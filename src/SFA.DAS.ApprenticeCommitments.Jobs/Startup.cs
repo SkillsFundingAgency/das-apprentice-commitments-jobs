@@ -1,9 +1,10 @@
-using Microsoft.Azure.Functions.Extensions.DependencyInjection;
+﻿using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
+using NServiceBus;
 using SFA.DAS.Configuration.AzureTableStorage;
 using System.IO;
 using System.Reflection;
@@ -16,9 +17,41 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs
     {
         public override void Configure(IFunctionsHostBuilder builder)
         {
+            var serviceProvider = builder.Services.BuildServiceProvider();
+            var configuration = serviceProvider.GetService<IConfiguration>();
+
             builder.ConfigureLogging();
             builder.ConfigureConfiguration();
+            ConfigureNServiceBus(builder, configuration);
         }
+
+        internal void ConfigureNServiceBus(IFunctionsHostBuilder builder, IConfiguration _)
+        {
+            var serviceProvider = builder.Services.BuildServiceProvider();
+            var config = serviceProvider.GetService<IConfiguration>();
+
+            var logger = serviceProvider.GetService<ILoggerProvider>().CreateLogger(GetType().AssemblyQualifiedName);
+            if (config["NServiceBusConnectionString"] == "UseDevelopmentStorage=true")
+            {
+                builder.Services.AddNServiceBus(logger, (options) =>
+                {
+                    var path = Path.Combine(RepositoryPath, @"src\TestConsole\.learningtransport");
+
+                    options.EndpointConfiguration = (endpoint) =>
+                    {
+                        endpoint.UseTransport<LearningTransport>().StorageDirectory(path);
+                        return endpoint;
+                    };
+                });
+            }
+            else
+            {
+                builder.Services.AddNServiceBus(logger);
+            }
+        }
+
+        private static string RepositoryPath =>
+            Directory.GetCurrentDirectory().Substring(0, Directory.GetCurrentDirectory().IndexOf("src"));
     }
 
     internal static class StartupParts
@@ -52,8 +85,8 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs
 
             configBuilder.AddAzureTableStorage(options =>
             {
-                options.ConfigurationKeys = preConfig["ConfigurationNames"].Split(",");
-                options.StorageConnectionString = preConfig["ConfigurationStorage"];
+                options.ConfigurationKeys = preConfig["ConfigNames"].Split(",");
+                options.StorageConnectionString = preConfig["ConfigurationStorageConnectionString"];
                 options.EnvironmentName = preConfig["EnvironmentName"];
                 options.PreFixConfigurationKeys = false;
             });
