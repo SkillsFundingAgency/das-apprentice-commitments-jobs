@@ -3,7 +3,15 @@ using SFA.DAS.CommitmentsV2.Messages.Events;
 using SFA.DAS.NServiceBus.AzureFunction.Attributes;
 using System.Threading.Tasks;
 
-namespace SFA.DAS.ApprenticeCommitments.Jobs
+namespace SFA.DAS.CommitmentsV2.Messages.Events
+{
+    public class ApprenticeshipCreatedEvent2 : ApprenticeshipCreatedEvent
+    {
+        public string Email { get; set; }
+    }
+}
+
+namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
 {
     public interface IEcsApi
     {
@@ -17,7 +25,10 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs
             [NServiceBusTrigger(Endpoint = "SFA.DAS.EmployerIncentives.AddEmployerVendorId")] ApprenticeshipCreatedEvent apprenticeshipCreated,
             IEcsApi api)
         {
-            await api.CreateApprentice("bob");
+            if (apprenticeshipCreated is ApprenticeshipCreatedEvent2 evt2)
+            {
+                await api.CreateApprentice(evt2.Email);
+            }
         }
     }
 }

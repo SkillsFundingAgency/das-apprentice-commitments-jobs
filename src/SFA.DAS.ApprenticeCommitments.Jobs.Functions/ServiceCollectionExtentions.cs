@@ -7,7 +7,7 @@ using System;
 using System.Linq;
 using static System.Math;
 
-namespace SFA.DAS.ApprenticeCommitments.Jobs
+namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
 {
     public static class ServiceCollectionExtensions
     {

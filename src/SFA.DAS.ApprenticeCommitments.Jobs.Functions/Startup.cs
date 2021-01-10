@@ -3,15 +3,13 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
-using NLog.Extensions.Logging;
 using NServiceBus;
 using SFA.DAS.Configuration.AzureTableStorage;
 using System.IO;
-using System.Reflection;
 
-[assembly: FunctionsStartup(typeof(SFA.DAS.ApprenticeCommitments.Jobs.Startup))]
+[assembly: FunctionsStartup(typeof(SFA.DAS.ApprenticeCommitments.Jobs.Functions.Startup))]
 
-namespace SFA.DAS.ApprenticeCommitments.Jobs
+namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
 {
     internal class Startup : FunctionsStartup
     {
@@ -56,18 +54,6 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs
 
     internal static class StartupParts
     {
-        internal static void ConfigureLogging(this IFunctionsHostBuilder builder)
-        {
-            builder.Services.AddLogging(logBuilder =>
-            {
-                // all logging is filtered out by defualt
-                logBuilder.AddFilter(typeof(Startup).Namespace, LogLevel.Information);
-                var rootDirectory = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), ".."));
-                var files = Directory.GetFiles(rootDirectory, "nlog.config", SearchOption.AllDirectories)[0];
-                logBuilder.AddNLog(files);
-            });
-        }
-
         internal static void ConfigureConfiguration(this IFunctionsHostBuilder builder)
         {
             var serviceProvider = builder.Services.BuildServiceProvider();
