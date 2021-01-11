@@ -4,6 +4,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using NServiceBus;
+using Microsoft.Extensions.DependencyInjection;
+using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure;
 using SFA.DAS.Configuration.AzureTableStorage;
 using System.IO;
 
@@ -21,6 +23,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
             builder.ConfigureLogging();
             builder.ConfigureConfiguration();
             ConfigureNServiceBus(builder, configuration);
+            builder.Services.AddTransient<ApprenticeCommitmentsApi>();
         }
 
         internal void ConfigureNServiceBus(IFunctionsHostBuilder builder, IConfiguration _)

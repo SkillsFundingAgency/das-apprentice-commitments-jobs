@@ -13,17 +13,15 @@ namespace SFA.DAS.CommitmentsV2.Messages.Events
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
 {
-    public interface IEcsApi
+    public class ApprenticeshipCreatedHandler
     {
-        Task CreateApprentice(string email);
-    }
+        private readonly IEcsApi api;
 
-    public static class ApprenticeshipCreatedHandler
-    {
+        public ApprenticeshipCreatedHandler(IEcsApi api) => this.api = api;
+
         [FunctionName("HandleApprenticeshipCreatedEvent")]
-        public static async Task RunEvent(
-            [NServiceBusTrigger(Endpoint = "SFA.DAS.EmployerIncentives.AddEmployerVendorId")] ApprenticeshipCreatedEvent apprenticeshipCreated,
-            IEcsApi api)
+        public async Task RunEvent(
+            [NServiceBusTrigger(Endpoint = "SFA.DAS.EmployerIncentives.AddEmployerVendorId")] ApprenticeshipCreatedEvent apprenticeshipCreated)
         {
             if (apprenticeshipCreated is ApprenticeshipCreatedEvent2 evt2)
             {

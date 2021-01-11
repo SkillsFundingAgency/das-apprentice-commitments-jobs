@@ -1,3 +1,6 @@
+using AutoFixture;
+using AutoFixture.AutoNSubstitute;
+using AutoFixture.Xunit2;
 using NSubstitute;
 using SFA.DAS.ApprenticeCommitments.Jobs.Functions;
 using SFA.DAS.CommitmentsV2.Messages.Events;
@@ -8,22 +11,39 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
 {
     public class WhenApprenticeshipHasBeenCreated
     {
-        [Fact]
-        public async Task Then_create_the_apprentice_record()
+        [Theory, DomainAutoData]
+        public async Task Then_create_the_apprentice_record(
+            [Frozen] IEcsApi api,
+            ApprenticeshipCreatedHandler sut,
+            ApprenticeshipCreatedEvent2 evt)
         {
-            var api = Substitute.For<IEcsApi>();
-            var evt = new ApprenticeshipCreatedEvent2 { Email = "bob" };
-            await ApprenticeshipCreatedHandler.RunEvent(evt, api);
-            await api.Received().CreateApprentice("bob");
+            await sut.RunEvent(evt);
+            await api.Received().CreateApprentice(evt.Email);
         }
 
-        [Fact]
-        public async Task Logs_when_event_without_email_is_received()
+        [Theory(Skip = "Not implemented yet")]
+        [DomainAutoData]
+        public async Task Logs_when_event_without_email_is_received(
+            [Frozen] IEcsApi api,
+            ApprenticeshipCreatedHandler sut,
+            ApprenticeshipCreatedEvent2 evt)
         {
-            var api = Substitute.For<IEcsApi>();
-            var evt = new ApprenticeshipCreatedEvent();
-            await ApprenticeshipCreatedHandler.RunEvent(evt, api);
-            //await api.Received().CreateApprentice("bob");
+            await sut.RunEvent(evt);
+            // assert
+        }
+
+        public class DomainAutoDataAttribute : AutoDataAttribute
+        {
+            public DomainAutoDataAttribute() : base(() => Customise())
+            {
+            }
+
+            private static IFixture Customise()
+            {
+                var fixture = new Fixture();
+                fixture.Customize(new AutoNSubstituteCustomization { ConfigureMembers = true });
+                return fixture;
+            }
         }
     }
 }

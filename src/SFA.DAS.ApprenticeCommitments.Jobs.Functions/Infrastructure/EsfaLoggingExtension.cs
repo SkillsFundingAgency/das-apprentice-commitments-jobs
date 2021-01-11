@@ -5,7 +5,7 @@ using NLog.Extensions.Logging;
 using System.IO;
 using System.Reflection;
 
-namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Startup
+namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure
 {
     internal static class EsfaLoggingExtension
     {
