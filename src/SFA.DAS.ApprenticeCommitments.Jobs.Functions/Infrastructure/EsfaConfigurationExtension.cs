@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using SFA.DAS.Configuration.AzureTableStorage;
 using System.IO;
 
@@ -44,6 +45,14 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure
                 .AddOptions<TOptions>()
                 .Configure<IConfiguration>((settings, configuration) =>
                     configuration.Bind(name, settings));
+        }
+
+        public static void ConfigureFromOptions<TInterface, TOptions>(this IServiceCollection services)
+            where TInterface : class
+            where TOptions : class, TInterface, new()
+        {
+            services.AddSingleton<TInterface>(s =>
+                s.GetRequiredService<IOptions<TOptions>>().Value);
         }
     }
 }

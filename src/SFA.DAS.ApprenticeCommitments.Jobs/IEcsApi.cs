@@ -6,6 +6,6 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs
     public interface IEcsApi
     {
         [Post("apprenticeships")]
-        Task CreateApprentice(string email);
+        Task CreateApprentice([Body] Apprenticeship email);
     }
 }

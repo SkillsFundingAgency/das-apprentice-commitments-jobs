@@ -3,6 +3,10 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+# Development files
+*.development.json
+local.settings.json
+
 # User-specific files
 *.rsuser
 *.suo
@@ -299,6 +303,10 @@ paket-files/
 # FAKE - F# Make
 .fake/
 
+# JetBrains Rider
+.idea/
+*.sln.iml
+
 # CodeRush personal settings
 .cr/personal
 
@@ -348,3 +356,19 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+
+#SonarCloud
+
+.sonarqube/
+SonarQube.Analysis.xml
+**/*.slconfig
+
+*.ncrunchsolution
+*.ncrunchproject
+.vscode/
+
+#Test generated nservicebus queues
+/.learningtransport/
+
+# Local logs
+*-nlog.txt

@@ -26,10 +26,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
         public async Task RunEvent(
             [NServiceBusTrigger(Endpoint = "SFA.DAS.EmployerIncentives.AddEmployerVendorId")] ApprenticeshipCreatedEvent apprenticeshipCreated)
         {
-            if (apprenticeshipCreated is ApprenticeshipCreatedEvent2 evt2)
-            {
-                await api.CreateApprentice(evt2.Email);
-            }
+            await api.CreateApprentice(apprenticeshipCreated.ToApprenticeship());
         }
 
         [FunctionName("HandleApprenticeshipCreatedEventTrigger")]

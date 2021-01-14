@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using RestEase.HttpClientFactory;
 using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure;
+using SFA.DAS.Http.Configuration;
 
 [assembly: FunctionsStartup(typeof(SFA.DAS.ApprenticeCommitments.Jobs.Functions.Startup))]
 
@@ -15,14 +16,14 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
             builder.ConfigureLogging();
             builder.ConfigureConfiguration();
             builder.ConfigureNServiceBus();
-            //builder.Services.AddTransient<ApprenticeCommitmentsApi>();
+
+            builder.Services.ConfigureOptions<ApprenticeCommitmentsApiOptions>(
+                ApprenticeCommitmentsApiOptions.ApprenticeCommitmentsApi);
+            builder.Services.ConfigureFromOptions<IApimClientConfiguration, ApprenticeCommitmentsApiOptions>();
 
             builder.Services.AddTransient<Http.MessageHandlers.DefaultHeadersHandler>();
             builder.Services.AddTransient<Http.MessageHandlers.LoggingMessageHandler>();
             builder.Services.AddTransient<Http.MessageHandlers.ApimHeadersHandler>();
-
-            builder.Services.ConfigureOptions<ApprenticeCommitmentsApiOptions>(
-                ApprenticeCommitmentsApiOptions.ApprenticeCommitmentsApi);
 
             var url = builder.Services
                 .BuildServiceProvider()

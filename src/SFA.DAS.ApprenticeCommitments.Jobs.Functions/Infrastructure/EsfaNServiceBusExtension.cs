@@ -26,7 +26,9 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure
 
                     options.EndpointConfiguration = (endpoint) =>
                     {
-                        endpoint.UseTransport<LearningTransport>().StorageDirectory(path);
+                        endpoint
+                            .UseTransport<LearningTransport>()
+                            .StorageDirectory(".learningtransport");
                         return endpoint;
                     };
                 });
