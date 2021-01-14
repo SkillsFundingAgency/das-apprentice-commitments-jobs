@@ -73,7 +73,7 @@
         "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/",
         "resourcePrefix": "[concat('das-',toLower(parameters('resourceEnvironmentName')),'-' , parameters('serviceName'))]",
         "appServicePlanName": "[concat(variables('resourcePrefix'),'-asp')]",
-        "functionAppNameCommitments": "[concat(variables('resourcePrefix'),'-acomtwkr-fa')]",
+        "functionAppNameCommitments": "[concat(variables('resourcePrefix'),'-fa')]",
         "resourceGroupName": "[concat(variables('resourcePrefix'), '-rg')]"
     },
     "resources": [
@@ -111,7 +111,7 @@
             }
         },
         {
-            "apiVersion": "2017-05-10",
+            "apiVersion": "2020-06-01",
             "name": "function-app-subnet",
             "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
             "type": "Microsoft.Resources/deployments",
@@ -235,7 +235,7 @@
             ]
         },
         {
-            "apiVersion": "2017-05-10",
+            "apiVersion": "2020-06-01",
             "name": "function-app-sb-role-assignment",
             "type": "Microsoft.Resources/deployments",
             "resourceGroup": "[parameters('sharedEnvResourceGroup')]",

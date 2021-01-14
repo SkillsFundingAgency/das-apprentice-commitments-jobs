@@ -6,66 +6,16 @@ trigger:
 
 pr: none
 
-workspace:
-    clean: all
-
-variables:
-  buildConfiguration: 'release'
-  buildPlatform: 'anycpu'
-
-pool:
-  name: 'DAS - Continuous Integration'
-
-steps:
-  - task: gittools.gitversion-preview.gitversion-task.GitVersion@5
-    displayName: GitVersion
-    inputs:
-      updateAssemblyInfo: true
-
-  - task: DotNetCoreCLI@2
-    displayName: Restore
-    inputs:
-      command: restore
-      projects: 'src/**/*.csproj'
-      noCache: true
-
-  - task: DotNetCoreCLI@2
-    displayName: Build
-    inputs:
-      projects: 'src/**/*.csproj'
-      arguments: '--configuration $(buildConfiguration) --no-restore'
-      
-  - task: DotNetCoreCLI@2
-    displayName: Test
-    inputs:
-      command: test
-      projects: '**/*.UnitTests.csproj'
-      arguments: '--configuration $(buildConfiguration) --no-build'
-
-  - task: DotNetCoreCLI@2
-    displayName: AcceptanceTest
-    inputs:
-      command: test
-      projects: '**/*.AcceptanceTests.csproj'
-      arguments: '--configuration $(buildConfiguration) --no-build'
-
-  - task: DotNetCoreCLI@2
-    displayName: 'Publish Function App Apprentice Commitments Jobs'
-    inputs:
-      command: publish
-      publishWebProjects: false
-      projects: 'src/SFA.DAS.ApprenticeCommitments.Jobs.Functions/SFA.DAS.ApprenticeCommitments.Jobs.Functions.csproj'
-      arguments: '--configuration $(buildConfiguration) --output $(build.artifactstagingdirectory)/publish --no-restore --no-build'
-
-  - task: CopyFiles@2
-    displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
-    inputs:
-      Contents: |
-        azure/**
-      TargetFolder: '$(build.artifactstagingdirectory)/publish'
-      OverWrite: true
-
-  - task: PublishBuildArtifacts@1
-    displayName: 'Publish Artifact'
-    inputs:
-      PathtoPublish: '$(build.artifactstagingdirectory)/publish'
+resources:
+  repositories:
+  - repository: self
+  - repository: das-platform-building-blocks
+    type: github
+    name: SkillsFundingAgency/das-platform-building-blocks
+    ref: refs/heads/master
+    endpoint: GitHub (SFA)
+  
+stages:
+- stage: Build
+  jobs:
+  - template: pipeline-templates/job/code-build.yml
