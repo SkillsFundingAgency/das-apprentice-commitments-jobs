@@ -47,6 +47,24 @@
         "configurationStorageConnectionString": {
             "type": "securestring"
         },
+        "sharedEnvResourceGroup": {
+            "type": "string"
+        },
+        "sharedServiceBusName": {
+            "type": "string"
+        },
+        "sharedEnvVirtualNetworkName": {
+            "type": "string"
+        },
+        "subnetDelegations": {
+            "type": "array"
+        },
+        "subnetObject": {
+            "type": "object"
+        },
+        "subnetServiceEndpointList": {
+            "type": "array"
+        },
         "loggingRedisConnectionString": {
             "type": "securestring"
         }
@@ -88,6 +106,36 @@
                     },
                     "aspInstances": {
                         "value": "[parameters('appServicePlanInstances')]"
+                    }
+                }
+            }
+        },
+        {
+            "apiVersion": "2017-05-10",
+            "name": "function-app-subnet",
+            "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('deploymentUrlBase'),'subnet.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "virtualNetworkName": {
+                        "value": "[parameters('sharedEnvVirtualNetworkName')]"
+                    },
+                    "subnetName": {
+                        "value": "[parameters('subnetObject').name]"
+                    },
+                    "subnetAddressPrefix": {
+                        "value": "[parameters('subnetObject').addressSpace]"
+                    },
+                    "serviceEndpointList": {
+                        "value": "[parameters('subnetServiceEndpointList')]"
+                    },
+                    "delegations": {
+                        "value": "[parameters('subnetDelegations')]"
                     }
                 }
             }
@@ -135,7 +183,7 @@
                         "value": "[variables('resourceGroupName')]"
                     },
                     "subnetResourceId": {
-                        "value": "[reference('worker-app-service-subnet').outputs.SubnetResourceId.value]"
+                        "value": "[reference('function-app-subnet').outputs.SubnetResourceId.value]"
                     },
                     "functionAppAppSettings": {
                         "value": {
@@ -184,6 +232,33 @@
             "dependsOn": [
                 "function-app-service-plan",
                 "function-app-insights"
+            ]
+        },
+        {
+            "apiVersion": "2017-05-10",
+            "name": "function-app-sb-role-assignment",
+            "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('deploymentUrlBase'),'role-assignments/role-assignment-service-bus.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "principalId": {
+                        "value": "[reference('function-app').outputs.managedServiceIdentityId.value]"
+                    },
+                    "assignmentType": {
+                        "value": "ServiceBusReader"
+                    },
+                    "resourceName": {
+                        "value": "[parameters('sharedServiceBusName')]"
+                    }
+                }
+            },
+            "dependsOn": [
+                "function-app"
             ]
         }
     ],
