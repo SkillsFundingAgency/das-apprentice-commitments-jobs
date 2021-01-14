@@ -1,9 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using RestEase;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs
 {
     public interface IEcsApi
     {
+        [Post("apprenticeships")]
         Task CreateApprentice(string email);
     }
 }
