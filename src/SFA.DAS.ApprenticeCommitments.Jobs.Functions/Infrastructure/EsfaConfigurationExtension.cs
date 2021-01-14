@@ -36,5 +36,14 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure
             var config = configBuilder.Build();
             builder.Services.Replace(ServiceDescriptor.Singleton(typeof(IConfiguration), config));
         }
+
+        public static void ConfigureOptions<TOptions>(this IServiceCollection services, string name)
+            where TOptions : class
+        {
+            services
+                .AddOptions<TOptions>()
+                .Configure<IConfiguration>((settings, configuration) =>
+                    configuration.Bind(name, settings));
+        }
     }
 }
