@@ -1,7 +1,5 @@
 ﻿using FluentAssertions;
-using SFA.DAS.ApprenticeCommitments.Jobs.AcceptanceTests.Steps;
 using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -33,8 +31,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.AcceptanceTests.Services
         {
             var waitForResult = new WaitForResult();
 
-            var hook = context.Hooks.Find(h => h is Hook<T>) as Hook<T>;
-            //var hook = context.Hooks.SingleOrDefault(h => h is Hook<T>) as Hook<T>;
+            var hook = context.Hooks.Find(h => h is MessageBusHook<T>) as MessageBusHook<T>;
 
             hook.OnReceived = _ => waitForResult.HasStarted = true;
             hook.OnProcessed = _ => waitForResult.HasCompleted = true;

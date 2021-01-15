@@ -3,6 +3,7 @@ using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure;
 using SFA.DAS.CommitmentsV2.Messages.Events;
 using SFA.DAS.NServiceBus.Configuration;
 using SFA.DAS.NServiceBus.Configuration.NewtonsoftJsonSerializer;
+using System;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -14,20 +15,13 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.AcceptanceTests.Services
         public bool IsRunning { get; private set; }
         public DirectoryInfo StorageDirectory { get; private set; }
 
-        public async Task Start(/*DirectoryInfo testDirectory*/)
+        public async Task Start()
         {
-            //StorageDirectory = new DirectoryInfo(Path.Combine(testDirectory.FullName, ".learningtransport"));
-            //if (!StorageDirectory.Exists)
-            //{
-            //    Directory.CreateDirectory(StorageDirectory.FullName);
-            //}
-
             var endpointConfiguration = new EndpointConfiguration("SFA.DAS.EmployerIncentives.Functions.Legalentities.TestMessageBus");
             endpointConfiguration
                 .UseNewtonsoftJsonSerializer()
                 .UseMessageConventions()
                 .UseTransport<LearningTransport>()
-                //.StorageDirectory(StorageDirectory.FullName)
                 ;
             endpointConfiguration.UseLearningTransport(s => s.RouteToEndpoint(typeof(ApprenticeshipCreated2Event), QueueNames.ApprenticeshipCreatedEvent));
 
@@ -44,5 +38,12 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.AcceptanceTests.Services
         public Task Publish(object message) => endpointInstance.Publish(message);
 
         public Task Send(object message) => endpointInstance.Send(message);
+    }
+
+    public class MessageBusHook<T> : IHook
+    {
+        public Action<T> OnReceived { get; set; }
+        public Action<T> OnProcessed { get; set; }
+        public Action<Exception, T> OnErrored { get; set; }
     }
 }

@@ -2,19 +2,21 @@
 using System;
 using System.Collections.Generic;
 
-namespace SFA.DAS.ApprenticeCommitments.Jobs.AcceptanceTests.Steps
+namespace SFA.DAS.ApprenticeCommitments.Jobs.AcceptanceTests
 {
     public class TestContext : IDisposable
     {
-        public ApprenticeCommitmentsTestApi Api { get; set; }
+        public MockOuterApi Api { get; set; }
 
         public TestMessageBus TestMessageBus { get; set; }
 
         public List<IHook> Hooks { get; } = new List<IHook>();
-        internal ApprenticeCommitmentApiTestServer FunctionsServer { get; set; }
+        internal FunctionsTestServer FunctionsServer { get; set; }
 
         public void Dispose()
         {
         }
     }
+
+    public interface IHook { }
 }

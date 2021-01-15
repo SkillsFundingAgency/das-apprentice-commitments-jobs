@@ -4,17 +4,15 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using NServiceBus;
 using NServiceBus.Transport;
-using SFA.DAS.ApprenticeCommitments.Jobs.AcceptanceTests.Steps;
 using SFA.DAS.ApprenticeCommitments.Jobs.Functions;
 using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure;
-using SFA.DAS.Configuration.AzureTableStorage;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs.AcceptanceTests.Services
 {
-    internal class ApprenticeCommitmentApiTestServer
+    internal class FunctionsTestServer
     {
         private readonly TestContext context;
         private readonly Dictionary<string, string> hostConfig = new Dictionary<string, string>();
@@ -30,7 +28,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.AcceptanceTests.Services
 
         private IHost host;
 
-        public ApprenticeCommitmentApiTestServer(TestContext context)
+        public FunctionsTestServer(TestContext context)
         {
             this.context = context;
         }
@@ -69,7 +67,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.AcceptanceTests.Services
                     a.SubscriptionKey = "";
                 });
 
-                s.AddNServiceBus(new LoggerFactory().CreateLogger<ApprenticeCommitmentApiTestServer>(),
+                s.AddNServiceBus(new LoggerFactory().CreateLogger<FunctionsTestServer>(),
                     o =>
                     {
                         o.EndpointConfiguration = (endpoint) =>
@@ -78,7 +76,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.AcceptanceTests.Services
                             return endpoint;
                         };
 
-                        if (context.Hooks.SingleOrDefault(h => h is Hook<MessageContext>) is Hook<MessageContext> hook)
+                        if (context.Hooks.SingleOrDefault(h => h is MessageBusHook<MessageContext>) is MessageBusHook<MessageContext> hook)
                         {
                             o.OnMessageReceived += (message) => hook?.OnReceived?.Invoke(message);
                             o.OnMessageProcessed += (message) => hook?.OnProcessed?.Invoke(message);

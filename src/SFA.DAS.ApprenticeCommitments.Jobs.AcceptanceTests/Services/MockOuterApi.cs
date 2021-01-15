@@ -3,14 +3,14 @@ using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
 using WireMock.Server;
 
-namespace SFA.DAS.ApprenticeCommitments.Jobs.AcceptanceTests.Steps
+namespace SFA.DAS.ApprenticeCommitments.Jobs.AcceptanceTests.Services
 {
-    public class ApprenticeCommitmentsTestApi : IDisposable
+    public class MockOuterApi : IDisposable
     {
         public WireMockServer Server { get; }
         public Uri BaseAddress { get; }
 
-        public ApprenticeCommitmentsTestApi()
+        public MockOuterApi()
         {
             Server = WireMockServer.Start(ssl: false);
             BaseAddress = new Uri(Server.Urls[0] + "/api");
