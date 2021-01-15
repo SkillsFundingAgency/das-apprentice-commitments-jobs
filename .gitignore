@@ -368,7 +368,7 @@ SonarQube.Analysis.xml
 .vscode/
 
 #Test generated nservicebus queues
-/.learningtransport/
+.learningtransport/
 
 # Local logs
 *-nlog.txt

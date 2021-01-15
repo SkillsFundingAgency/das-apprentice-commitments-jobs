@@ -22,8 +22,6 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure
             {
                 builder.Services.AddNServiceBus(logger, (options) =>
                 {
-                    var path = Path.Combine(RepositoryPath, @"src\TestConsole\.learningtransport");
-
                     options.EndpointConfiguration = (endpoint) =>
                     {
                         endpoint

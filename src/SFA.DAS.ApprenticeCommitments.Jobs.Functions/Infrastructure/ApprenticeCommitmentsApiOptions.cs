@@ -2,7 +2,7 @@
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure
 {
-    class ApprenticeCommitmentsApiOptions : IApimClientConfiguration
+    public class ApprenticeCommitmentsApiOptions : IApimClientConfiguration
     {
         public const string ApprenticeCommitmentsApi = "ApprenticeCommitmentsApi";
         public string ApiBaseUrl { get; set; }

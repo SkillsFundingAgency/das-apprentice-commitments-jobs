@@ -9,12 +9,16 @@ using SFA.DAS.Http.Configuration;
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
 {
-    internal class Startup : FunctionsStartup
+    public class Startup : FunctionsStartup
     {
+        public override void ConfigureAppConfiguration(IFunctionsConfigurationBuilder builder)
+        {
+            builder.ConfigureConfiguration();
+        }
+
         public override void Configure(IFunctionsHostBuilder builder)
         {
             builder.ConfigureLogging();
-            builder.ConfigureConfiguration();
             builder.ConfigureNServiceBus();
 
             builder.Services.ConfigureOptions<ApprenticeCommitmentsApiOptions>(

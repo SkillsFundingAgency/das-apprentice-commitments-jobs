@@ -15,7 +15,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
         public async Task Then_create_the_apprentice_record(
             [Frozen] Mock<IEcsApi> api,
             ApprenticeshipCreatedHandler sut,
-            ApprenticeshipCreatedEvent2 evt)
+            ApprenticeshipCreated2Event evt)
         {
             await sut.RunEvent(evt);
             api.Verify(m => m.CreateApprentice(It.Is<Apprenticeship>(n =>

@@ -2,13 +2,14 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure;
 using SFA.DAS.CommitmentsV2.Messages.Events;
 using SFA.DAS.NServiceBus.AzureFunction.Attributes;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.CommitmentsV2.Messages.Events
 {
-    public class ApprenticeshipCreatedEvent2 : ApprenticeshipCreatedEvent
+    public class ApprenticeshipCreated2Event : ApprenticeshipCreatedEvent
     {
         public string Email { get; set; }
     }
@@ -24,7 +25,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
 
         [FunctionName("HandleApprenticeshipCreatedEvent")]
         public async Task RunEvent(
-            [NServiceBusTrigger(Endpoint = "SFA.DAS.EmployerIncentives.AddEmployerVendorId")] ApprenticeshipCreatedEvent apprenticeshipCreated)
+            [NServiceBusTrigger(Endpoint = QueueNames.ApprenticeshipCreatedEvent)] ApprenticeshipCreated2Event apprenticeshipCreated)
         {
             await api.CreateApprentice(apprenticeshipCreated.ToApprenticeship());
         }
@@ -36,7 +37,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
 
-            await RunEvent(new ApprenticeshipCreatedEvent2
+            await RunEvent(new ApprenticeshipCreated2Event
             {
                 Email = "email@example.com",
             });
