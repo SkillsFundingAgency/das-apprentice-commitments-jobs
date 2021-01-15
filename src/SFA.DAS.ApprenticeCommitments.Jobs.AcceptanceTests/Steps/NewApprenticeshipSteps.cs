@@ -19,6 +19,8 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.AcceptanceTests.Steps
         [When("an apprenticeship is approved")]
         public async Task WhenAnApprenticeshipIsApproved()
         {
+            testContext.Api.AcceptAllRequests();
+
             await testContext.WaitFor<MessageContext>(async () =>
                 await testContext.TestMessageBus.Publish(new ApprenticeshipCreated2Event { Email = "bob" }));
         }

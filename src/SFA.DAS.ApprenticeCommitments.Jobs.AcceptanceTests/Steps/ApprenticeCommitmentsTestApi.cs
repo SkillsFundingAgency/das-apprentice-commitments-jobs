@@ -1,4 +1,6 @@
 ﻿using System;
+using WireMock.RequestBuilders;
+using WireMock.ResponseBuilders;
 using WireMock.Server;
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs.AcceptanceTests.Steps
@@ -14,9 +16,16 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.AcceptanceTests.Steps
             BaseAddress = new Uri(Server.Urls[0] + "/api");
         }
 
+        internal void AcceptAllRequests()
+        {
+            Server
+                .Given(Request.Create())
+                .RespondWith(Response.Create().WithStatusCode(System.Net.HttpStatusCode.Accepted));
+        }
+
         public void Dispose()
         {
-            /*if (Server?.IsStarted == true)*/ Server?.Stop();
+            Server?.Stop();
             Server?.Dispose();
         }
     }

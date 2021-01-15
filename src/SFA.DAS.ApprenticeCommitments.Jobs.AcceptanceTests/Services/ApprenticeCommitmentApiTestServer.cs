@@ -80,9 +80,9 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.AcceptanceTests.Services
 
                         if (context.Hooks.SingleOrDefault(h => h is Hook<MessageContext>) is Hook<MessageContext> hook)
                         {
-                            o.OnMessageReceived = (message) => hook?.OnReceived(message);
-                            o.OnMessageProcessed = (message) => hook?.OnProcessed(message);
-                            o.OnMessageErrored = (exception, message) => hook?.OnErrored(exception, message);
+                            o.OnMessageReceived += (message) => hook?.OnReceived?.Invoke(message);
+                            o.OnMessageProcessed += (message) => hook?.OnProcessed?.Invoke(message);
+                            o.OnMessageErrored += (exception, message) => hook?.OnErrored?.Invoke(exception, message);
                         }
                     });
             });
