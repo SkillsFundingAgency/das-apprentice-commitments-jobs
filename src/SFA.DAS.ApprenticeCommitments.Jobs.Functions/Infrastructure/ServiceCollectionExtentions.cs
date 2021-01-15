@@ -11,13 +11,14 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddNServiceBus(
+        public static IServiceCollection AddNServiceBus<T>(
             this IServiceCollection serviceCollection,
-            ILogger logger,
             Action<NServiceBusOptions> OnConfigureOptions = null)
         {
-            serviceCollection.AddSingleton<IExtensionConfigProvider, NServiceBusExtensionConfigProvider>(_ =>
+            serviceCollection.AddSingleton<IExtensionConfigProvider, NServiceBusExtensionConfigProvider>(services =>
             {
+                var logger = services.GetRequiredService<ILogger<T>>();
+
                 var options = new NServiceBusOptions
                 {
                     OnMessageReceived = (context) =>

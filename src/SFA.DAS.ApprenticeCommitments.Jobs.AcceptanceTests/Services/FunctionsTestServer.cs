@@ -67,8 +67,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.AcceptanceTests.Services
                     a.SubscriptionKey = "";
                 });
 
-                s.AddNServiceBus(new LoggerFactory().CreateLogger<FunctionsTestServer>(),
-                    o =>
+                s.AddNServiceBus<FunctionsTestServer>(o =>
                     {
                         o.EndpointConfiguration = (endpoint) =>
                         {
