@@ -372,3 +372,5 @@ SonarQube.Analysis.xml
 
 # Local logs
 *-nlog.txt
+
+*.feature.cs
