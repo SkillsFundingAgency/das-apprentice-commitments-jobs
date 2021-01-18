@@ -2,6 +2,7 @@ jobs:
 - job: CodeBuild
   pool:
     name: DAS - Continuous Integration
+    demands: Agent.OS -equals Windows_NT
   variables:
   - group: Prod Management Resources
   - name: buildConfiguration
