@@ -23,17 +23,6 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
                 n.Email == evt.Email)));
         }
 
-        //[Test]
-        //[DomainAutoData]
-        //public async Task Logs_when_event_without_email_is_received(
-        //    [Frozen] IEcsApi api,
-        //    ApprenticeshipCreatedHandler sut,
-        //    ApprenticeshipCreatedEvent2 evt)
-        //{
-        //    await sut.RunEvent(evt);
-        //    // assert
-        //}
-
         public class DomainAutoDataAttribute : AutoDataAttribute
         {
             public DomainAutoDataAttribute() : base(() => Customise())
