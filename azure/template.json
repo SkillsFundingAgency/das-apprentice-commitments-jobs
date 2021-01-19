@@ -28,8 +28,7 @@
             "defaultValue": 2
         },
         "configNames": {
-            "type": "string",
-            "defaultValue": "__SolutionBaseName__"
+            "type": "string"
         },
         "environmentName": {
             "type": "string"
@@ -56,6 +55,12 @@
         "sharedEnvVirtualNetworkName": {
             "type": "string"
         },
+        "sharedApimResourceGroup": {
+            "type": "string"
+        },
+        "sharedApimName": {
+            "type": "string"
+        },
         "subnetDelegations": {
             "type": "array"
         },
@@ -73,7 +78,7 @@
         "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/",
         "resourcePrefix": "[concat('das-',toLower(parameters('resourceEnvironmentName')),'-' , parameters('serviceName'))]",
         "appServicePlanName": "[concat(variables('resourcePrefix'),'-asp')]",
-        "functionAppNameCommitments": "[concat(variables('resourcePrefix'),'-fa')]",
+        "functionAppName": "[concat(variables('resourcePrefix'),'-fa')]",
         "resourceGroupName": "[concat(variables('resourcePrefix'), '-rg')]"
     },
     "resources": [
@@ -153,10 +158,34 @@
                 },
                 "parameters": {
                     "appInsightsName": {
-                        "value": "[variables('functionAppNameCommitments')]"
+                        "value": "[variables('functionAppName')]"
                     },
                     "attachedService": {
-                        "value": "[variables('functionAppNameCommitments')]"
+                        "value": "[variables('functionAppName')]"
+                    }
+                }
+            }
+        },
+        {
+            "apiVersion": "2020-06-01",
+            "name": "apim-product-subscription",
+            "resourceGroup": "[parameters('sharedApimResourceGroup')]",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('deploymentUrlBase'),'apim/apim-subscription.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "apimName": {
+                        "value": "[parameters('sharedApimName')]"
+                    },
+                    "subscriptionName": {
+                        "value": "[variables('functionAppName')]"
+                    },
+                    "subscriptionScope": {
+                        "value": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('sharedApimResourceGroup'), '/providers/Microsoft.ApiManagement/service/', parameters('sharedApimName'), '/products/ApprenticeCommitmentsOuterApi')]"
                     }
                 }
             }
@@ -174,7 +203,7 @@
                 },
                 "parameters": {
                     "functionAppName": {
-                        "value": "[variables('functionAppNameCommitments')]"
+                        "value": "[variables('functionAppName')]"
                     },
                     "appServicePlanName": {
                         "value": "[variables('appServicePlanName')]"
@@ -263,9 +292,9 @@
         }
     ],
     "outputs": {
-        "FunctionAppNameCommitments": {
+        "FunctionAppName": {
             "type": "string",
-            "value": "[variables('functionAppNameCommitments')]"
+            "value": "[variables('functionAppName')]"
         },
         "ResourceGroupName": {
             "type": "string",
