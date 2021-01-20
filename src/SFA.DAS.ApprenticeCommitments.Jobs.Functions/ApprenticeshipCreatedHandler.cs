@@ -39,6 +39,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
 
             await RunEvent(new ApprenticeshipCreated2Event
             {
+                ApprenticeshipId = 1001,
                 Email = "email@example.com",
             });
 
