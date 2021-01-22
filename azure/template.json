@@ -72,9 +72,6 @@
         },
         "loggingRedisConnectionString": {
             "type": "securestring"
-        },
-        "loggingRedisKey": {
-            "type": "string"
         }
     },
     "variables": {
@@ -251,10 +248,6 @@
                                 {
                                     "name": "LoggingRedisConnectionString",
                                     "value": "[parameters('loggingRedisConnectionString')]"
-                                },
-                                {
-                                    "name": "LoggingRedisKey",
-                                    "value": "[parameters('loggingRedisKey')]"
                                 },
                                 {
                                     "name": "FUNCTIONS_WORKER_RUNTIME",
