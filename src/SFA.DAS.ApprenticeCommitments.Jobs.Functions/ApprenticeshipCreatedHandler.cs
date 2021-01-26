@@ -1,3 +1,5 @@
+using System;
+using System.Net.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
@@ -6,6 +8,9 @@ using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure;
 using SFA.DAS.CommitmentsV2.Messages.Events;
 using SFA.DAS.NServiceBus.AzureFunction.Attributes;
 using System.Threading.Tasks;
+using Microsoft.Azure.Amqp.Framing;
+using Microsoft.Azure.WebJobs.Extensions.Http;
+using Newtonsoft.Json;
 
 namespace SFA.DAS.CommitmentsV2.Messages.Events
 {
@@ -32,18 +37,22 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
 
         [FunctionName("HandleApprenticeshipCreatedEventTrigger")]
         public async Task<IActionResult> Run(
-            [HttpTrigger("get", "post", Route = null)] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Function, "POST", Route = "test-apprenticeship-created-event")] HttpRequestMessage req,
             ILogger log)
         {
-            log.LogInformation("C# HTTP trigger function processed a request.");
+            log.LogInformation("Calling test-event.");
 
-            await RunEvent(new ApprenticeshipCreated2Event
+            try
             {
-                ApprenticeshipId = 1001,
-                Email = "email@example.com",
-            });
-
-            return new OkResult();
+                var @event = JsonConvert.DeserializeObject<ApprenticeshipCreated2Event>(await req.Content.ReadAsStringAsync());
+                await RunEvent(@event);
+                return new AcceptedResult();
+            }
+            catch (Exception e)
+            {
+                log.LogError(e, "Error Calling test-apprenticeship-created-event");
+                return new BadRequestResult();
+            }
         }
     }
 }
