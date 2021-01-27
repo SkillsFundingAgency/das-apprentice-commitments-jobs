@@ -49,6 +49,12 @@
         "sharedEnvResourceGroup": {
             "type": "string"
         },
+        "nServiceBusConnectionString": {
+            "type": "securestring"
+        },
+        "nServiceBusLicense": {
+            "type": "securestring"
+        },
         "sharedServiceBusName": {
             "type": "string"
         },
@@ -223,6 +229,14 @@
                                 {
                                     "name": "ConfigurationStorageConnectionString",
                                     "value": "[parameters('configurationStorageConnectionString')]"
+                                },
+                                {
+                                    "name": "NServiceBusConnectionString",
+                                    "value": "[parameters('nServiceBusConnectionString')]"
+                                },
+                                {
+                                    "name": "NServiceBusLicense",
+                                    "value": "[parameters('nServiceBusLicense')]"
                                 },
                                 {
                                     "name": "ConfigNames",
