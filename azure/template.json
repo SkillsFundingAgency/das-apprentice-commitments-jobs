@@ -300,7 +300,7 @@
                         "value": "[reference('function-app').outputs.managedServiceIdentityId.value]"
                     },
                     "assignmentType": {
-                        "value": "ServiceBusReceiver"
+                        "value": "ServiceBusSender"
                     },
                     "resourceName": {
                         "value": "[parameters('sharedServiceBusName')]"
