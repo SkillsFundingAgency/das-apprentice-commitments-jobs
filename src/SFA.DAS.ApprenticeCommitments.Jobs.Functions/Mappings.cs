@@ -8,7 +8,8 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
             new Apprenticeship
             {
                 ApprenticeshipId = source.ApprenticeshipId,
-                Email = source.Email
+                Email = source.Email,
+                Organisation = source.LegalEntityName,
             };
     }
 }
