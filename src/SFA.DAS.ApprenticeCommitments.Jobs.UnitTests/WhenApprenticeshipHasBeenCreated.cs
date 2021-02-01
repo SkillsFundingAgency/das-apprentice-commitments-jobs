@@ -20,7 +20,8 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
             await sut.RunEvent(evt);
             api.Verify(m => m.CreateApprentice(It.Is<Apprenticeship>(n =>
                 n.ApprenticeshipId == evt.ApprenticeshipId &&
-                n.Email == evt.Email)));
+                n.Email == evt.Email &&
+                n.Organisation == evt.LegalEntityName)));
         }
 
         public class DomainAutoDataAttribute : AutoDataAttribute
