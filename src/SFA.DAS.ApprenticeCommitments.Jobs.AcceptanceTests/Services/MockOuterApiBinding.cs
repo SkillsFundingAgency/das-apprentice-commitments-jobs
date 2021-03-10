@@ -1,4 +1,5 @@
-﻿using TechTalk.SpecFlow;
+﻿using System.Runtime.CompilerServices;
+using TechTalk.SpecFlow;
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs.AcceptanceTests.Services
 {
@@ -14,5 +15,12 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.AcceptanceTests.Services
         {
             context.Api = new MockOuterApi();
         }
+
+        [AfterScenario()]
+        public void Cleanup()
+        {
+            context.Api?.Dispose();
+        }
+
     }
 }
