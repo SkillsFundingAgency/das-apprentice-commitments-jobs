@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using System;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -12,9 +13,10 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs.AcceptanceTests.Services
 {
-    internal class FunctionsTestServer
+    internal class FunctionsTestServer : IDisposable
     {
-        private readonly TestContext context;
+        private bool _isDisposed;
+        private readonly TestContext _context;
         private readonly Dictionary<string, string> hostConfig = new Dictionary<string, string>();
 
         private readonly Dictionary<string, string> appConfig = new Dictionary<string, string>
@@ -26,11 +28,12 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.AcceptanceTests.Services
                 { "AzureWebJobsStorage", "UseDevelopmentStorage=true" }
             };
 
-        private IHost host;
+        private IHost _host;
 
         public FunctionsTestServer(TestContext context)
         {
-            this.context = context;
+            _isDisposed = false;
+            _context = context;
         }
 
         public async Task Start()
@@ -52,7 +55,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.AcceptanceTests.Services
                     {
                         c.Services.Configure<ApprenticeCommitmentsApiOptions>(a =>
                         {
-                            a.ApiBaseUrl = context.Api.BaseAddress.ToString();
+                            a.ApiBaseUrl = _context.Api.BaseAddress.ToString();
                             a.SubscriptionKey = "";
                         });
                     })
@@ -63,7 +66,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.AcceptanceTests.Services
             {
                 s.Configure<ApprenticeCommitmentsApiOptions>(a =>
                 {
-                    a.ApiBaseUrl = context.Api.BaseAddress.ToString();
+                    a.ApiBaseUrl = _context.Api.BaseAddress.ToString();
                     a.SubscriptionKey = "";
                 });
 
@@ -71,11 +74,11 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.AcceptanceTests.Services
                     {
                         o.EndpointConfiguration = (endpoint) =>
                         {
-                            endpoint.UseTransport<LearningTransport>();
+                            endpoint.UseTransport<LearningTransport>().StorageDirectory(_context.TestMessageBus.StorageDirectory.FullName);
                             return endpoint;
                         };
 
-                        if (context.Hooks.SingleOrDefault(h => h is MessageBusHook<MessageContext>) is MessageBusHook<MessageContext> hook)
+                        if (_context.Hooks.SingleOrDefault(h => h is MessageBusHook<MessageContext>) is MessageBusHook<MessageContext> hook)
                         {
                             o.OnMessageReceived += (message) => hook?.OnReceived?.Invoke(message);
                             o.OnMessageProcessed += (message) => hook?.OnProcessed?.Invoke(message);
@@ -85,7 +88,25 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.AcceptanceTests.Services
             });
 
             hostBuilder.UseEnvironment("LOCAL");
-            host = await hostBuilder.StartAsync();
+            _host = await hostBuilder.StartAsync();
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_isDisposed) return;
+
+            if (disposing)
+            {
+                _host?.Dispose();
+            }
+
+            _isDisposed = true;
         }
     }
 }
