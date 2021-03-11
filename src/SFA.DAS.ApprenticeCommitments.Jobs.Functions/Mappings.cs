@@ -11,7 +11,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
                 Email = source.Email,
                 EmployerName = source.LegalEntityName,
                 EmployerAccountId = source.AccountId,
-                AccountLegalEntityId = source.AccountLegalEntityId
+                EmployerAccountLegalEntityId = source.AccountLegalEntityId
             };
     }
 }

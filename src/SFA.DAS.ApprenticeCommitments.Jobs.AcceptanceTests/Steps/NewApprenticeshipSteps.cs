@@ -55,7 +55,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.AcceptanceTests.Steps
             request.Should().NotBeNull();
             request.ApprenticeshipId.Should().Be(_event.ApprenticeshipId);
             request.Email.Should().Be(_event.Email);
-            request.AccountLegalEntityId.Should().Be(_event.AccountLegalEntityId);
+            request.EmployerAccountLegalEntityId.Should().Be(_event.AccountLegalEntityId);
             request.EmployerAccountId.Should().Be(_event.AccountId);
             request.EmployerName.Should().Be(_event.LegalEntityName);
         }
