@@ -1,18 +1,26 @@
-﻿using TechTalk.SpecFlow;
+﻿using System.Runtime.CompilerServices;
+using TechTalk.SpecFlow;
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs.AcceptanceTests.Services
 {
     [Binding]
     public class MockOuterApiBinding
     {
-        private readonly TestContext context;
+        private readonly TestContext _context;
 
-        public MockOuterApiBinding(TestContext context) => this.context = context;
+        public MockOuterApiBinding(TestContext context) => _context = context;
 
-        [BeforeScenario(Order = 2)]
+        [BeforeScenario(Order = 1)]
         public void InitialiseApi()
         {
-            context.Api = new MockOuterApi();
+            _context.Api = new MockOuterApi();
+        }
+
+        [AfterScenario()]
+        public void Cleanup()
+        {
+            _context.Api?.MockServer.Reset();
+            _context.Api?.Dispose();
         }
     }
 }

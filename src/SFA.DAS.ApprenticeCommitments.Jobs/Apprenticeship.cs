@@ -5,6 +5,7 @@
         public long ApprenticeshipId { get; set; }
         public long EmployerAccountId { get; set; }
         public string Email { get; set; }
-        public string Organisation { get; set; }
+        public long EmployerAccountLegalEntityId { get; set; }
+        public string EmployerName { get; set; }
     }
 }

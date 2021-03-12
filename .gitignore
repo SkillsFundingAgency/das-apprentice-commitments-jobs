@@ -374,3 +374,6 @@ SonarQube.Analysis.xml
 *-nlog.txt
 
 *.feature.cs
+
+#ignore this folder
+temp/

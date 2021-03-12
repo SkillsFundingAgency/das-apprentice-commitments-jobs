@@ -7,26 +7,19 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.AcceptanceTests.Services
 {
     public class MockOuterApi : IDisposable
     {
-        public WireMockServer Server { get; }
+        public WireMockServer MockServer { get; }
         public Uri BaseAddress { get; }
 
         public MockOuterApi()
         {
-            Server = WireMockServer.Start(ssl: false);
-            BaseAddress = new Uri(Server.Urls[0] + "/api");
-        }
-
-        internal void AcceptAllRequests()
-        {
-            Server
-                .Given(Request.Create())
-                .RespondWith(Response.Create().WithStatusCode(System.Net.HttpStatusCode.Accepted));
+            MockServer = WireMockServer.Start(ssl: false);
+            BaseAddress = new Uri(MockServer.Urls[0] + "/api");
         }
 
         public void Dispose()
         {
-            Server?.Stop();
-            Server?.Dispose();
+            MockServer?.Stop();
+            MockServer?.Dispose();
         }
     }
 }

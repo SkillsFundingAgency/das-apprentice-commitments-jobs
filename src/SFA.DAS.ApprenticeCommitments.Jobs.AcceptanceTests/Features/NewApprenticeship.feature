@@ -1,9 +1,9 @@
 ﻿Feature: NewApprenticeship
-	In order to avoid silly mistakes
-	As a math idiot
-	I want to be told the sum of two numbers
+	When an apprenticeship is approved by employer and provider
+	As a interested observer 
+	I want to create that apprenticeship for the apprentice to confirm
 
-@mytag
-Scenario: Add two numbers
+Scenario: When an apprenticeship has been approved, create the apprenticeship for the apprentice to confirm 
+	Given outer api is available
 	When an apprenticeship is approved
 	Then an apprenticeship record is created
