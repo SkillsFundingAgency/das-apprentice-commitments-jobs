@@ -1,4 +1,4 @@
-﻿using FluentAssertions;
+using FluentAssertions;
 using NServiceBus.Transport;
 using SFA.DAS.ApprenticeCommitments.Jobs.AcceptanceTests.Services;
 using SFA.DAS.CommitmentsV2.Messages.Events;
@@ -58,6 +58,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.AcceptanceTests.Steps
             request.EmployerAccountLegalEntityId.Should().Be(_event.AccountLegalEntityId);
             request.EmployerAccountId.Should().Be(_event.AccountId);
             request.EmployerName.Should().Be(_event.LegalEntityName);
+            request.TrainingProviderId.Should().Be(_event.ProviderId);
         }
     }
 }

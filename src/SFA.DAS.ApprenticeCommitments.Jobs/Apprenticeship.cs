@@ -7,5 +7,6 @@
         public string Email { get; set; }
         public long EmployerAccountLegalEntityId { get; set; }
         public string EmployerName { get; set; }
+        public long TrainingProviderId { get; set; }
     }
 }
