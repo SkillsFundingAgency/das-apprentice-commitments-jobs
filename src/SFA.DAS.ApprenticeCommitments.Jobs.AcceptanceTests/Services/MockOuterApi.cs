@@ -1,25 +1,46 @@
 ﻿using System;
-using WireMock.RequestBuilders;
-using WireMock.ResponseBuilders;
 using WireMock.Server;
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs.AcceptanceTests.Services
 {
     public class MockOuterApi : IDisposable
     {
+        private bool _isDisposed;
+
         public WireMockServer MockServer { get; }
-        public Uri BaseAddress { get; }
+        public string BaseAddress { get; }
 
         public MockOuterApi()
         {
             MockServer = WireMockServer.Start(ssl: false);
-            BaseAddress = new Uri(MockServer.Urls[0] + "/api");
+            BaseAddress = MockServer.Urls[0];
         }
 
         public void Dispose()
         {
-            MockServer?.Stop();
-            MockServer?.Dispose();
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        public void Reset()
+        {
+            MockServer.Reset();
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_isDisposed) return;
+
+            if (disposing)
+            {
+                if (MockServer.IsStarted)
+                {
+                    MockServer.Stop();
+                }
+                MockServer.Dispose();
+            }
+
+            _isDisposed = true;
         }
     }
 }

@@ -55,7 +55,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.AcceptanceTests.Services
                     {
                         c.Services.Configure<ApprenticeCommitmentsApiOptions>(a =>
                         {
-                            a.ApiBaseUrl = _context.Api.BaseAddress.ToString();
+                            a.ApiBaseUrl = _context.Api.BaseAddress;
                             a.SubscriptionKey = "";
                         });
                     })
@@ -64,12 +64,6 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.AcceptanceTests.Services
 
             hostBuilder.ConfigureServices((s) =>
             {
-                s.Configure<ApprenticeCommitmentsApiOptions>(a =>
-                {
-                    a.ApiBaseUrl = _context.Api.BaseAddress.ToString();
-                    a.SubscriptionKey = "";
-                });
-
                 s.AddNServiceBus<FunctionsTestServer>(o =>
                     {
                         o.EndpointConfiguration = (endpoint) =>
