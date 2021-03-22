@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using NServiceBus;
 using NServiceBus.Transport;
 using SFA.DAS.ApprenticeCommitments.Jobs.Functions;
@@ -19,21 +18,25 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.AcceptanceTests.Services
         private readonly TestContext _context;
         private readonly Dictionary<string, string> hostConfig = new Dictionary<string, string>();
 
-        private readonly Dictionary<string, string> appConfig = new Dictionary<string, string>
-            {
-                { "EnvironmentName", "LOCAL" },
-                { "ConfigurationStorageConnectionString", "UseDevelopmentStorage=true" },
-                { "ConfigNames", "SFA.DAS.EmployerIncentives.Functions" },
-                { "NServiceBusConnectionString", "UseDevelopmentStorage=true" },
-                { "AzureWebJobsStorage", "UseDevelopmentStorage=true" }
-            };
+        private readonly Dictionary<string, string> appConfig;
 
         private IHost _host;
+
+        public SendInvitationRemindersHandler SendInvitationRemindersHandler { get; private set; }
 
         public FunctionsTestServer(TestContext context)
         {
             _isDisposed = false;
             _context = context;
+            appConfig = new Dictionary<string, string>
+            {
+                { "EnvironmentName", "LOCAL" },
+                { "ConfigurationStorageConnectionString", "UseDevelopmentStorage=true" },
+                { "ConfigNames", "SFA.DAS.EmployerIncentives.Functions" },
+                { "NServiceBusConnectionString", "UseDevelopmentStorage=true" },
+                { "AzureWebJobsStorage", "UseDevelopmentStorage=true" },
+                { "SendRemindersAfterThisNumberDays", _context.SendRemindersAfterThisNumberDays },
+            };
         }
 
         public async Task Start()
@@ -83,6 +86,10 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.AcceptanceTests.Services
 
             hostBuilder.UseEnvironment("LOCAL");
             _host = await hostBuilder.StartAsync();
+
+            SendInvitationRemindersHandler = new SendInvitationRemindersHandler(
+                _host.Services.GetService(typeof(IEcsApi)) as IEcsApi, 
+                _host.Services.GetService(typeof(IConfiguration)) as IConfiguration);
         }
 
         public void Dispose()
