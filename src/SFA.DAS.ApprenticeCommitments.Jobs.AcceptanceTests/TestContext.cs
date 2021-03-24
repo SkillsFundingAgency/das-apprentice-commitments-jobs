@@ -13,7 +13,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.AcceptanceTests
         public List<IHook> Hooks { get; } = new List<IHook>();
         internal FunctionsTestServer FunctionsServer { get; set; }
 
-        public string SendRemindersAfterThisNumberDays { get; set; }
+        public const int SendRemindersAfterThisNumberDays = 9;
     }
 
     public interface IHook { }

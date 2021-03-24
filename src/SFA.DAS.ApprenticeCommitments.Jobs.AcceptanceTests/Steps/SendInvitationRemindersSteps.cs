@@ -34,10 +34,9 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.AcceptanceTests.Steps
                         .WithStatusCode((int)HttpStatusCode.Accepted));
         }
 
-        [Given(@"the reminder period is set to be (.*) days")]
-        public void GivenTheReminderPeriodIsSetToBeDays(int days)
+        [Given(@"the reminder period is set")]
+        public void GivenTheReminderPeriodIsSetToBeDays()
         {
-            _context.SendRemindersAfterThisNumberDays = days.ToString();
         }
 
         [Given(@"the reminder is not set")]
@@ -56,16 +55,15 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.AcceptanceTests.Steps
             await _context.FunctionsServer.SendInvitationRemindersHandler.Run(null, Mock.Of<ILogger>());
         }
 
-        [Then(@"a request to send reminder emails is sent with (.*) days")]
-        public void ThenARequestToSendReminderEmailsIsSentWithDays(int days)
+        [Then(@"a request to send reminder emails is sent with expected value")]
+        public void ThenARequestToSendReminderEmailsIsSentWithDays()
         {
             var logs = _context.Api.MockServer.LogEntries;
             logs.Should().HaveCount(1);
             var request = JsonConvert.DeserializeObject<SendInvitationRemindersRequest>(logs.First().RequestMessage.Body);
 
             request.Should().NotBeNull();
-            request.RemindAfterDays.Should().Be(days);
-            request.SendNow.Should().BeCloseTo(DateTime.UtcNow, 10000);
+            request.InvitationCutOffTime.Should().BeBefore(DateTime.UtcNow.AddDays(TestContext.SendRemindersAfterThisNumberDays));
         }
     }
 }

@@ -26,12 +26,12 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
             try
             {
                 log.LogInformation("Send Invitation Reminders Job Starting");
-                await api.SendInvitationReminders(new SendInvitationRemindersRequest { SendNow = DateTime.UtcNow, RemindAfterDays = GetReminderAfterDaysValue() });
+                await api.SendInvitationReminders(new SendInvitationRemindersRequest { InvitationCutOffTime = DateTime.UtcNow.AddDays(GetReminderAfterDaysValue())});
                 log.LogInformation("Send Invitation Reminders Job Complete");
             }
             catch (Exception e)
             {
-                log.LogError(e, "Send Invitation Reminders Job error-ed");
+                log.LogError(e, "Send Invitation Reminders Job has failed");
             }
         }
 

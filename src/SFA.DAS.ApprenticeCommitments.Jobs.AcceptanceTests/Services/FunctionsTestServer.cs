@@ -35,7 +35,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.AcceptanceTests.Services
                 { "ConfigNames", "SFA.DAS.EmployerIncentives.Functions" },
                 { "NServiceBusConnectionString", "UseDevelopmentStorage=true" },
                 { "AzureWebJobsStorage", "UseDevelopmentStorage=true" },
-                { "SendRemindersAfterThisNumberDays", _context.SendRemindersAfterThisNumberDays },
+                { "SendRemindersAfterThisNumberDays", TestContext.SendRemindersAfterThisNumberDays.ToString() },
             };
         }
 
