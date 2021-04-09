@@ -63,7 +63,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.AcceptanceTests.Steps
             var request = JsonConvert.DeserializeObject<SendInvitationRemindersRequest>(logs.First().RequestMessage.Body);
 
             request.Should().NotBeNull();
-            request.InvitationCutOffTime.Should().BeBefore(DateTime.UtcNow.AddDays(TestContext.SendRemindersAfterThisNumberDays));
+            request.InvitationCutOffTime.Should().BeBefore(DateTime.UtcNow.AddDays(-1 * TestContext.SendRemindersAfterThisNumberDays));
         }
     }
 }
