@@ -1,6 +1,4 @@
 ﻿using System;
-using WireMock.RequestBuilders;
-using WireMock.ResponseBuilders;
 using WireMock.Server;
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs.AcceptanceTests.Services
@@ -13,13 +11,17 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.AcceptanceTests.Services
         public MockOuterApi()
         {
             MockServer = WireMockServer.Start(ssl: false);
-            BaseAddress = new Uri(MockServer.Urls[0] + "/api");
+            BaseAddress = new Uri(MockServer.Urls[0]);
         }
 
         public void Dispose()
         {
             MockServer?.Stop();
-            MockServer?.Dispose();
+        }
+
+        public void Reset()
+        {
+            MockServer.Reset();
         }
     }
 }

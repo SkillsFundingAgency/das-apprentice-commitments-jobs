@@ -12,6 +12,8 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.AcceptanceTests
         public DirectoryInfo WorkingDirectory { get; set; }
         public List<IHook> Hooks { get; } = new List<IHook>();
         internal FunctionsTestServer FunctionsServer { get; set; }
+
+        public const int SendRemindersAfterThisNumberDays = 9;
     }
 
     public interface IHook { }
