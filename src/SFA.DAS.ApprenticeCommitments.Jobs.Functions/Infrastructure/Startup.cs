@@ -1,6 +1,7 @@
 ﻿using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using NServiceBus;
 using RestEase.HttpClientFactory;
 using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure;
 using SFA.DAS.Http.Configuration;
@@ -19,7 +20,16 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
         public override void Configure(IFunctionsHostBuilder builder)
         {
             builder.ConfigureLogging();
-            builder.ConfigureNServiceBus();
+
+            builder.UseNServiceBus(() =>
+            {
+                var configuration = new ServiceBusTriggeredEndpointConfiguration(
+                    endpointName: QueueNames.ApprenticeshipCreatedEvent);
+
+                configuration.LogDiagnostics();
+
+                return configuration;
+            });
 
             builder.Services.ConfigureOptions<ApprenticeCommitmentsApiOptions>(
                 ApprenticeCommitmentsApiOptions.ApprenticeCommitmentsApi);

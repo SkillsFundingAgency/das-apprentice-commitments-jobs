@@ -1,5 +1,6 @@
 using AutoFixture.NUnit3;
 using Moq;
+using NServiceBus.Testing;
 using NUnit.Framework;
 using SFA.DAS.ApprenticeCommitments.Jobs.Functions;
 using SFA.DAS.CommitmentsV2.Messages.Events;
@@ -15,7 +16,8 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
             ApprenticeshipCreatedHandler sut,
             ApprenticeshipCreated2Event evt)
         {
-            await sut.RunEvent(evt);
+            await sut.Handle(evt, new TestableMessageHandlerContext());
+
             api.Verify(m => m.CreateApprentice(It.Is<Apprenticeship>(n =>
                 n.ApprenticeshipId == evt.ApprenticeshipId &&
                 n.Email == evt.Email &&
