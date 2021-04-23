@@ -3,6 +3,7 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using NServiceBus;
 using SFA.DAS.CommitmentsV2.Messages.Events;
 using System;
 using System.Net.Http;
@@ -12,13 +13,14 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
 {
     public class HttpTrigger
     {
-        private readonly ApprenticeshipCreatedHandler handler;
+        private readonly IFunctionEndpoint endpoint;
 
-        public HttpTrigger(ApprenticeshipCreatedHandler handler) => this.handler = handler;
+        public HttpTrigger(IFunctionEndpoint endpoint) => this.endpoint = endpoint;
 
         [FunctionName("HandleApprenticeshipCreatedEventTrigger")]
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "POST", Route = "test-apprenticeship-created-event")] HttpRequestMessage req,
+            ExecutionContext executionContext,
             ILogger log)
         {
             log.LogInformation("Calling test-event.");
@@ -26,7 +28,11 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
             try
             {
                 var @event = JsonConvert.DeserializeObject<ApprenticeshipCreated2Event>(await req.Content.ReadAsStringAsync());
-                await handler.Handle(@event, null);
+
+                var sendOptions = new SendOptions();
+                sendOptions.RouteToThisEndpoint();
+
+                await endpoint.Send(@event, sendOptions, executionContext, log);
 
                 return new AcceptedResult();
             }

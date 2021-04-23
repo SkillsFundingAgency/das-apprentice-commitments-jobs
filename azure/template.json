@@ -231,6 +231,10 @@
                                     "value": "[parameters('configurationStorageConnectionString')]"
                                 },
                                 {
+                                    "name": "AzureWebJobsServiceBus",
+                                    "value": "[parameters('nServiceBusConnectionString')]"
+                                },
+                                {
                                     "name": "NServiceBusConnectionString",
                                     "value": "[parameters('nServiceBusConnectionString')]"
                                 },

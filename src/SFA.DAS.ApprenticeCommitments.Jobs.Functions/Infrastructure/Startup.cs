@@ -5,6 +5,7 @@ using NServiceBus;
 using RestEase.HttpClientFactory;
 using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure;
 using SFA.DAS.Http.Configuration;
+using System;
 
 [assembly: FunctionsStartup(typeof(SFA.DAS.ApprenticeCommitments.Jobs.Functions.Startup))]
 
@@ -24,7 +25,8 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
             builder.UseNServiceBus(() =>
             {
                 var configuration = new ServiceBusTriggeredEndpointConfiguration(
-                    endpointName: QueueNames.ApprenticeshipCreatedEvent);
+                    endpointName: QueueNames.ApprenticeshipCreatedEvent,
+                    connectionStringName: "AzureWebJobsServiceBus");
 
                 configuration.LogDiagnostics();
 
