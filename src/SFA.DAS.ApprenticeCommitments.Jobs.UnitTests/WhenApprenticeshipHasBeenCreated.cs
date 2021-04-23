@@ -1,5 +1,3 @@
-using AutoFixture;
-using AutoFixture.AutoMoq;
 using AutoFixture.NUnit3;
 using Moq;
 using NUnit.Framework;
@@ -11,7 +9,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
 {
     public class WhenApprenticeshipHasBeenCreated
     {
-        [Test, DomainAutoData]
+        [Test, AutoMoqData]
         public async Task Then_create_the_apprentice_record(
             [Frozen] Mock<IEcsApi> api,
             ApprenticeshipCreatedHandler sut,
@@ -22,20 +20,6 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
                 n.ApprenticeshipId == evt.ApprenticeshipId &&
                 n.Email == evt.Email &&
                 n.EmployerName == evt.LegalEntityName)));
-        }
-
-        public class DomainAutoDataAttribute : AutoDataAttribute
-        {
-            public DomainAutoDataAttribute() : base(() => Customise())
-            {
-            }
-
-            private static IFixture Customise()
-            {
-                var fixture = new Fixture();
-                fixture.Customize(new AutoMoqCustomization());
-                return fixture;
-            }
         }
     }
 }
