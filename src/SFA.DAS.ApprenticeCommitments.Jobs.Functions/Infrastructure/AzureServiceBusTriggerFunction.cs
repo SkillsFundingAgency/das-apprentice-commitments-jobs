@@ -1,10 +1,9 @@
 ﻿using Microsoft.Azure.ServiceBus;
 using Microsoft.Azure.WebJobs;
 using NServiceBus;
-using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure;
 using System.Threading.Tasks;
 
-namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
+namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure
 {
     internal class AzureServiceBusTriggerFunction
     {

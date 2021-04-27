@@ -11,11 +11,11 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
 {
-    public class HttpTrigger
+    public class ApprenticeshipCreatedSimulationHttpTrigger
     {
         private readonly IFunctionEndpoint endpoint;
 
-        public HttpTrigger(IFunctionEndpoint endpoint) => this.endpoint = endpoint;
+        public ApprenticeshipCreatedSimulationHttpTrigger(IFunctionEndpoint endpoint) => this.endpoint = endpoint;
 
         [FunctionName("HandleApprenticeshipCreatedEventTrigger")]
         public async Task<IActionResult> Run(
