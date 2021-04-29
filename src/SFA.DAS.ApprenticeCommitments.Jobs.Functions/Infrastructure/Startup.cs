@@ -1,4 +1,4 @@
-﻿using Microsoft.Azure.Functions.Extensions.DependencyInjection;
+using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using NServiceBus;
@@ -28,6 +28,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
                     endpointName: QueueNames.ApprenticeshipCreatedEvent,
                     connectionStringName: "AzureWebJobsServiceBus");
 
+                configuration.DoNotSendMessagesToErrorQueue();
                 configuration.LogDiagnostics();
 
                 return configuration;
