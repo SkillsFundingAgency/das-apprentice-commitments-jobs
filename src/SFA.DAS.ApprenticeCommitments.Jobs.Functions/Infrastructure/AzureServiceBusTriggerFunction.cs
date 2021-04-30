@@ -14,7 +14,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure
 
         [FunctionName("ApprenticeshipCreatedEvent")]
         public async Task Run(
-            [ServiceBusTrigger(queueName: EndpointName)] Message message,
+            [ServiceBusTrigger(queueName: EndpointName, Connection = "NServiceBusConnectionString ")] Message message,
             ExecutionContext context)
         {
             await endpoint.Process(message, context);

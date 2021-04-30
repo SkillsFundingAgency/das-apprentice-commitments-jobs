@@ -26,7 +26,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
             {
                 var configuration = new ServiceBusTriggeredEndpointConfiguration(
                     endpointName: QueueNames.ApprenticeshipCreatedEvent,
-                    connectionStringName: "AzureWebJobsServiceBus");
+                    connectionStringName: "NServiceBusConnectionString");
 
                 configuration.DoNotSendMessagesToErrorQueue();
                 configuration.LogDiagnostics();
