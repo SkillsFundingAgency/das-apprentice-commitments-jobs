@@ -5,7 +5,6 @@ using NServiceBus;
 using RestEase.HttpClientFactory;
 using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure;
 using SFA.DAS.Http.Configuration;
-using System;
 
 [assembly: FunctionsStartup(typeof(SFA.DAS.ApprenticeCommitments.Jobs.Functions.Startup))]
 
@@ -28,7 +27,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
                     endpointName: QueueNames.ApprenticeshipCreatedEvent,
                     connectionStringName: "NServiceBusConnectionString");
 
-                configuration.DoNotSendMessagesToErrorQueue();
+                configuration.AdvancedConfiguration.SendFailedMessagesTo($"{QueueNames.ApprenticeshipCreatedEvent}-error");
                 configuration.LogDiagnostics();
 
                 return configuration;
