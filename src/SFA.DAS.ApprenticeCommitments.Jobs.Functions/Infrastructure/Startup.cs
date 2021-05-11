@@ -24,10 +24,10 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
             builder.UseNServiceBus(() =>
             {
                 var configuration = new ServiceBusTriggeredEndpointConfiguration(
-                    endpointName: QueueNames.ApprenticeshipCreatedEvent,
+                    endpointName: QueueNames.ApprenticeshipCommitmentsJobs,
                     connectionStringName: "NServiceBusConnectionString");
 
-                configuration.AdvancedConfiguration.SendFailedMessagesTo($"{QueueNames.ApprenticeshipCreatedEvent}-error");
+                configuration.AdvancedConfiguration.SendFailedMessagesTo($"{QueueNames.ApprenticeshipCommitmentsJobs}-error");
                 configuration.LogDiagnostics();
 
                 return configuration;
