@@ -14,7 +14,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
         public async Task Then_notify_apim(
             [Frozen] Mock<IEcsApi> api,
             ApprenticeshipCommitmentsJobsHandler sut,
-            ApprenticeshipUpdatedApprovedEvent evt)
+            ApprenticeshipUpdatedApproved2Event evt)
         {
             await sut.Handle(evt, new TestableMessageHandlerContext());
 

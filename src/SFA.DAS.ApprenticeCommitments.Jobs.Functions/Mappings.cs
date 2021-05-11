@@ -16,11 +16,12 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
                 AgreedOn = source.AgreedOn,
             };
 
-        public static ApprenticeshipUpdated ToApprenticeship(this ApprenticeshipUpdatedApprovedEvent source) =>
+        public static ApprenticeshipUpdated ToApprenticeship(this ApprenticeshipUpdatedApproved2Event source) =>
             new ApprenticeshipUpdated
             {
                 ApprenticeshipId = source.ApprenticeshipId,
                 ApprovedOn = source.ApprovedOn,
+                Email = source.Email,
             };
     }
 }
