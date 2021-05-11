@@ -18,16 +18,22 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
         public ApprenticeshipCreatedSimulationHttpTrigger(IFunctionEndpoint endpoint) => this.endpoint = endpoint;
 
         [FunctionName("HandleApprenticeshipCreatedEventTrigger")]
-        public async Task<IActionResult> Run(
+        public Task<IActionResult> ApprenticeshipCreatedEvent(
             [HttpTrigger(AuthorizationLevel.Function, "POST", Route = "test-apprenticeship-created-event")] HttpRequestMessage req,
             ExecutionContext executionContext,
             ILogger log)
-        {
-            log.LogInformation("Calling test-event.");
+            => Simulate<ApprenticeshipCreated2Event>(req, executionContext, log);
 
+        [FunctionName("HandleApprenticeshipUpdatedEventTrigger")]
+        public Task<IActionResult> ApprenticeshipUpdatedEvent(
+            [HttpTrigger] HttpRequestMessage req, ExecutionContext executionContext, ILogger log)
+            => Simulate<ApprenticeshipUpdatedApprovedEvent>(req, executionContext, log);
+
+        public async Task<IActionResult> Simulate<T>(HttpRequestMessage req, ExecutionContext executionContext, ILogger log)
+        {
             try
             {
-                var @event = JsonConvert.DeserializeObject<ApprenticeshipCreated2Event>(await req.Content.ReadAsStringAsync());
+                var @event = JsonConvert.DeserializeObject<T>(await req.Content.ReadAsStringAsync());
 
                 var sendOptions = new SendOptions();
                 sendOptions.RouteToThisEndpoint();
@@ -38,8 +44,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
             }
             catch (Exception e)
             {
-                log.LogError(e, "Error Calling test-apprenticeship-created-event");
-                return new BadRequestResult();
+                return new BadRequestObjectResult(e);
             }
         }
     }
