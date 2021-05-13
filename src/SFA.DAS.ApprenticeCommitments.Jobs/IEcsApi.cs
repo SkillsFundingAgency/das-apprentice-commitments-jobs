@@ -8,7 +8,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs
         [Post("apprenticeships")]
         Task CreateApprentice([Body] ApprenticeshipCreated apprenticeship);
 
-        [Post("apprenticeships/update")]
+        [Post("apprenticeships/change")]
         Task UpdateApprenticeship([Body] ApprenticeshipUpdated apprenticeship);
 
         [Post("registrations/reminders")]
