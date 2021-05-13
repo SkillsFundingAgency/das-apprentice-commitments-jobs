@@ -14,13 +14,14 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
         public async Task Then_notify_apim(
             [Frozen] Mock<IEcsApi> api,
             ApprenticeshipCommitmentsJobsHandler sut,
-            ApprenticeshipUpdatedApproved2Event evt)
+            ApprenticeshipUpdatedApprovedEvent evt)
         {
             await sut.Handle(evt, new TestableMessageHandlerContext());
 
             api.Verify(m => m.UpdateApprenticeship(It.Is<ApprenticeshipUpdated>(n =>
-                n.ApprenticeshipId == evt.ApprenticeshipId &&
-                n.ApprovedOn == evt.ApprovedOn)));
+                n.ContinuationOfCommitmentsApprenticeshipId == null &&
+                n.CommitmentsApprenticeshipId == evt.ApprenticeshipId &&
+                n.CommitmentsApprovedOn == evt.ApprovedOn)));
         }
     }
 }

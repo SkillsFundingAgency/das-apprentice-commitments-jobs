@@ -27,7 +27,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
         [FunctionName("HandleApprenticeshipUpdatedEventTrigger")]
         public Task<IActionResult> ApprenticeshipUpdatedEvent(
             [HttpTrigger] HttpRequestMessage req, ExecutionContext executionContext, ILogger log)
-            => Simulate<ApprenticeshipUpdatedApproved2Event>(req, executionContext, log);
+            => Simulate<ApprenticeshipUpdatedApprovedEvent>(req, executionContext, log);
 
         public async Task<IActionResult> Simulate<T>(HttpRequestMessage req, ExecutionContext executionContext, ILogger log)
         {

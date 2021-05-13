@@ -8,27 +8,29 @@ namespace SFA.DAS.CommitmentsV2.Messages.Events
     {
         public string Email { get; set; }
     }
-
-    public class ApprenticeshipUpdatedApproved2Event : ApprenticeshipUpdatedApprovedEvent
-    {
-        public string Email { get; set; }
-    }
 }
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
 {
     public class ApprenticeshipCommitmentsJobsHandler
         : IHandleMessages<ApprenticeshipCreated2Event>
-        , IHandleMessages<ApprenticeshipUpdatedApproved2Event>
+        , IHandleMessages<ApprenticeshipUpdatedApprovedEvent>
     {
         private readonly IEcsApi api;
 
         public ApprenticeshipCommitmentsJobsHandler(IEcsApi api) => this.api = api;
 
         public async Task Handle(ApprenticeshipCreated2Event message, IMessageHandlerContext _)
-            => await api.CreateApprentice(message.ToApprenticeship());
+        {
+            if (message.ContinuationOfId.HasValue)
+            {
+                await api.UpdateApprenticeship(message.ToApprenticeshipUpdated());
+                return;
+            }
+            await api.CreateApprentice(message.ToApprenticeshipCreated());
+        }
 
-        public async Task Handle(ApprenticeshipUpdatedApproved2Event message, IMessageHandlerContext _)
-            => await api.UpdateApprenticeship(message.ToApprenticeship());
+        public Task Handle(ApprenticeshipUpdatedApprovedEvent message, IMessageHandlerContext _)
+            => api.UpdateApprenticeship(message.ToApprenticeshipUpdated());
     }
 }
