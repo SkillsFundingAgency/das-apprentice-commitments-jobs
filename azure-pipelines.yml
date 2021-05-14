@@ -4,8 +4,6 @@ trigger:
     include:
       - "*"
 
-pr: none
-
 resources:
   repositories:
   - repository: self
