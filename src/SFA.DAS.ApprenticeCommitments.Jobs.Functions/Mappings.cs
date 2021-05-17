@@ -19,7 +19,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
         public static ApprenticeshipUpdated ToApprenticeshipUpdated(this ApprenticeshipCreated2Event source) =>
             new ApprenticeshipUpdated
             {
-                CommitmentsContinuationApprenticeshipId = source.ContinuationOfId,
+                CommitmentsContinuedApprenticeshipId = source.ContinuationOfId,
                 CommitmentsApprenticeshipId = source.ApprenticeshipId,
                 CommitmentsApprovedOn = source.CreatedOn
             };
