@@ -1,4 +1,3 @@
-using System;
 using AutoFixture.NUnit3;
 using Moq;
 using NServiceBus.Testing;
@@ -26,10 +25,10 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
             await sut.Handle(evt, new TestableMessageHandlerContext());
 
             api.Verify(m => m.CreateApprentice(It.Is<ApprenticeshipCreated>(n =>
-                n.ApprenticeshipId == evt.ApprenticeshipId &&
+                n.CommitmentsApprenticeshipId == evt.ApprenticeshipId &&
                 n.Email == evt.Email &&
                 n.EmployerName == evt.LegalEntityName &&
-                n.AgreedOn == evt.AgreedOn)));
+                n.CommitmentsApprovedOn == evt.CreatedOn)));
         }
 
         [Test, AutoMoqData]
@@ -46,11 +45,9 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
             await sut.Handle(evt, new TestableMessageHandlerContext());
 
             api.Verify(m => m.UpdateApprenticeship(It.Is<ApprenticeshipUpdated>(n =>
-                n.ContinuationOfCommitmentsApprenticeshipId == continuationId &&
+                n.CommitmentsContinuationApprenticeshipId == continuationId &&
                 n.CommitmentsApprenticeshipId == evt.ApprenticeshipId &&
-                n.CommitmentsApprovedOn == evt.AgreedOn)));
+                n.CommitmentsApprovedOn == evt.CreatedOn)));
         }
-
-
     }
 }
