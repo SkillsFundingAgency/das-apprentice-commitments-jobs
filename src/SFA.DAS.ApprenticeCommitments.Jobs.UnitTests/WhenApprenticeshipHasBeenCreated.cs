@@ -45,7 +45,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
             await sut.Handle(evt, new TestableMessageHandlerContext());
 
             api.Verify(m => m.UpdateApprenticeship(It.Is<ApprenticeshipUpdated>(n =>
-                n.CommitmentsContinuationApprenticeshipId == continuationId &&
+                n.CommitmentsContinuedApprenticeshipId == continuationId &&
                 n.CommitmentsApprenticeshipId == evt.ApprenticeshipId &&
                 n.CommitmentsApprovedOn == evt.CreatedOn)));
         }
