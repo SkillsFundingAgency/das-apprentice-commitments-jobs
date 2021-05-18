@@ -13,7 +13,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
                 EmployerAccountId = source.AccountId,
                 EmployerAccountLegalEntityId = source.AccountLegalEntityId,
                 TrainingProviderId = source.ProviderId,
-                AgreedOn = source.AgreedOn,
+                CommitmentsApprovedOn = source.CreatedOn,
             };
 
         public static ApprenticeshipUpdated ToApprenticeship(this ApprenticeshipUpdatedApprovedEvent source) =>

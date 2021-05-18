@@ -22,7 +22,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
                 n.ApprenticeshipId == evt.ApprenticeshipId &&
                 n.Email == evt.Email &&
                 n.EmployerName == evt.LegalEntityName &&
-                n.AgreedOn == evt.AgreedOn)));
+                n.CommitmentsApprovedOn == evt.CreatedOn)));
         }
     }
 }

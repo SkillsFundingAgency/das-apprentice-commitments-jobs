@@ -5,7 +5,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs
     public class ApprenticeshipCreated
     {
         public long ApprenticeshipId { get; set; }
-        public DateTime AgreedOn { get; set; }
+        public DateTime CommitmentsApprovedOn { get; set; }
         public long EmployerAccountId { get; set; }
         public string Email { get; set; }
         public long EmployerAccountLegalEntityId { get; set; }
