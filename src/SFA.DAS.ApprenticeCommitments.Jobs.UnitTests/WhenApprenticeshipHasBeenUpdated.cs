@@ -8,21 +8,19 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
 {
-    public class WhenApprenticeshipHasBeenCreated
+    public class WhenApprenticeshipHasBeenUpdated
     {
         [Test, AutoMoqData]
-        public async Task Then_create_the_apprentice_record(
+        public async Task Then_notify_apim(
             [Frozen] Mock<IEcsApi> api,
             ApprenticeshipCommitmentsJobsHandler sut,
-            ApprenticeshipCreated2Event evt)
+            ApprenticeshipUpdatedApprovedEvent evt)
         {
             await sut.Handle(evt, new TestableMessageHandlerContext());
 
-            api.Verify(m => m.CreateApprentice(It.Is<ApprenticeshipCreated>(n =>
+            api.Verify(m => m.UpdateApprenticeship(It.Is<ApprenticeshipUpdated>(n =>
                 n.ApprenticeshipId == evt.ApprenticeshipId &&
-                n.Email == evt.Email &&
-                n.EmployerName == evt.LegalEntityName &&
-                n.CommitmentsApprovedOn == evt.CreatedOn)));
+                n.ApprovedOn == evt.ApprovedOn)));
         }
     }
 }
