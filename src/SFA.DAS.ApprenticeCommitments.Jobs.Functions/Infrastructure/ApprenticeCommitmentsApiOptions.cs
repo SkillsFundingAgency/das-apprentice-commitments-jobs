@@ -5,8 +5,8 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure
     public class ApprenticeCommitmentsApiOptions : IApimClientConfiguration
     {
         public const string ApprenticeCommitmentsApi = "ApprenticeCommitmentsApi";
-        public string ApiBaseUrl { get; set; }
-        public string SubscriptionKey { get; set; }
-        public string ApiVersion { get; set; }
+        public string ApiBaseUrl { get; set; } = null!;
+        public string SubscriptionKey { get; set; } = null!;
+        public string ApiVersion { get; set; } = null!;
     }
 }
