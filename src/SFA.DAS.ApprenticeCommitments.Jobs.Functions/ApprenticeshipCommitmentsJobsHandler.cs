@@ -14,6 +14,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
 {
     public class ApprenticeshipCommitmentsJobsHandler
         : IHandleMessages<ApprenticeshipCreated2Event>
+        , IHandleMessages<ApprenticeshipCreatedEvent>
         , IHandleMessages<ApprenticeshipUpdatedApprovedEvent>
     {
         private readonly IEcsApi api;
@@ -30,7 +31,10 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
             await api.CreateApprentice(message.ToApprenticeshipCreated());
         }
 
-        public Task Handle(ApprenticeshipUpdatedApprovedEvent message, IMessageHandlerContext context)
-            => api.UpdateApprenticeship(message.ToApprenticeshipUpdated());
+        public async Task Handle(ApprenticeshipCreatedEvent message, IMessageHandlerContext context)
+            => await api.CreateApprentice(message.ToApprenticeship());
+
+        public async Task Handle(ApprenticeshipUpdatedApprovedEvent message, IMessageHandlerContext context)
+            => await api.UpdateApprenticeship(message.ToApprenticeshipUpdated());
     }
 }

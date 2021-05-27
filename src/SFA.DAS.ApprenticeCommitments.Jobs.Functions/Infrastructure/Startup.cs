@@ -1,4 +1,5 @@
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
+using Microsoft.Azure.ServiceBus;
 using Microsoft.Azure.ServiceBus.Management;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Configuration;
@@ -12,6 +13,8 @@ using SFA.DAS.Http.Configuration;
 using System;
 using System.Linq;
 using System.Reflection;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 
 [assembly: FunctionsStartup(typeof(SFA.DAS.ApprenticeCommitments.Jobs.Functions.Startup))]
@@ -40,11 +43,16 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
             builder.UseNServiceBus(() =>
             {
                 var configuration = new ServiceBusTriggeredEndpointConfiguration(
-                    endpointName: QueueNames.ApprenticeshipCreatedEvent,
+                    endpointName: QueueNames.ApprenticeshipCommitmentsJobs,
                     connectionStringName: "NServiceBusConnectionString");
 
-                configuration.AdvancedConfiguration.SendFailedMessagesTo($"{QueueNames.ApprenticeshipCreatedEvent}-error");
+                configuration.AdvancedConfiguration.SendFailedMessagesTo($"{QueueNames.ApprenticeshipCommitmentsJobs}-error");
                 configuration.LogDiagnostics();
+
+                configuration.AdvancedConfiguration.Conventions()
+                    .DefiningEventsAs(t => t.Namespace?.StartsWith("SFA.DAS.CommitmentsV2.Messages.Events") == true);
+
+                configuration.Transport.SubscriptionRuleNamingConvention(SFA.DAS.NServiceBus.Configuration.AzureServiceBus.RuleNameShortener.Shorten);
 
                 return configuration;
             });
@@ -74,6 +82,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
             IConfiguration configuration,
             string? auditQueue = null,
             string? errorQueue = null,
+            string? topicName = "bundle-1",
             string connectionStringName = "AzureWebJobsServiceBus",
             ILogger? logger = null)
         {
@@ -96,8 +105,10 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
             errorQueue ??= $"{endpointQueueName}-error";
 
             await CreateQueue(endpointQueueName, managementClient, logger);
-            await CreateQueue(auditQueue, managementClient, logger);
+            //await CreateQueue(auditQueue, managementClient, logger);
             await CreateQueue(errorQueue, managementClient, logger);
+
+            await CreateSubscription(topicName, managementClient, endpointQueueName);
         }
 
         private static async Task CreateQueue(string endpointQueueName, ManagementClient managementClient, ILogger? logger)
@@ -107,6 +118,71 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
                 logger?.LogInformation("Creating queue: `{queueName}`", endpointQueueName);
                 await managementClient.CreateQueueAsync(endpointQueueName);
             }
+        }
+
+        private static async Task CreateSubscription(string topicName, ManagementClient managementClient, string endpointQueueName)
+        {
+            if (!await managementClient.SubscriptionExistsAsync(topicName, endpointQueueName))
+            {
+                var subscriptionDescription = new SubscriptionDescription(topicName, endpointQueueName)
+                {
+                    ForwardTo = endpointQueueName,
+                    UserMetadata = $"Events {endpointQueueName} subscribed to"
+                };
+                var ruleDescription = new RuleDescription
+                {
+                    Filter = new FalseFilter()
+                };
+                await managementClient.CreateSubscriptionAsync(subscriptionDescription, ruleDescription);
+            }
+        }
+    }
+
+    public class ForceAutoSubscription : IMessage { }
+
+    public class TimerFunc
+    {
+        private readonly IFunctionEndpoint functionEndpoint;
+
+        public TimerFunc(IFunctionEndpoint functionEndpoint)
+        {
+            this.functionEndpoint = functionEndpoint;
+        }
+
+        [FunctionName("TimerFunc")]
+        public async Task Run([TimerTrigger("* * * 1 1 *", RunOnStartup = true)] TimerInfo myTimer,
+            ILogger logger, ExecutionContext executionContext)
+        {
+            var sendOptions = new SendOptions();
+            sendOptions.SetHeader(Headers.ControlMessageHeader, bool.TrueString);
+            sendOptions.SetHeader(Headers.MessageIntent, MessageIntentEnum.Send.ToString());
+            sendOptions.RouteToThisEndpoint();
+            await functionEndpoint.Send(new ForceAutoSubscription(), sendOptions, executionContext, logger);
+        }
+    }
+}
+
+namespace SFA.DAS.NServiceBus.Configuration.AzureServiceBus
+{
+    public static class RuleNameShortener
+    {
+        private const int AzureServiceBusRuleNameMaxLength = 50;
+
+        public static string Shorten(Type rule)
+        {
+            var ruleName = rule.FullName;
+            var importantName = ruleName.Replace("SFA.DAS.", "").Replace(".Messages.Events", "");
+
+            if (importantName.Length <= AzureServiceBusRuleNameMaxLength)
+                return importantName;
+
+            using var md5 = new MD5CryptoServiceProvider();
+            var bytes = Encoding.Default.GetBytes(ruleName);
+            var hash = md5.ComputeHash(bytes);
+            var hashstr = BitConverter.ToString(hash).Replace("-", string.Empty);
+
+            var shortName = $"{hashstr.Substring(0, 8)}{importantName[^42..]}";
+            return shortName;
         }
     }
 }

@@ -30,5 +30,16 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
                 CommitmentsApprenticeshipId = source.ApprenticeshipId,
                 CommitmentsApprovedOn = source.ApprovedOn
             };
+
+        public static ApprenticeshipCreated ToApprenticeship(this ApprenticeshipCreatedEvent source) =>
+            new ApprenticeshipCreated
+            {
+                CommitmentsApprenticeshipId = source.ApprenticeshipId,
+                EmployerName = source.LegalEntityName,
+                EmployerAccountId = source.AccountId,
+                EmployerAccountLegalEntityId = source.AccountLegalEntityId,
+                TrainingProviderId = source.ProviderId,
+                CommitmentsApprovedOn = source.CreatedOn,
+            };
     }
 }
