@@ -19,7 +19,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
             var m = new Mock<ManagementClient>("Endpoint=sb://bob.windows.net/;Authentication=Managed Identity;");
             m.Setup(x => x.QueueExistsAsync(QueueNames.ApprenticeshipCommitmentsJobs, It.IsAny<CancellationToken>())).ReturnsAsync(false);
 
-            await AutoQueues.CreateQueuesWithReflection(m.Object);
+            await AutoSubscribeToQueues.CreateQueuesWithReflection(m.Object);
 
             m.Verify(x => x.CreateQueueAsync(QueueNames.ApprenticeshipCommitmentsJobs, It.IsAny<CancellationToken>()));
         }
@@ -30,7 +30,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
             var m = new Mock<ManagementClient>("Endpoint=sb://bob.windows.net/;Authentication=Managed Identity;");
             m.Setup(x => x.QueueExistsAsync(QueueNames.ApprenticeshipCommitmentsJobs, It.IsAny<CancellationToken>())).ReturnsAsync(true);
 
-            await AutoQueues.CreateQueuesWithReflection(m.Object);
+            await AutoSubscribeToQueues.CreateQueuesWithReflection(m.Object);
 
             m.Verify(x => x.CreateQueueAsync(QueueNames.ApprenticeshipCommitmentsJobs, It.IsAny<CancellationToken>()), Times.Never);
         }
@@ -41,7 +41,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
             var m = new Mock<ManagementClient>("Endpoint=sb://bob.windows.net/;Authentication=Managed Identity;");
             m.Setup(x => x.QueueExistsAsync($"{QueueNames.ApprenticeshipCommitmentsJobs}-error", It.IsAny<CancellationToken>())).ReturnsAsync(false);
 
-            await AutoQueues.CreateQueuesWithReflection(m.Object);
+            await AutoSubscribeToQueues.CreateQueuesWithReflection(m.Object);
 
             m.Verify(x => x.CreateQueueAsync($"{QueueNames.ApprenticeshipCommitmentsJobs}-error", It.IsAny<CancellationToken>()));
         }
@@ -52,7 +52,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
             var m = new Mock<ManagementClient>("Endpoint=sb://bob.windows.net/;Authentication=Managed Identity;");
             m.Setup(x => x.QueueExistsAsync($"{QueueNames.ApprenticeshipCommitmentsJobs}-error", It.IsAny<CancellationToken>())).ReturnsAsync(true);
 
-            await AutoQueues.CreateQueuesWithReflection(m.Object);
+            await AutoSubscribeToQueues.CreateQueuesWithReflection(m.Object);
 
             m.Verify(x => x.CreateQueueAsync($"{QueueNames.ApprenticeshipCommitmentsJobs}-error", It.IsAny<CancellationToken>()), Times.Never);
         }
@@ -63,7 +63,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
             var m = new Mock<ManagementClient>("Endpoint=sb://bob.windows.net/;Authentication=Managed Identity;");
             m.Setup(x => x.SubscriptionExistsAsync("bundle-1", "ApprenticeCommitments.Apprenticeship", It.IsAny<CancellationToken>())).ReturnsAsync(true);
 
-            await AutoQueues.CreateQueuesWithReflection(m.Object);
+            await AutoSubscribeToQueues.CreateQueuesWithReflection(m.Object);
 
             m.Verify(x => x.CreateSubscriptionAsync(
                 It.Is<SubscriptionDescription>(d =>
@@ -76,7 +76,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
         [Test]
         public void Name_under_limit_when_common_parts_removed_is_used_whole()
         {
-            var shortName = RuleNameShortener.Shorten(typeof(ApprenticeshipCreatedEvent));
+            var shortName = AzureQueueNameShortener.Shorten(typeof(ApprenticeshipCreatedEvent));
             Assert.That(shortName, Is.EqualTo("CommitmentsV2.ApprenticeshipCreatedEvent"));
         }
 
@@ -88,7 +88,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
         [TestCase(typeof(LongNamespaceButUnder50Chars.ThisIsTheReallyReallyReallyLongNameThatIsOver50CharsItself), "ThisIsTheReallyReallyReallyLongNameThatIs.79B64E48")]
         public void Name_over_limit_when_common_parts_removed_is_used_shortened(Type type, string name)
         {
-            var shortName = RuleNameShortener.Shorten(type);
+            var shortName = AzureQueueNameShortener.Shorten(type);
             Assert.That(shortName.Length, Is.LessThanOrEqualTo(50));
             Assert.That(shortName, Is.EqualTo(name));
         }
