@@ -16,7 +16,7 @@ namespace SFA.DAS.NServiceBus.Configuration.AzureServiceBus
             IConfiguration configuration,
             string connectionStringName = "AzureWebJobsServiceBus",
             string? errorQueue = null,
-            string? topicName = "bundle-1",
+            string topicName = "bundle-1",
             ILogger? logger = null)
         {
             var connectionString = configuration.GetValue<string>(connectionStringName);
@@ -27,7 +27,7 @@ namespace SFA.DAS.NServiceBus.Configuration.AzureServiceBus
         public static async Task CreateQueuesWithReflection(
             ManagementClient managementClient,
             string? errorQueue = null,
-            string? topicName = "bundle-1",
+            string topicName = "bundle-1",
             ILogger? logger = null)
         {
             var attribute = Assembly.GetExecutingAssembly().GetTypes()

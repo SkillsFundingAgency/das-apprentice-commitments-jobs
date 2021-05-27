@@ -29,7 +29,8 @@ namespace SFA.DAS.NServiceBus.Configuration.AzureServiceBus
         /// <returns></returns>
         public static string Shorten(Type eventType)
         {
-            var ruleName = eventType.FullName;
+            var ruleName = eventType.FullName
+                ?? throw new ArgumentException("Could not find name of eventType");
             var importantName = ruleName.Replace("SFA.DAS.", "").Replace(".Messages.Events", "");
 
             if (importantName.Length <= AzureServiceBusRuleNameMaxLength)
@@ -40,7 +41,7 @@ namespace SFA.DAS.NServiceBus.Configuration.AzureServiceBus
             if (lastWord.Length > ShortenedNameContextLength)
                 lastWord = lastWord[..ShortenedNameContextLength];
 
-            using var md5 = new MD5CryptoServiceProvider();
+            using var md5 = new SHA512Managed();
             var hash = md5.ComputeHash(Encoding.Default.GetBytes(ruleName));
             var hashstr = BitConverter.ToString(hash).Replace("-", string.Empty);
 

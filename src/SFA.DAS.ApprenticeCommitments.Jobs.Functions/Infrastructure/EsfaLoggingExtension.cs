@@ -25,10 +25,9 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure
         {
             // all logging is filtered out by defualt
             logBuilder.AddFilter(typeof(Startup).Namespace, LogLevel.Information);
-            var rootDirectory = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), ".."));
+            var rootDirectory = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!, ".."));
             var files = Directory.GetFiles(rootDirectory, "nlog.config", SearchOption.AllDirectories)[0];
             logBuilder.AddNLog(files);
-            //logBuilder.AddConsole();
         }
     }
 }

@@ -80,12 +80,12 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
             Assert.That(shortName, Is.EqualTo("CommitmentsV2.ApprenticeshipCreatedEvent"));
         }
 
-        [TestCase(typeof(VeryLongNamespaceThatItselfIsMoreThan50CharactersLong.ShortName), "ShortName.21AED97D")]
-        [TestCase(typeof(VeryLongNamespaceThatItselfIsMoreThan50CharactersLong.AFairlyLongNameButUnder50Chars), "AFairlyLongNameButUnder50Chars.1B354C68")]
-        [TestCase(typeof(VeryLongNamespaceThatItselfIsMoreThan50CharactersLong.ThisIsTheReallyReallyReallyLongNameThatIsOver50CharsItself), "ThisIsTheReallyReallyReallyLongNameThatIs.F215C1FC")]
+        [TestCase(typeof(VeryLongNamespaceThatItselfIsMoreThan50CharactersLong.ShortName), "ShortName.140174A7")]
+        [TestCase(typeof(VeryLongNamespaceThatItselfIsMoreThan50CharactersLong.AFairlyLongNameButUnder50Chars), "AFairlyLongNameButUnder50Chars.D965D415")]
+        [TestCase(typeof(VeryLongNamespaceThatItselfIsMoreThan50CharactersLong.ThisIsTheReallyReallyReallyLongNameThatIsOver50CharsItself), "ThisIsTheReallyReallyReallyLongNameThatIs.E4D35887")]
         [TestCase(typeof(LongNamespaceButUnder50Chars.ShortName), "LongNamespaceButUnder50Chars.ShortName")]
-        [TestCase(typeof(LongNamespaceButUnder50Chars.AFairlyLongNameButUnder50Chars), "AFairlyLongNameButUnder50Chars.D1B2D6DD")]
-        [TestCase(typeof(LongNamespaceButUnder50Chars.ThisIsTheReallyReallyReallyLongNameThatIsOver50CharsItself), "ThisIsTheReallyReallyReallyLongNameThatIs.79B64E48")]
+        [TestCase(typeof(LongNamespaceButUnder50Chars.AFairlyLongNameButUnder50Chars), "AFairlyLongNameButUnder50Chars.533EC818")]
+        [TestCase(typeof(LongNamespaceButUnder50Chars.ThisIsTheReallyReallyReallyLongNameThatIsOver50CharsItself), "ThisIsTheReallyReallyReallyLongNameThatIs.6B7A0139")]
         public void Name_over_limit_when_common_parts_removed_is_used_shortened(Type type, string name)
         {
             var shortName = AzureQueueNameShortener.Shorten(type);
