@@ -10,11 +10,13 @@ using NServiceBus;
 using RestEase.HttpClientFactory;
 using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure;
 using SFA.DAS.Http.Configuration;
+using SFA.DAS.NServiceBus.Configuration.AzureServiceBus;
 using System;
 using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 [assembly: FunctionsStartup(typeof(SFA.DAS.ApprenticeCommitments.Jobs.Functions.Startup))]
@@ -34,7 +36,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
 
             var logger = LoggerFactory.Create(b => b.ConfigureLogging()).CreateLogger<Startup>();
 
-            CreateQueuesWithReflection(
+            AutoQueues.CreateQueuesWithReflection(
                 builder.GetContext().Configuration,
                 connectionStringName: "NServiceBusConnectionString",
                 logger: logger)
@@ -77,18 +79,31 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
                 //.AddTypedClient<>
                 ;
         }
+    }
+}
 
-        private static async Task CreateQueuesWithReflection(
+namespace SFA.DAS.NServiceBus.Configuration.AzureServiceBus
+{
+    public static class AutoQueues
+    {
+        public static async Task CreateQueuesWithReflection(
             IConfiguration configuration,
-            string? auditQueue = null,
+            string connectionStringName = "AzureWebJobsServiceBus",
             string? errorQueue = null,
             string? topicName = "bundle-1",
-            string connectionStringName = "AzureWebJobsServiceBus",
             ILogger? logger = null)
         {
             var connectionString = configuration.GetValue<string>(connectionStringName);
             var managementClient = new ManagementClient(connectionString);
+            await CreateQueuesWithReflection(managementClient, errorQueue, topicName, logger);
+        }
 
+        public static async Task CreateQueuesWithReflection(
+            ManagementClient managementClient,
+            string? errorQueue = null,
+            string? topicName = "bundle-1",
+            ILogger? logger = null)
+        {
             var attribute = Assembly.GetExecutingAssembly().GetTypes()
                 .SelectMany(t => t.GetMethods())
                 .Where(m => m.GetCustomAttribute<FunctionNameAttribute>(false) != null)
@@ -101,64 +116,61 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
 
             logger?.LogInformation("Queue Name: {queueName}", endpointQueueName);
 
-            auditQueue ??= $"{endpointQueueName}-audit";
             errorQueue ??= $"{endpointQueueName}-error";
 
             await CreateQueue(endpointQueueName, managementClient, logger);
-            //await CreateQueue(auditQueue, managementClient, logger);
             await CreateQueue(errorQueue, managementClient, logger);
 
-            await CreateSubscription(topicName, managementClient, endpointQueueName);
+            await CreateSubscription(topicName, managementClient, endpointQueueName, logger);
         }
 
         private static async Task CreateQueue(string endpointQueueName, ManagementClient managementClient, ILogger? logger)
         {
-            if (!await managementClient.QueueExistsAsync(endpointQueueName))
-            {
-                logger?.LogInformation("Creating queue: `{queueName}`", endpointQueueName);
-                await managementClient.CreateQueueAsync(endpointQueueName);
-            }
+            if (await managementClient.QueueExistsAsync(endpointQueueName)) return;
+
+            logger?.LogInformation("Creating queue: `{queueName}`", endpointQueueName);
+            await managementClient.CreateQueueAsync(endpointQueueName);
         }
 
-        private static async Task CreateSubscription(string topicName, ManagementClient managementClient, string endpointQueueName)
+        private static async Task CreateSubscription(string topicName, ManagementClient managementClient, string endpointQueueName, ILogger? logger)
         {
-            if (!await managementClient.SubscriptionExistsAsync(topicName, endpointQueueName))
+            if (await managementClient.SubscriptionExistsAsync(topicName, endpointQueueName)) return;
+
+            logger?.LogInformation($"Creating subscription to: `{endpointQueueName}`", endpointQueueName);
+
+            var description = new SubscriptionDescription(topicName, endpointQueueName)
             {
-                var subscriptionDescription = new SubscriptionDescription(topicName, endpointQueueName)
-                {
-                    ForwardTo = endpointQueueName,
-                    UserMetadata = $"Events {endpointQueueName} subscribed to"
-                };
-                var ruleDescription = new RuleDescription
-                {
-                    Filter = new FalseFilter()
-                };
-                await managementClient.CreateSubscriptionAsync(subscriptionDescription, ruleDescription);
-            }
+                ForwardTo = endpointQueueName,
+                UserMetadata = $"Subscribed to {endpointQueueName}"
+            };
+
+            var ignoreAllEvents = new RuleDescription { Filter = new FalseFilter() };
+
+            await managementClient.CreateSubscriptionAsync(description, ignoreAllEvents);
         }
     }
+}
 
-    public class ForceAutoSubscription : IMessage { }
+public class ForceAutoSubscription : IMessage { }
 
-    public class TimerFunc
+public class TimerFunc
+{
+    private readonly IFunctionEndpoint functionEndpoint;
+
+    public TimerFunc(IFunctionEndpoint functionEndpoint)
     {
-        private readonly IFunctionEndpoint functionEndpoint;
+        this.functionEndpoint = functionEndpoint;
+    }
 
-        public TimerFunc(IFunctionEndpoint functionEndpoint)
-        {
-            this.functionEndpoint = functionEndpoint;
-        }
-
-        [FunctionName("TimerFunc")]
-        public async Task Run([TimerTrigger("* * * 1 1 *", RunOnStartup = true)] TimerInfo myTimer,
-            ILogger logger, ExecutionContext executionContext)
-        {
-            var sendOptions = new SendOptions();
-            sendOptions.SetHeader(Headers.ControlMessageHeader, bool.TrueString);
-            sendOptions.SetHeader(Headers.MessageIntent, MessageIntentEnum.Send.ToString());
-            sendOptions.RouteToThisEndpoint();
-            await functionEndpoint.Send(new ForceAutoSubscription(), sendOptions, executionContext, logger);
-        }
+    [FunctionName("TimerFunc")]
+    public async Task Run([TimerTrigger("* * * 1 1 *", RunOnStartup = true)] TimerInfo myTimer,
+        ILogger logger, ExecutionContext executionContext)
+    {
+        var sendOptions = new SendOptions();
+        sendOptions.SetHeader(Headers.ControlMessageHeader, bool.TrueString);
+        sendOptions.SetHeader(Headers.MessageIntent, MessageIntentEnum.Send.ToString());
+        sendOptions.RouteToThisEndpoint();
+        await functionEndpoint.Send(new ForceAutoSubscription(), sendOptions, executionContext, logger);
     }
 }
 
@@ -176,12 +188,16 @@ namespace SFA.DAS.NServiceBus.Configuration.AzureServiceBus
             if (importantName.Length <= AzureServiceBusRuleNameMaxLength)
                 return importantName;
 
+            var r = new Regex(@"\b(\w+)$");
+            var lastWord = r.Match(importantName).Value;
+            if (lastWord.Length > 41) lastWord = lastWord[..41];
+
             using var md5 = new MD5CryptoServiceProvider();
             var bytes = Encoding.Default.GetBytes(ruleName);
             var hash = md5.ComputeHash(bytes);
             var hashstr = BitConverter.ToString(hash).Replace("-", string.Empty);
 
-            var shortName = $"{hashstr.Substring(0, 8)}{importantName[^42..]}";
+            var shortName = $"{lastWord}.{hashstr[0..8]}";
             return shortName;
         }
     }
