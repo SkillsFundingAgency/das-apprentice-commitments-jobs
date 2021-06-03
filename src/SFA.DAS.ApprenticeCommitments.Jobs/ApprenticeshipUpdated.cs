@@ -4,7 +4,8 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs
 {
     public class ApprenticeshipUpdated
     {
-        public long ApprenticeshipId { get; set; }
-        public DateTime ApprovedOn { get; set; }
+        public long? CommitmentsContinuedApprenticeshipId { get; set; }
+        public long CommitmentsApprenticeshipId { get; set; }
+        public DateTime CommitmentsApprovedOn { get; set; }
     }
 }

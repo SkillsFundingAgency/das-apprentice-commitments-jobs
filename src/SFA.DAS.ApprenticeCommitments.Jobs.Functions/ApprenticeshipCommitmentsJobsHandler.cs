@@ -21,9 +21,16 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
         public ApprenticeshipCommitmentsJobsHandler(IEcsApi api) => this.api = api;
 
         public async Task Handle(ApprenticeshipCreated2Event message, IMessageHandlerContext context)
-            => await api.CreateApprentice(message.ToApprenticeship());
+        {
+            if (message.ContinuationOfId.HasValue)
+            {
+                await api.UpdateApprenticeship(message.ToApprenticeshipUpdated());
+                return;
+            }
+            await api.CreateApprentice(message.ToApprenticeshipCreated());
+        }
 
-        public async Task Handle(ApprenticeshipUpdatedApprovedEvent message, IMessageHandlerContext context)
-            => await api.UpdateApprenticeship(message.ToApprenticeship());
+        public Task Handle(ApprenticeshipUpdatedApprovedEvent message, IMessageHandlerContext context)
+            => api.UpdateApprenticeship(message.ToApprenticeshipUpdated());
     }
 }
