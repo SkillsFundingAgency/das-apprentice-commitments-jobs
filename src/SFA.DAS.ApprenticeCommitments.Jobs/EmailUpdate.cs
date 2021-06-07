@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace SFA.DAS.ApprenticeCommitments.Jobs
+﻿namespace SFA.DAS.ApprenticeCommitments.Jobs
 {
     public class EmailUpdate
     {
