@@ -18,7 +18,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
             [Frozen] Mock<IEcsApi> api,
             ApprenticeshipCommitmentsJobsHandler sut)
         {
-            var evt = _fixture.Build<ApprenticeshipCreated2Event>()
+            var evt = _fixture.Build<ApprenticeshipCreatedEvent>()
                 .Without(p=>p.ContinuationOfId)
                 .Create();
 
@@ -26,7 +26,6 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
 
             api.Verify(m => m.CreateApprentice(It.Is<ApprenticeshipCreated>(n =>
                 n.CommitmentsApprenticeshipId == evt.ApprenticeshipId &&
-                n.Email == evt.Email &&
                 n.EmployerName == evt.LegalEntityName &&
                 n.CommitmentsApprovedOn == evt.CreatedOn)));
         }
@@ -38,7 +37,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
         {
             var continuationId = _fixture.Create<long>();
 
-            var evt = _fixture.Build<ApprenticeshipCreated2Event>()
+            var evt = _fixture.Build<ApprenticeshipCreatedEvent>()
                 .With(p => p.ContinuationOfId, continuationId)
                 .Create();
 

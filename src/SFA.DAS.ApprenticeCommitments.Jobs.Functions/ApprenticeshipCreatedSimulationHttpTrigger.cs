@@ -22,7 +22,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
             [HttpTrigger(AuthorizationLevel.Function, "POST", Route = "test-apprenticeship-created-event")] HttpRequestMessage req,
             ExecutionContext executionContext,
             ILogger log)
-            => Simulate<ApprenticeshipCreated2Event>(req, executionContext, log);
+            => Simulate<ApprenticeshipCreatedEvent>(req, executionContext, log);
 
         [FunctionName("HandleApprenticeshipUpdatedEventTrigger")]
         public Task<IActionResult> ApprenticeshipUpdatedEvent(
