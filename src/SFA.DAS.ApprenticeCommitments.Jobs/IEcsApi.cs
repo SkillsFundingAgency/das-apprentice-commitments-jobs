@@ -1,4 +1,5 @@
-﻿using RestEase;
+﻿using System;
+using RestEase;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs
@@ -13,5 +14,8 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs
 
         [Post("registrations/reminders")]
         Task SendInvitationReminders([Body] SendInvitationRemindersRequest request);
+
+        [Post("apprentices/{id}/email")]
+        Task UpdateApprenticeEmail([Path] Guid id, [Body] EmailUpdate request);
     }
 }
