@@ -4,11 +4,10 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
 {
     public static class Mappings
     {
-        public static ApprenticeshipCreated ToApprenticeshipCreated(this ApprenticeshipCreated2Event source) =>
+        public static ApprenticeshipCreated ToApprenticeshipCreated(this ApprenticeshipCreatedEvent source) =>
             new ApprenticeshipCreated
             {
                 CommitmentsApprenticeshipId = source.ApprenticeshipId,
-                Email = source.Email,
                 EmployerName = source.LegalEntityName,
                 EmployerAccountId = source.AccountId,
                 EmployerAccountLegalEntityId = source.AccountLegalEntityId,
@@ -16,7 +15,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
                 CommitmentsApprovedOn = source.CreatedOn
             };
 
-        public static ApprenticeshipUpdated ToApprenticeshipUpdated(this ApprenticeshipCreated2Event source) =>
+        public static ApprenticeshipUpdated ToApprenticeshipUpdated(this ApprenticeshipCreatedEvent source) =>
             new ApprenticeshipUpdated
             {
                 CommitmentsContinuedApprenticeshipId = source.ContinuationOfId,

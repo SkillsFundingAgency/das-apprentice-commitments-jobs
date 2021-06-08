@@ -1,10 +1,12 @@
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NServiceBus;
 using RestEase.HttpClientFactory;
 using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure;
 using SFA.DAS.Http.Configuration;
+using SFA.DAS.NServiceBus.Configuration.AzureServiceBus;
 
 [assembly: FunctionsStartup(typeof(SFA.DAS.ApprenticeCommitments.Jobs.Functions.Startup))]
 
@@ -21,6 +23,14 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
         {
             builder.ConfigureLogging();
 
+            var logger = LoggerFactory.Create(b => b.ConfigureLogging()).CreateLogger<Startup>();
+
+            AutoSubscribeToQueues.CreateQueuesWithReflection(
+                builder.GetContext().Configuration,
+                connectionStringName: "NServiceBusConnectionString",
+                logger: logger)
+                .GetAwaiter().GetResult();
+
             builder.UseNServiceBus(() =>
             {
                 var configuration = new ServiceBusTriggeredEndpointConfiguration(
@@ -29,6 +39,11 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
 
                 configuration.AdvancedConfiguration.SendFailedMessagesTo($"{QueueNames.ApprenticeshipCommitmentsJobs}-error");
                 configuration.LogDiagnostics();
+
+                configuration.AdvancedConfiguration.Conventions()
+                    .DefiningEventsAs(t => t.Namespace?.StartsWith("SFA.DAS.CommitmentsV2.Messages.Events") == true);
+
+                configuration.Transport.SubscriptionRuleNamingConvention(AzureQueueNameShortener.Shorten);
 
                 return configuration;
             });
