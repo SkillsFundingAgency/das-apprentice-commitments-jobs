@@ -23,7 +23,6 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
             }
             else
             {
-                // create registration
                 var res = await api.CreateApprentice(message.ToApprenticeshipCreated());
 
                 var invite = new SendInvitation()
@@ -38,7 +37,6 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
                     UserRedirect = res.RedirectUrl,
                 };
 
-                // create invitation
                 await context.Send(invite);
             }
         }

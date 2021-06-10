@@ -7,7 +7,7 @@ using RestEase.HttpClientFactory;
 using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure;
 using SFA.DAS.Http.Configuration;
 using SFA.DAS.NServiceBus.Configuration.AzureServiceBus;
-using ls = SFA.DAS.Apprentice.LoginService.Messages;
+using SFA.DAS.Apprentice.LoginService.Messages;
 
 [assembly: FunctionsStartup(typeof(SFA.DAS.ApprenticeCommitments.Jobs.Functions.Startup))]
 
@@ -50,7 +50,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
                 configuration.Transport.SubscriptionRuleNamingConvention(AzureQueueNameShortener.Shorten);
 
                 // when a SendInvitationCommand event is fired, route it to the login service queue
-                configuration.Transport.Routing().RouteToEndpoint(typeof(ls.SendInvitation), "sfa.das.apprenticeloginservice");
+                configuration.Transport.Routing().RouteToEndpoint(typeof(SendInvitation), QueueNames.LoginServiceQueue);
 
                 return configuration;
             });
