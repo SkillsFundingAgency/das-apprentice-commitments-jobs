@@ -25,19 +25,22 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
             {
                 var res = await api.CreateApprentice(message.ToApprenticeshipCreated());
 
-                var invite = new SendInvitation()
+                if (res != null)
                 {
-                    ClientId = Guid.Parse(res.ClientId),
-                    SourceId = res.SourceId.ToString(),                    
-                    GivenName = res.GivenName,
-                    FamilyName = res.FamilyName,
-                    OrganisationName = message.LegalEntityName,
-                    ApprenticeshipName = res.ApprenticeshipName,
-                    Callback = res.CallbackUrl,
-                    UserRedirect = res.RedirectUrl,
-                };
+                    var invite = new SendInvitation()
+                    {
+                        ClientId = Guid.Parse(res.ClientId),
+                        SourceId = res.SourceId.ToString(),
+                        GivenName = res.GivenName,
+                        FamilyName = res.FamilyName,
+                        OrganisationName = message.LegalEntityName,
+                        ApprenticeshipName = res.ApprenticeshipName,
+                        Callback = res.CallbackUrl,
+                        UserRedirect = res.RedirectUrl,
+                    };
 
-                await context.Send(invite);
+                    await context.Send(invite);
+                }
             }
         }
 
@@ -45,6 +48,6 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
             => await api.UpdateApprenticeship(message.ToApprenticeshipUpdated());
 
         public async Task Handle(SendInvitationReply message, IMessageHandlerContext context)
-        => await Task.CompletedTask;
+            => await Task.CompletedTask;
     }
 }
