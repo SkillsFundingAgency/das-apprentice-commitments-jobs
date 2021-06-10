@@ -18,6 +18,10 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
             [Frozen] Mock<IEcsApi> api,
             ApprenticeshipCommitmentsJobsHandler sut)
         {
+            api.Setup(x => x.CreateApprentice(It.IsAny<ApprenticeshipCreated>()))
+                .ReturnsAsync(_fixture.Build<CreateApprenticeshipResponse>()
+                                      .With(x => x.ClientId, System.Guid.NewGuid().ToString()).Create());
+
             var evt = _fixture.Build<ApprenticeshipCreatedEvent>()
                 .Without(p=>p.ContinuationOfId)
                 .Create();
