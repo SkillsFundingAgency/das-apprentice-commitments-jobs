@@ -31,6 +31,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
                     {
                         ClientId = Guid.Parse(res.ClientId),
                         SourceId = res.SourceId.ToString(),
+                        Email = res.Email,
                         GivenName = res.GivenName,
                         FamilyName = res.FamilyName,
                         OrganisationName = message.LegalEntityName,
