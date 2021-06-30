@@ -3,6 +3,8 @@ using SFA.DAS.CommitmentsV2.Messages.Events;
 using System;
 using System.Threading.Tasks;
 using SFA.DAS.Apprentice.LoginService.Messages;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
 {
@@ -12,8 +14,13 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
         , IHandleMessages<ApprenticeshipUpdatedApprovedEvent>
     {
         private readonly IEcsApi api;
+        private readonly ILogger<ApprenticeshipCommitmentsJobsHandler> logger;
 
-        public ApprenticeshipCommitmentsJobsHandler(IEcsApi api) => this.api = api;
+        public ApprenticeshipCommitmentsJobsHandler(IEcsApi api, ILogger<ApprenticeshipCommitmentsJobsHandler> logger)
+        {
+            this.api = api;
+            this.logger = logger;
+        }
 
         public async Task Handle(ApprenticeshipCreatedEvent message, IMessageHandlerContext context)
         {
@@ -24,6 +31,8 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
             else
             {
                 var res = await api.CreateApprentice(message.ToApprenticeshipCreated());
+
+                logger.LogInformation($"CreateApprentice returned {JsonConvert.SerializeObject(res)}");
 
                 if (res != null)
                 {
