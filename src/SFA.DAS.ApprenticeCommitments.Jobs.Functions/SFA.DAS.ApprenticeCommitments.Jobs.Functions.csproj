@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <AzureFunctionsVersion>v3</AzureFunctionsVersion>
@@ -16,10 +16,12 @@
     <PackageReference Include="NLog.Extensions.Logging" Version="1.7.0" />
     <PackageReference Include="RestEase" Version="1.5.2" />
     <PackageReference Include="RestEase.HttpClientFactory" Version="1.5.2" />
+    <PackageReference Include="SFA.DAS.ApprenticeCommitments.Messages" Version="0.1.42-prerelease-1" />
     <PackageReference Include="SFA.DAS.CommitmentsV2.Messages" Version="7.26.0" />
     <PackageReference Include="SFA.DAS.Configuration.AzureTableStorage" Version="3.0.84" />
     <PackageReference Include="SFA.DAS.Http" Version="3.2.59" />
     <PackageReference Include="SFA.DAS.NLog.Targets.Redis" Version="1.2.1" />
+    <PackageReference Include="SFA.DAS.Notifications.Messages" Version="3.0.0" />
   </ItemGroup>
   <ItemGroup>
     <None Update="host.json">

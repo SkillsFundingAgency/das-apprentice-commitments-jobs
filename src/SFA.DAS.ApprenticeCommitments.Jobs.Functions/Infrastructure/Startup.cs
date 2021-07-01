@@ -50,7 +50,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
 
             builder.Services.ConfigureApplicationOptions<ApplicationSettings>();
             builder.Services.ConfigureFromOptions(f => f.ApprenticeCommitmentsApi);
-            builder.Services.ConfigureFromOptions<IApimClientConfiguration, ApprenticeCommitmentsApiOptions>();
+            builder.Services.ConfigureFromOptions(f => f.Notifications);
             builder.Services.AddSingleton<IApimClientConfiguration>(x => x.GetRequiredService<ApprenticeCommitmentsApiOptions>());
 
             builder.Services.AddTransient<Http.MessageHandlers.DefaultHeadersHandler>();
