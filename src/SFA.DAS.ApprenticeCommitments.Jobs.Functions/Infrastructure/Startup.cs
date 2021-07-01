@@ -1,7 +1,6 @@
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using NServiceBus;
 using RestEase.HttpClientFactory;
 using SFA.DAS.ApprenticeCommitments.Jobs.Api;
@@ -49,9 +48,10 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
                 return configuration;
             });
 
-            builder.Services.ConfigureOptions<ApprenticeCommitmentsApiOptions>(
-                ApprenticeCommitmentsApiOptions.ApprenticeCommitmentsApi);
+            builder.Services.ConfigureApplicationOptions<ApplicationSettings>();
+            builder.Services.ConfigureFromOptions(f => f.ApprenticeCommitmentsApi);
             builder.Services.ConfigureFromOptions<IApimClientConfiguration, ApprenticeCommitmentsApiOptions>();
+            builder.Services.AddSingleton<IApimClientConfiguration>(x => x.GetRequiredService<ApprenticeCommitmentsApiOptions>());
 
             builder.Services.AddTransient<Http.MessageHandlers.DefaultHeadersHandler>();
             builder.Services.AddTransient<Http.MessageHandlers.LoggingMessageHandler>();
@@ -59,8 +59,8 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
 
             var url = builder.Services
                 .BuildServiceProvider()
-                .GetRequiredService<IOptions<ApprenticeCommitmentsApiOptions>>()
-                .Value.ApiBaseUrl;
+                .GetRequiredService<ApprenticeCommitmentsApiOptions>()
+                .ApiBaseUrl;
 
             builder.Services.AddRestEaseClient<IEcsApi>(url)
                 .AddHttpMessageHandler<Http.MessageHandlers.DefaultHeadersHandler>()
