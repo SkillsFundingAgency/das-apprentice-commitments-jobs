@@ -6,6 +6,7 @@ using SFA.DAS.ApprenticeCommitments.Jobs.Functions;
 using SFA.DAS.CommitmentsV2.Messages.Events;
 using System.Threading.Tasks;
 using AutoFixture;
+using SFA.DAS.ApprenticeCommitments.Jobs.Api;
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
 {

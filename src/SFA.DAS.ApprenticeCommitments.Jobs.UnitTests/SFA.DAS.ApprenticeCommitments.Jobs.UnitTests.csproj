@@ -29,7 +29,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SFA.DAS.ApprenticeCommitments.Jobs.Functions\SFA.DAS.ApprenticeCommitments.Jobs.Functions.csproj" />
-    <ProjectReference Include="..\SFA.DAS.ApprenticeCommitments.Jobs\SFA.DAS.ApprenticeCommitments.Jobs.csproj" />
   </ItemGroup>
 
 </Project>
