@@ -61,7 +61,8 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
             builder.Services.ConfigureOptions<ApprenticeCommitmentsApiOptions>(
                 ApprenticeCommitmentsApiOptions.ApprenticeCommitmentsApi);
             builder.Services.ConfigureFromOptions<IApimClientConfiguration, ApprenticeCommitmentsApiOptions>();
-
+            builder.Services.ConfigureOptions<NServiceBusOptions>(
+                "ApprenticeLoginApi");
             builder.Services.AddTransient<Http.MessageHandlers.DefaultHeadersHandler>();
             builder.Services.AddTransient<Http.MessageHandlers.LoggingMessageHandler>();
             builder.Services.AddTransient<Http.MessageHandlers.ApimHeadersHandler>();
@@ -70,6 +71,9 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
                 .BuildServiceProvider()
                 .GetRequiredService<IOptions<ApprenticeCommitmentsApiOptions>>()
                 .Value.ApiBaseUrl;
+            var aService = builder.Services
+                .BuildServiceProvider();
+            var bService = aService.GetRequiredService<IOptions<NServiceBusOptions>>();
 
             builder.Services.AddRestEaseClient<IEcsApi>(url)
                 .AddHttpMessageHandler<Http.MessageHandlers.DefaultHeadersHandler>()
