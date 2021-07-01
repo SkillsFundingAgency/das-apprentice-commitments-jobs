@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using SFA.DAS.Apprentice.LoginService.Messages;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure;
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
 {
@@ -15,11 +16,17 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
     {
         private readonly IEcsApi api;
         private readonly ILogger<ApprenticeshipCommitmentsJobsHandler> logger;
+        private readonly NServiceBusOptions nServiceBusOptions;
 
-        public ApprenticeshipCommitmentsJobsHandler(IEcsApi api, ILogger<ApprenticeshipCommitmentsJobsHandler> logger)
+        public ApprenticeshipCommitmentsJobsHandler(
+            IEcsApi api, 
+            ILogger<ApprenticeshipCommitmentsJobsHandler> logger,
+            NServiceBusOptions nServiceBusOptions
+            )
         {
             this.api = api;
             this.logger = logger;
+            this.nServiceBusOptions = nServiceBusOptions;
         }
 
         public async Task Handle(ApprenticeshipCreatedEvent message, IMessageHandlerContext context)
@@ -38,15 +45,15 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
                 {
                     var invite = new SendInvitation()
                     {
-                        ClientId = Guid.Parse(res.ClientId),
+                        ClientId = Guid.Parse(nServiceBusOptions.IdentityServerClientId),
                         SourceId = res.SourceId.ToString(),
                         Email = res.Email,
                         GivenName = res.GivenName,
                         FamilyName = res.FamilyName,
                         OrganisationName = message.LegalEntityName,
                         ApprenticeshipName = res.ApprenticeshipName,
-                        Callback = res.CallbackUrl,
-                        UserRedirect = res.RedirectUrl,
+                        Callback = nServiceBusOptions.CallbackUrl,
+                        UserRedirect = nServiceBusOptions.RedirectUrl,
                     };
 
                     await context.Send(invite);
