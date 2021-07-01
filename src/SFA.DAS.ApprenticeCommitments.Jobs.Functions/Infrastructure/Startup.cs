@@ -71,6 +71,9 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
                 .BuildServiceProvider()
                 .GetRequiredService<IOptions<ApprenticeCommitmentsApiOptions>>()
                 .Value.ApiBaseUrl;
+            var aService = builder.Services
+                .BuildServiceProvider();
+            var bService = aService.GetRequiredService<IOptions<NServiceBusOptions>>();
 
             builder.Services.AddRestEaseClient<IEcsApi>(url)
                 .AddHttpMessageHandler<Http.MessageHandlers.DefaultHeadersHandler>()
