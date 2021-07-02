@@ -1,4 +1,5 @@
 ﻿using SFA.DAS.Http.Configuration;
+using System;
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure
 {
@@ -12,7 +13,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure
 
     public class NServiceBusOptions
     {
-        public string IdentityServerClientId { get; set; } = null!;
+        public Guid IdentityServerClientId { get; set; }
         public string CallbackUrl { get; set; } = null!;
         public string RedirectUrl { get; set; } = null!;
     }

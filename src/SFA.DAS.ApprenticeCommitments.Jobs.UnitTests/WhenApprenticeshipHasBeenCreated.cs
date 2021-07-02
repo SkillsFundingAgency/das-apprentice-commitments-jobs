@@ -6,6 +6,7 @@ using SFA.DAS.ApprenticeCommitments.Jobs.Functions;
 using SFA.DAS.CommitmentsV2.Messages.Events;
 using System.Threading.Tasks;
 using AutoFixture;
+using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure;
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
 {
@@ -19,8 +20,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
             ApprenticeshipCommitmentsJobsHandler sut)
         {
             api.Setup(x => x.CreateApprentice(It.IsAny<ApprenticeshipCreated>()))
-                .ReturnsAsync(_fixture.Build<CreateApprenticeshipResponse>()
-                                      .With(x => x.ClientId, System.Guid.NewGuid().ToString()).Create());
+                .ReturnsAsync(_fixture.Create<CreateApprenticeshipResponse>());
 
             var evt = _fixture.Build<ApprenticeshipCreatedEvent>()
                 .Without(p=>p.ContinuationOfId)
