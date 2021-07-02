@@ -7,7 +7,7 @@ using SFA.DAS.ApprenticeCommitments.Jobs.Functions;
 using SFA.DAS.CommitmentsV2.Messages.Events;
 using System.Threading.Tasks;
 
-
+
 namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
 {
     public class WhenApprenticeshipHasBeenCreated
@@ -19,12 +19,8 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
             [Frozen] Mock<IEcsApi> api,
             ApprenticeshipCommitmentsJobsHandler sut)
         {
-            api.Setup(x => x.CreateApprentice(It.IsAny<ApprenticeshipCreated>()))
-
-               .ReturnsAsync(_fixture.Create<CreateApprenticeshipResponse>());
-
-
-
+            api.Setup(x => x.CreateApprentice(It.IsAny<ApprenticeshipCreated>()))
+               .ReturnsAsync(_fixture.Create<CreateApprenticeshipResponse>());
             var evt = _fixture.Build<ApprenticeshipCreatedEvent>()
                .Without(p => p.ContinuationOfId)
                .Create();
