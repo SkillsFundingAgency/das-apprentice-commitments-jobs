@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure
 {
@@ -7,6 +8,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure
         public ApprenticeCommitmentsApiOptions ApprenticeCommitmentsApi { get; set; } = null!;
         public UrlConfiguration ApprenticeCommitmentsWeb { get; set; } = null!;
         public NotificationConfiguration Notifications { get; set; } = null!;
+        public TimeSpan TimeToWaitBeforeChangeOfApprenticeshipEmail { get; set; } = TimeSpan.FromHours(24);
     }
 
     public class UrlConfiguration
@@ -16,6 +18,6 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure
 
     public class NotificationConfiguration
     {
-        public Dictionary<string, string> Templates { get; set; } = null!;
+        public Dictionary<string, string> Templates { get; set; } = new Dictionary<string, string>();
     }
 }

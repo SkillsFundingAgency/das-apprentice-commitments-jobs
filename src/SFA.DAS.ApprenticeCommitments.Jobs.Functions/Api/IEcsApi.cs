@@ -15,6 +15,9 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Api
         [Get("/apprentices/{apprenticeid}")]
         Task<Apprentice> GetApprentice([Path] Guid apprenticeid);
 
+        [Get("/apprentices/{apprenticeid}/apprenticeships/{apprenticeshipid}/revisions")]
+        Task<ApprenticeshipHistory> GetApprenticeshipHistory([Path] Guid apprenticeid, [Path] long apprenticeshipid);
+
         [Post("registrations/reminders")]
         Task SendInvitationReminders([Body] SendInvitationRemindersRequest request);
     }
