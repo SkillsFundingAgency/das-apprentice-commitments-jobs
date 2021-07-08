@@ -3,6 +3,7 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
+using SFA.DAS.ApprenticeCommitments.Jobs.Api;
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
 {
