@@ -25,7 +25,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
         public async Task Handle(ApprenticeshipChangedEvent message, IMessageHandlerContext context)
         {
             if (!settings.Notifications.Templates.TryGetValue("ApprenticeshipChangedEmail", out var templateId))
-                throw new Exception("Missing configuration `Notifications:Templates:ApprenticeshipChangedEmail`");
+                throw new InvalidOperationException("Missing configuration `Notifications:Templates:ApprenticeshipChangedEmail`");
 
             var url = $"{settings.ApprenticeCommitmentsWeb.BaseUrl}/Apprenticeships";
 
