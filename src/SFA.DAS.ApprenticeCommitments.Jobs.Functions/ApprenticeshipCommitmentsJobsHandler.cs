@@ -7,10 +7,6 @@ using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure;
 using SFA.DAS.CommitmentsV2.Messages.Events;
 using System;
 using System.Threading.Tasks;
-using SFA.DAS.Apprentice.LoginService.Messages;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure;
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
 {
@@ -22,12 +18,12 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
     {
         private readonly IEcsApi _api;
         private readonly ILogger<ApprenticeshipCommitmentsJobsHandler> _logger;
-        private readonly NServiceBusOptions _nServiceBusOptions;
+        private readonly LoginServiceOptions _nServiceBusOptions;
 
         public ApprenticeshipCommitmentsJobsHandler(
-            IEcsApi api, 
+            IEcsApi api,
             ILogger<ApprenticeshipCommitmentsJobsHandler> logger,
-            NServiceBusOptions nServiceBusOptions
+            LoginServiceOptions nServiceBusOptions
             )
         {
             _api = api;
