@@ -16,12 +16,12 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
     {
         private readonly IEcsApi api;
         private readonly ILogger<ApprenticeshipCommitmentsJobsHandler> logger;
-        private readonly NServiceBusOptions nServiceBusOptions;
+        private readonly LoginServiceOptions nServiceBusOptions;
 
         public ApprenticeshipCommitmentsJobsHandler(
             IEcsApi api, 
             ILogger<ApprenticeshipCommitmentsJobsHandler> logger,
-            NServiceBusOptions nServiceBusOptions
+            LoginServiceOptions nServiceBusOptions
             )
         {
             this.api = api;
