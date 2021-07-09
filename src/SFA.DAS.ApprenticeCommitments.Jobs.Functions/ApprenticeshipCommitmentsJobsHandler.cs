@@ -1,20 +1,10 @@
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using NServiceBus;
-using SFA.DAS.Apprentice.LoginService.Messages;
 using SFA.DAS.CommitmentsV2.Messages.Events;
 using System;
 using System.Threading.Tasks;
-
-namespace SFA.DAS.CommitmentsV2.Messages.Events
-{
-    public class EmailChangedEvent
-    {
-        public Guid ApprenticeId { get; set; }
-        public string CurrentEmailAddress { get; set; }
-        public string NewEmailAddress { get; set; }
-    }
-}
+using SFA.DAS.Apprentice.LoginService.Messages;
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
 {
@@ -56,8 +46,8 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
                         FamilyName = res.FamilyName,
                         OrganisationName = message.LegalEntityName,
                         ApprenticeshipName = res.ApprenticeshipName,
-                        Callback = res.CallbackUrl,
-                        UserRedirect = res.RedirectUrl,
+                        Callback = new Uri(res.CallbackUrl),
+                        UserRedirect = new Uri(res.RedirectUrl),
                     };
 
                     await context.Send(invite);

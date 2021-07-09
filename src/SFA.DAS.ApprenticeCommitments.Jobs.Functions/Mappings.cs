@@ -1,4 +1,5 @@
-﻿using SFA.DAS.CommitmentsV2.Messages.Events;
+﻿using SFA.DAS.Apprentice.LoginService.Messages;
+using SFA.DAS.CommitmentsV2.Messages.Events;
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
 {

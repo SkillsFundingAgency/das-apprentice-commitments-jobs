@@ -3,8 +3,8 @@ using Moq;
 using NServiceBus.Testing;
 using NUnit.Framework;
 using SFA.DAS.ApprenticeCommitments.Jobs.Functions;
-using SFA.DAS.CommitmentsV2.Messages.Events;
 using System.Threading.Tasks;
+using SFA.DAS.Apprentice.LoginService.Messages;
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
 {
