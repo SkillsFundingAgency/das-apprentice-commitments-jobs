@@ -52,6 +52,9 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
                 // when a SendInvitationCommand event is fired, route it to the login service queue
                 configuration.Transport.Routing().RouteToEndpoint(typeof(SendInvitation), QueueNames.LoginServiceQueue);
 
+                configuration.AdvancedConfiguration.Pipeline.Register(new LogIncomingBehaviour(), nameof(LogIncomingBehaviour));
+                configuration.AdvancedConfiguration.Pipeline.Register(new LogOutgoingBehaviour(), nameof(LogOutgoingBehaviour));
+
                 return configuration;
             });
 
