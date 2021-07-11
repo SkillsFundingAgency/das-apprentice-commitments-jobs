@@ -8,6 +8,7 @@ using SFA.DAS.Apprentice.LoginService.Messages;
 using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure;
 using SFA.DAS.Http.Configuration;
 using SFA.DAS.NServiceBus.Configuration.AzureServiceBus;
+using System;
 
 [assembly: FunctionsStartup(typeof(SFA.DAS.ApprenticeCommitments.Jobs.Functions.Startup))]
 
@@ -42,10 +43,9 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
                 configuration.LogDiagnostics();
 
                 configuration.AdvancedConfiguration.Conventions()
-                    .DefiningMessagesAs(t => t.Namespace?.StartsWith("SFA.DAS.Apprentice.LoginService.Messages") == true ||
-                                             t.Name == nameof(ForceAutoEventSubscription))
-
-                    .DefiningEventsAs(t => t.Namespace?.StartsWith("SFA.DAS.CommitmentsV2.Messages.Events") == true);
+                    .DefiningMessagesAs(IsMessage)
+                    .DefiningEventsAs(IsEvent)
+                    .DefiningCommandsAs(IsCommand);
 
                 configuration.Transport.SubscriptionRuleNamingConvention(AzureQueueNameShortener.Shorten);
 
@@ -78,5 +78,16 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
                 //.AddTypedClient<>
                 ;
         }
+
+        private static bool IsMessage(Type t) => t is IMessage || IsSfaMessage(t, "Messages");
+
+        private static bool IsEvent(Type t) => t is IEvent || IsSfaMessage(t, "Messages.Events");
+
+        private static bool IsCommand(Type t) => t is ICommand || IsSfaMessage(t, "Messages.Commands");
+
+        private static bool IsSfaMessage(Type t, string namespaceSuffix)
+            => t.Namespace != null &&
+                t.Namespace.StartsWith("SFA.DAS") &&
+                t.Namespace.EndsWith(namespaceSuffix);
     }
 }
