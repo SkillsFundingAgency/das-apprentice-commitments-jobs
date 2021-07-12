@@ -2,7 +2,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using NServiceBus;
 using SFA.DAS.Apprentice.LoginService.Messages;
-using SFA.DAS.Apprentice.LoginService.Messages.Events;
+using SFA.DAS.Apprentice.LoginService.Messages.Commands;
 using SFA.DAS.CommitmentsV2.Messages.Events;
 using System;
 using System.Threading.Tasks;
@@ -13,7 +13,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
         : IHandleMessages<ApprenticeshipCreatedEvent>
         , IHandleMessages<SendInvitationReply>
         , IHandleMessages<ApprenticeshipUpdatedApprovedEvent>
-        , IHandleMessages<EmailChangedEvent>
+        , IHandleMessages<UpdateEmailAddressCommand>
     {
         private readonly IEcsApi _api;
         private readonly ILogger<ApprenticeshipCommitmentsJobsHandler> _logger;
@@ -59,9 +59,9 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
         public Task Handle(ApprenticeshipUpdatedApprovedEvent message, IMessageHandlerContext context)
             => _api.UpdateApprenticeship(message.ToApprenticeshipUpdated());
 
-        public Task Handle(EmailChangedEvent message, IMessageHandlerContext context)
+        public Task Handle(UpdateEmailAddressCommand message, IMessageHandlerContext context)
         {
-            _logger.LogInformation($"Received {nameof(EmailChangedEvent)} for apprentice {message.ApprenticeId}");
+            _logger.LogInformation($"Received {nameof(UpdateEmailAddressCommand)} for apprentice {message.ApprenticeId}");
             return _api.UpdateApprenticeEmail(message.ApprenticeId, message.ToEmailUpdate());
         }
 

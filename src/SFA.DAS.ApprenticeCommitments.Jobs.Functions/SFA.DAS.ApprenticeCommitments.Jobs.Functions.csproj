@@ -16,7 +16,7 @@
     <PackageReference Include="NLog.Extensions.Logging" Version="1.7.0" />
     <PackageReference Include="RestEase" Version="1.5.2" />
     <PackageReference Include="RestEase.HttpClientFactory" Version="1.5.2" />
-    <PackageReference Include="SFA.DAS.Apprentice.LoginService.Messages" Version="0.1.183" />
+    <PackageReference Include="SFA.DAS.Apprentice.LoginService.Messages" Version="0.1.184" />
     <PackageReference Include="SFA.DAS.CommitmentsV2.Messages" Version="7.29.0" />
     <PackageReference Include="SFA.DAS.Configuration.AzureTableStorage" Version="3.0.84" />
     <PackageReference Include="SFA.DAS.Http" Version="3.2.59" />
