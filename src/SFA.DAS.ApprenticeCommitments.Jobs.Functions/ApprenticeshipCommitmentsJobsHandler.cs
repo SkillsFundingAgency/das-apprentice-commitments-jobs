@@ -1,11 +1,12 @@
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using NServiceBus;
+using SFA.DAS.Apprentice.LoginService.Messages;
+using SFA.DAS.Apprentice.LoginService.Messages.Commands;
+using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure;
 using SFA.DAS.CommitmentsV2.Messages.Events;
 using System;
 using System.Threading.Tasks;
-using SFA.DAS.Apprentice.LoginService.Messages;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure;
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
 {
@@ -13,19 +14,20 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
         : IHandleMessages<ApprenticeshipCreatedEvent>
         , IHandleMessages<SendInvitationReply>
         , IHandleMessages<ApprenticeshipUpdatedApprovedEvent>
+        , IHandleMessages<UpdateEmailAddressCommand>
     {
-        private readonly IEcsApi api;
-        private readonly ILogger<ApprenticeshipCommitmentsJobsHandler> logger;
+        private readonly IEcsApi _api;
+        private readonly ILogger<ApprenticeshipCommitmentsJobsHandler> _logger;
         private readonly NServiceBusOptions nServiceBusOptions;
 
         public ApprenticeshipCommitmentsJobsHandler(
-            IEcsApi api, 
+            IEcsApi api,
             ILogger<ApprenticeshipCommitmentsJobsHandler> logger,
             NServiceBusOptions nServiceBusOptions
-            )
+                                                   )
         {
-            this.api = api;
-            this.logger = logger;
+            this._api = api;
+            this._logger = logger;
             this.nServiceBusOptions = nServiceBusOptions;
         }
 
@@ -33,13 +35,13 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
         {
             if (message.ContinuationOfId.HasValue)
             {
-                await api.UpdateApprenticeship(message.ToApprenticeshipUpdated());
+                await _api.UpdateApprenticeship(message.ToApprenticeshipUpdated());
             }
             else
             {
-                var res = await api.CreateApprentice(message.ToApprenticeshipCreated());
+                var res = await _api.CreateApprentice(message.ToApprenticeshipCreated());
 
-                logger.LogInformation($"CreateApprentice returned {JsonConvert.SerializeObject(res)}");
+                _logger.LogInformation($"CreateApprentice returned {JsonConvert.SerializeObject(res)}");
 
                 if (res != null)
                 {
@@ -52,8 +54,8 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
                         FamilyName = res.FamilyName,
                         OrganisationName = message.LegalEntityName,
                         ApprenticeshipName = res.ApprenticeshipName,
-                        Callback = nServiceBusOptions.CallbackUrl,
-                        UserRedirect = nServiceBusOptions.RedirectUrl,
+                        Callback = new Uri(nServiceBusOptions.CallbackUrl),
+                        UserRedirect = new Uri(nServiceBusOptions.RedirectUrl),
                     };
 
                     await context.Send(invite);
@@ -61,8 +63,14 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
             }
         }
 
-        public async Task Handle(ApprenticeshipUpdatedApprovedEvent message, IMessageHandlerContext context)
-            => await api.UpdateApprenticeship(message.ToApprenticeshipUpdated());
+        public Task Handle(ApprenticeshipUpdatedApprovedEvent message, IMessageHandlerContext context)
+            => _api.UpdateApprenticeship(message.ToApprenticeshipUpdated());
+
+        public Task Handle(UpdateEmailAddressCommand message, IMessageHandlerContext context)
+        {
+            _logger.LogInformation($"Received {nameof(UpdateEmailAddressCommand)} for apprentice {message.ApprenticeId}");
+            return _api.UpdateApprenticeEmail(message.ApprenticeId, message.ToEmailUpdate());
+        }
 
         public async Task Handle(SendInvitationReply message, IMessageHandlerContext context)
             => await Task.CompletedTask;
