@@ -13,7 +13,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
         {
         }
 
-        public static IFixture CreateFixture()
+        private static IFixture CreateFixture()
         {
             var fixture = new Fixture();
             fixture.Customize(new AutoMoqCustomization { ConfigureMembers = true });
