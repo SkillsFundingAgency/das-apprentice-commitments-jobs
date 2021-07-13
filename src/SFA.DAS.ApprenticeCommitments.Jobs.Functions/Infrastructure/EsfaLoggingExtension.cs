@@ -11,14 +11,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure
     {
         internal static void ConfigureLogging(this IFunctionsHostBuilder builder)
         {
-            builder.Services.AddLogging(logBuilder =>
-            {
-                // all logging is filtered out by defualt
-                logBuilder.AddFilter(typeof(Startup).Namespace, LogLevel.Information);
-                var rootDirectory = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!, ".."));
-                var files = Directory.GetFiles(rootDirectory, "nlog.config", SearchOption.AllDirectories)[0];
-                logBuilder.AddNLog(files);
-            });
+            builder.Services.AddLogging(ConfigureLogging);
         }
 
         internal static void ConfigureLogging(this ILoggingBuilder logBuilder)
