@@ -52,8 +52,6 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
             {
                 try
                 {
-                    log.LogInformation($"Getting Apprenticeship Details for ApprenticeshipId {registration.ApprenticeshipId}");
-
                     log.LogInformation($"Sending Invitation for Apprentice {registration.ApprenticeId}");
                     var invite = new SendInvitation
                     {
