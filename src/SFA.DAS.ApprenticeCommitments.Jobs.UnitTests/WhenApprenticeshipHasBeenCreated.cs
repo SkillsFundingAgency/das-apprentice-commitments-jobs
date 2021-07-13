@@ -1,3 +1,4 @@
+using AutoFixture;
 using AutoFixture.NUnit3;
 using Moq;
 using NServiceBus.Testing;
@@ -5,14 +6,12 @@ using NUnit.Framework;
 using SFA.DAS.ApprenticeCommitments.Jobs.Functions;
 using SFA.DAS.CommitmentsV2.Messages.Events;
 using System.Threading.Tasks;
-using AutoFixture;
-using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure;
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
 {
     public class WhenApprenticeshipHasBeenCreated
     {
-        Fixture _fixture = new Fixture();
+        private Fixture _fixture = new Fixture();
 
         [Test, AutoMoqData]
         public async Task And_it_is_a_new_apprenticeship_Then_create_the_apprentice_record(
@@ -20,11 +19,11 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
             ApprenticeshipCommitmentsJobsHandler sut)
         {
             api.Setup(x => x.CreateApprentice(It.IsAny<ApprenticeshipCreated>()))
-                .ReturnsAsync(_fixture.Create<CreateApprenticeshipResponse>());
+               .ReturnsAsync(_fixture.Create<CreateApprenticeshipResponse>());
 
             var evt = _fixture.Build<ApprenticeshipCreatedEvent>()
-                .Without(p=>p.ContinuationOfId)
-                .Create();
+               .Without(p => p.ContinuationOfId)
+               .Create();
 
             await sut.Handle(evt, new TestableMessageHandlerContext());
 
