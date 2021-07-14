@@ -9,8 +9,6 @@ jobs:
     value: release
   - name: buildPlatform
     value: anycpu
-  - name: SonarCloudProjectKey
-    value: SkillsFundingAgency_das-apprentice-commitments-jobs
   workspace:
     clean: all
   steps:
@@ -21,27 +19,10 @@ jobs:
       useConfigFile: true
       configFilePath: GitVersion.yml
 
-  - task: SonarCloudPrepare@1
-    displayName: Prepare SonarCloud analysis configuration
-    condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'),eq(variables['Build.Reason'], 'PullRequest')))
-    inputs:
-      SonarCloud: ESFA - SonarCloud
-      organization: "$(SonarCloudOrganisationKey)"
-      scannerMode: MSBuild
-      projectName: "$(Build.DefinitionName)"
-      projectKey: "$(SonarCloudProjectKey)"
-
   - template: azure-pipelines-templates/build/step/app-build.yml@das-platform-building-blocks
-
-  - task: SonarCloudAnalyze@1
-    displayName: Run SonarCloud analysis
-    condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'),eq(variables['Build.Reason'], 'PullRequest')))
-
-  - task: SonarCloudPublish@1
-    displayName: Publish SonarCloud analysis results on build summary
-    condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'),eq(variables['Build.Reason'], 'PullRequest')))
-    inputs:
-      pollingTimeoutSec: '300'
+    parameters:
+      SonarCloud: true
+      SonarCloudProjectKey: SkillsFundingAgency_das-apprentice-commitments-jobs
 
   - template: azure-pipelines-templates/build/step/dependency-check.yml@das-platform-building-blocks
 
