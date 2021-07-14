@@ -58,6 +58,8 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
                         UserRedirect = new Uri(nServiceBusOptions.RedirectUrl),
                     };
 
+                    _logger.LogInformation($"Sending SendInvitation returned {JsonConvert.SerializeObject(invite)}");
+
                     await context.Send(invite);
                 }
             }
