@@ -24,12 +24,13 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure
         }
 
         public static void ConfigureOptions<TOptions>(this IServiceCollection services, string name)
-            where TOptions : class
+            where TOptions : class, new ()
         {
             services
                 .AddOptions<TOptions>()
                 .Configure<IConfiguration>((settings, configuration) =>
                     configuration.Bind(name, settings));
+            services.AddSingleton(S => S.GetRequiredService<IOptions<TOptions>>().Value);
         }
 
         public static void ConfigureFromOptions<TInterface, TOptions>(this IServiceCollection services)
