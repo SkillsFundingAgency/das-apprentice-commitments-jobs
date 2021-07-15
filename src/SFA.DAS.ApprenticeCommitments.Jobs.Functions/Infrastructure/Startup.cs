@@ -61,7 +61,8 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
             builder.Services.ConfigureOptions<ApprenticeCommitmentsApiOptions>(
                 ApprenticeCommitmentsApiOptions.ApprenticeCommitmentsApi);
             builder.Services.ConfigureFromOptions<IApimClientConfiguration, ApprenticeCommitmentsApiOptions>();
-
+            builder.Services.ConfigureOptions<NServiceBusOptions>(
+                "ApprenticeLoginApi");
             builder.Services.AddTransient<Http.MessageHandlers.DefaultHeadersHandler>();
             builder.Services.AddTransient<Http.MessageHandlers.LoggingMessageHandler>();
             builder.Services.AddTransient<Http.MessageHandlers.ApimHeadersHandler>();
