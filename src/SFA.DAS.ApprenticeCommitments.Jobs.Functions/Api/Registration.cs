@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 
+#nullable disable
+
 namespace SFA.DAS.ApprenticeCommitments.Jobs.Api
 {
     public class Registration
