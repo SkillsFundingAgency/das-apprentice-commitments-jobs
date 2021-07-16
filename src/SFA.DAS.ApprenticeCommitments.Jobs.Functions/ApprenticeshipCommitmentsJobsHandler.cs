@@ -42,6 +42,8 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
             {
                 var res = await _api.CreateApprentice(message.ToApprenticeshipCreated());
 
+                _logger.LogInformation($"CreateApprentice returned {JsonConvert.SerializeObject(res)}");
+
                 if (res != null)
                 {
                     var invite = new SendInvitation()
@@ -57,7 +59,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
                         UserRedirect = new Uri(_nServiceBusOptions.RedirectUrl),
                     };
 
-                    _logger.LogInformation($"Sending SendInvitation returned {JsonConvert.SerializeObject(invite)}");
+                    _logger.LogInformation($"SendInvitation {JsonConvert.SerializeObject(invite)}");
 
                     await context.Send(invite);
                 }
