@@ -43,6 +43,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
                 var res = await _api.CreateApprentice(message.ToApprenticeshipCreated());
 
                 _logger.LogInformation($"CreateApprentice returned {JsonConvert.SerializeObject(res)}");
+                _logger.LogInformation($"_nServiceBusOptions {JsonConvert.SerializeObject(_nServiceBusOptions)}");
 
                 if (res != null)
                 {
