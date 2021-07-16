@@ -44,7 +44,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
             {
                 await context.Send(new SendEmailCommand(
                     templateId,
-                    apprentice.Email.ToString(),
+                    apprentice.Email,
                     new Dictionary<string, string>
                     {
                         { "GivenName", apprentice.FirstName },

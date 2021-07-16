@@ -33,7 +33,6 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure
     }
 
     public class LoginServiceOptions
-
     {
         public Guid IdentityServerClientId { get; set; }
         public string CallbackUrl { get; set; } = null!;

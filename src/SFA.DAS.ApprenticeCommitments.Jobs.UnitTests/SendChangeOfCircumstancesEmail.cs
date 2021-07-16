@@ -38,7 +38,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
                 .Which.Message.Should().BeEquivalentTo(new
                 {
                     TemplateId = "99",
-                    RecipientsAddress = apprentice.Email.ToString(),
+                    RecipientsAddress = apprentice.Email,
                     Tokens = new Dictionary<string, string>
                     {
                         { "GivenName", apprentice.FirstName },

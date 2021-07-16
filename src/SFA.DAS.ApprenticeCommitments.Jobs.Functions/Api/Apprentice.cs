@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Net.Mail;
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs.Api
 {
@@ -8,6 +7,6 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Api
         public Guid Id { get; set; }
         public string FirstName { get; set; } = null!;
         public string LastName { get; set; } = null!;
-        public MailAddress Email { get; set; } = null!;
+        public string Email { get; set; } = null!;
     }
 }
