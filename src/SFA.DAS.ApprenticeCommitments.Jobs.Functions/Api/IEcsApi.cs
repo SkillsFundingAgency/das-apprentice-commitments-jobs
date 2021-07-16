@@ -24,7 +24,8 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Api
         [Get("registrations/reminders")]
         Task<RegistrationsWrapper> GetReminderRegistrations([Query] DateTime invitationCutOffTime);
 
-        Task InvitationReminderSent(Guid apprenticeId, DateTime utcNow);
+        [Post("registrations/{apprenticeId}/reminder")]
+        Task InvitationReminderSent([Path] Guid apprenticeId, [Body] RegistrationReminderSentRequest request);
 
         [Post("apprentices/{id}/email")]
         Task UpdateApprenticeEmail([Path] Guid id, [Body] EmailUpdate request);

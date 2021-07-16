@@ -70,7 +70,10 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
                     await _endpoint.Send(invite, executionContext, log);
 
                     log.LogInformation($"Updating Registration for Apprentice {registration.ApprenticeId}");
-                    await _api.InvitationReminderSent(registration.ApprenticeId, DateTime.UtcNow);
+                    await _api.InvitationReminderSent(registration.ApprenticeId, new RegistrationReminderSentRequest
+                    {
+                        SentOn = DateTime.UtcNow
+                    });
                 }
                 catch (Exception e)
                 {
