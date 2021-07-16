@@ -1,10 +1,10 @@
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using NServiceBus;
 using RestEase.HttpClientFactory;
 using SFA.DAS.Apprentice.LoginService.Messages;
+using SFA.DAS.ApprenticeCommitments.Jobs.Api;
 using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure;
 using SFA.DAS.Http.Configuration;
 using SFA.DAS.NServiceBus.Configuration.AzureServiceBus;
@@ -60,17 +60,17 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
 
             builder.Services.ConfigureOptions<ApprenticeCommitmentsApiOptions>(
                 ApprenticeCommitmentsApiOptions.ApprenticeCommitmentsApi);
-            builder.Services.ConfigureFromOptions<IApimClientConfiguration, ApprenticeCommitmentsApiOptions>();
-            builder.Services.ConfigureOptions<NServiceBusOptions>(
-                "ApprenticeLoginApi");
+            builder.Services.ConfigureFromOptions(f => f.ApprenticeCommitmentsApi);
+            builder.Services.ConfigureFromOptions(f => f.Notifications);
+            builder.Services.AddSingleton<IApimClientConfiguration>(x => x.GetRequiredService<ApprenticeCommitmentsApiOptions>());
             builder.Services.AddTransient<Http.MessageHandlers.DefaultHeadersHandler>();
             builder.Services.AddTransient<Http.MessageHandlers.LoggingMessageHandler>();
             builder.Services.AddTransient<Http.MessageHandlers.ApimHeadersHandler>();
 
             var url = builder.Services
                 .BuildServiceProvider()
-                .GetRequiredService<IOptions<ApprenticeCommitmentsApiOptions>>()
-                .Value.ApiBaseUrl;
+                .GetRequiredService<ApprenticeCommitmentsApiOptions>()
+                .ApiBaseUrl;
 
             builder.Services.AddRestEaseClient<IEcsApi>(url)
                 .AddHttpMessageHandler<Http.MessageHandlers.DefaultHeadersHandler>()
