@@ -19,17 +19,17 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
     {
         private readonly IEcsApi _api;
         private readonly ILogger<ApprenticeshipCommitmentsJobsHandler> _logger;
-        private readonly NServiceBusOptions nServiceBusOptions;
+        private readonly LoginServiceOptions _nServiceBusOptions;
 
         public ApprenticeshipCommitmentsJobsHandler(
             IEcsApi api,
             ILogger<ApprenticeshipCommitmentsJobsHandler> logger,
-            NServiceBusOptions nServiceBusOptions
-                                                   )
+            LoginServiceOptions nServiceBusOptions
+            )
         {
-            this._api = api;
-            this._logger = logger;
-            this.nServiceBusOptions = nServiceBusOptions;
+            _api = api;
+            _logger = logger;
+            _nServiceBusOptions = nServiceBusOptions;
         }
 
         public async Task Handle(ApprenticeshipCreatedEvent message, IMessageHandlerContext context)
@@ -42,21 +42,19 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
             {
                 var res = await _api.CreateApprentice(message.ToApprenticeshipCreated());
 
-                _logger.LogInformation($"CreateApprentice returned {JsonConvert.SerializeObject(res)}");
-
                 if (res != null)
                 {
                     var invite = new SendInvitation()
                     {
-                        ClientId = nServiceBusOptions.IdentityServerClientId,
+                        ClientId = _nServiceBusOptions.IdentityServerClientId,
                         SourceId = res.SourceId.ToString(),
                         Email = res.Email,
                         GivenName = res.GivenName,
                         FamilyName = res.FamilyName,
                         OrganisationName = message.LegalEntityName,
                         ApprenticeshipName = res.ApprenticeshipName,
-                        Callback = new Uri(nServiceBusOptions.CallbackUrl),
-                        UserRedirect = new Uri(nServiceBusOptions.RedirectUrl),
+                        Callback = new Uri(_nServiceBusOptions.CallbackUrl),
+                        UserRedirect = new Uri(_nServiceBusOptions.RedirectUrl),
                     };
 
                     _logger.LogInformation($"Sending SendInvitation returned {JsonConvert.SerializeObject(invite)}");
