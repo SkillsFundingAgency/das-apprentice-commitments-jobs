@@ -17,7 +17,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
     {
         [Test, AutoMoqData]
         public async Task Send_reminder_emails_with_default_cutoff(
-            [Frozen] ApplicationOptions config,
+            [Frozen] ApplicationSettings config,
             [Frozen] Mock<IEcsApi> api,
             SendInvitationRemindersHandler sut)
         {
@@ -32,7 +32,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
 
         [Test, AutoMoqData]
         public async Task Send_reminder_emails_with_configured_cutoff(
-            [Frozen] ApplicationOptions config,
+            [Frozen] ApplicationSettings config,
             [Frozen] Mock<IEcsApi> api, SendInvitationRemindersHandler sut)
         {
             config.SendRemindersAfterThisNumberDays = 99;
@@ -46,7 +46,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
 
         [Test, AutoMoqData]
         public async Task Send_reminder_emails_with_negative_cutoff_uses_default(
-            [Frozen] ApplicationOptions config,
+            [Frozen] ApplicationSettings config,
             [Frozen] Mock<IEcsApi> api, SendInvitationRemindersHandler sut)
         {
             config.SendRemindersAfterThisNumberDays = -15;

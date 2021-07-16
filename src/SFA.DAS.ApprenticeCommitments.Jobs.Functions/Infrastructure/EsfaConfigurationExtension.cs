@@ -24,14 +24,13 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure
             });
         }
 
-        public static void ConfigureOptions<TOptions>(this IServiceCollection services, string name)
-            where TOptions : class, new()
+        public static void AddApplicationOptions(this IServiceCollection services)
         {
             services
-                .AddOptions<TOptions>()
+                .AddOptions<ApplicationSettings>()
                 .Configure<IConfiguration>((settings, configuration) =>
-                    configuration.Bind(name, settings));
-            services.AddSingleton(s => s.GetRequiredService<IOptions<TOptions>>().Value);
+                    configuration.Bind(settings));
+            services.AddSingleton(s => s.GetRequiredService<IOptions<ApplicationSettings>>().Value);
         }
 
         public static void ConfigureFromOptions<TOptions>(this IServiceCollection services, Func<ApplicationSettings, TOptions> func)

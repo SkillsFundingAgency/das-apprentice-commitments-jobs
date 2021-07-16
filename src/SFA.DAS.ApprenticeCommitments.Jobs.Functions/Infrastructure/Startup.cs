@@ -1,6 +1,8 @@
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using NServiceBus;
 using RestEase.HttpClientFactory;
 using SFA.DAS.Apprentice.LoginService.Messages;
@@ -58,8 +60,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
                 return configuration;
             });
 
-            builder.Services.ConfigureOptions<ApprenticeCommitmentsApiOptions>(
-                ApprenticeCommitmentsApiOptions.ApprenticeCommitmentsApi);
+            builder.Services.AddApplicationOptions();
             builder.Services.ConfigureFromOptions(f => f.ApprenticeCommitmentsApi);
             builder.Services.ConfigureFromOptions(f => f.Notifications);
             builder.Services.AddSingleton<IApimClientConfiguration>(x => x.GetRequiredService<ApprenticeCommitmentsApiOptions>());

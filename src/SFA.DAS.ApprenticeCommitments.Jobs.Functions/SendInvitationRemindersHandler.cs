@@ -14,12 +14,12 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
     {
         private readonly IEcsApi _api;
         private readonly IFunctionEndpoint _endpoint;
-        private readonly ApplicationOptions _options;
+        private readonly ApplicationSettings _options;
 
         public SendInvitationRemindersHandler(
             IEcsApi api,
             IFunctionEndpoint endpoint,
-            ApplicationOptions options)
+            ApplicationSettings options)
         {
             _api = api;
             _endpoint = endpoint;
