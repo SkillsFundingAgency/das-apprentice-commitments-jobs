@@ -7,6 +7,7 @@ using SFA.DAS.Apprentice.LoginService.Messages;
 using SFA.DAS.ApprenticeCommitments.Jobs.Api;
 using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure;
 using SFA.DAS.Http.Configuration;
+using SFA.DAS.Notifications.Messages.Commands;
 using SFA.DAS.NServiceBus.Configuration.AzureServiceBus;
 using System;
 
@@ -51,6 +52,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
 
                 // when a SendInvitationCommand event is fired, route it to the login service queue
                 configuration.Transport.Routing().RouteToEndpoint(typeof(SendInvitation), QueueNames.LoginServiceQueue);
+                configuration.Transport.Routing().RouteToEndpoint(typeof(SendEmailCommand), QueueNames.NotificationsQueue);
 
                 configuration.AdvancedConfiguration.Pipeline.Register(new LogIncomingBehaviour(), nameof(LogIncomingBehaviour));
                 configuration.AdvancedConfiguration.Pipeline.Register(new LogOutgoingBehaviour(), nameof(LogOutgoingBehaviour));
