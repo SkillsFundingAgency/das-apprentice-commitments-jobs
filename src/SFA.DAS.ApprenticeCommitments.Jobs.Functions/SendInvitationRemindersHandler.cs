@@ -28,7 +28,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
 
         [FunctionName("HandleSendInvitationReminders")]
         public async Task Run(
-            [TimerTrigger("%SendRemindersTriggerTime%")] TimerInfo _,
+            [TimerTrigger("%SendRemindersTriggerTime%")] TimerInfo timer,
             ExecutionContext executionContext,
             ILogger log)
         {
