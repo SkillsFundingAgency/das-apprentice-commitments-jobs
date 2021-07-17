@@ -76,6 +76,9 @@
         "subnetServiceEndpointList": {
             "type": "array"
         },
+        "workerAccessRestrictions": {
+            "type": "array"
+        },
         "loggingRedisConnectionString": {
             "type": "securestring"
         },
@@ -276,6 +279,9 @@
                                 }
                             ]
                         }
+                    },
+                    "ipSecurityRestrictions": {
+                        "value": "[parameters('workerAccessRestrictions')]"
                     }
                 }
             },
