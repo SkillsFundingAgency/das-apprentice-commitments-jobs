@@ -1,4 +1,6 @@
-﻿using NServiceBus;
+﻿using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using NServiceBus;
 using SFA.DAS.ApprenticeCommitments.Jobs.Api;
 using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure;
 using SFA.DAS.ApprenticeCommitments.Messages.Events;
@@ -15,11 +17,13 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
         private TimeSpan _timeToWaitBeforeEmail => settings.TimeToWaitBeforeChangeOfApprenticeshipEmail;
         private readonly ApplicationSettings settings;
         private readonly IEcsApi api;
+        private readonly ILogger<ApprenticeshipChangedEventHandler> logger;
 
-        public ApprenticeshipChangedEventHandler(ApplicationSettings settings, IEcsApi api)
+        public ApprenticeshipChangedEventHandler(ApplicationSettings settings, IEcsApi api,ILogger<ApprenticeshipChangedEventHandler> logger)
         {
             this.api = api;
             this.settings = settings;
+            this.logger = logger;
         }
 
         public async Task Handle(ApprenticeshipChangedEvent message, IMessageHandlerContext context)
@@ -33,6 +37,8 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
 
             var ordered = apprenticeship.Revisions
                 .OrderBy(x => x.ApprovedOn).ToArray();
+
+            logger.LogInformation($"Revisions: {JsonConvert.SerializeObject(ordered)}");
 
             var newest = ordered[^1];
             var previous = ordered[^2];
