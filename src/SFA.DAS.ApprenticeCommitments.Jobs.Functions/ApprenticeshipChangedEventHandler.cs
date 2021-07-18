@@ -32,13 +32,13 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
             var (apprentice, apprenticeship) = await GetApprenticeship(message);
 
             var ordered = apprenticeship.Revisions
-                .OrderBy(x => x.CommitmentsApprovedOn).ToArray();
+                .OrderBy(x => x.ApprovedOn).ToArray();
 
             var newest = ordered[^1];
             var previous = ordered[^2];
 
-            var sinceLastApproval = newest.CommitmentsApprovedOn - previous.CommitmentsApprovedOn;
-            var seenPreviousApproval = apprenticeship.LastViewed > previous.CommitmentsApprovedOn;
+            var sinceLastApproval = newest.ApprovedOn - previous.ApprovedOn;
+            var seenPreviousApproval = apprenticeship.LastViewed > previous.ApprovedOn;
 
             if (sinceLastApproval > _timeToWaitBeforeEmail || seenPreviousApproval)
             {

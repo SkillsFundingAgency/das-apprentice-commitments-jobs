@@ -67,8 +67,8 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
             ApprenticeshipChangedEventHandler sut,
             ApprenticeshipChangedEvent evt)
         {
-            apprenticeship.Revisions[2].CommitmentsApprovedOn =
-                apprenticeship.Revisions[1].CommitmentsApprovedOn.AddHours(23);
+            apprenticeship.Revisions[2].ApprovedOn =
+                apprenticeship.Revisions[1].ApprovedOn.AddHours(23);
 
             var context = new TestableMessageHandlerContext();
 
@@ -83,8 +83,8 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
             ApprenticeshipChangedEventHandler sut,
             ApprenticeshipChangedEvent evt)
         {
-            apprenticeship.Revisions[2].CommitmentsApprovedOn =
-                apprenticeship.Revisions[1].CommitmentsApprovedOn.AddHours(25);
+            apprenticeship.Revisions[2].ApprovedOn =
+                apprenticeship.Revisions[1].ApprovedOn.AddHours(25);
 
             var context = new TestableMessageHandlerContext();
             await sut.Handle(evt, context);
@@ -99,9 +99,9 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
             ApprenticeshipChangedEvent evt)
         {
             apprenticeship.LastViewed =
-                apprenticeship.Revisions[1].CommitmentsApprovedOn.AddHours(1);
-            apprenticeship.Revisions[2].CommitmentsApprovedOn =
-                apprenticeship.Revisions[1].CommitmentsApprovedOn.AddHours(8);
+                apprenticeship.Revisions[1].ApprovedOn.AddHours(1);
+            apprenticeship.Revisions[2].ApprovedOn =
+                apprenticeship.Revisions[1].ApprovedOn.AddHours(8);
 
             var context = new TestableMessageHandlerContext();
             await sut.Handle(evt, context);
@@ -130,7 +130,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
                 fixture.Customize<ApprenticeshipHistory>(c => c
                     .With(s => s.LastViewed, default(DateTime))
                     .With(s => s.Revisions,
-                        fixture.CreateMany<ApprenticeshipRevision>().OrderBy(x => x.CommitmentsApprovedOn).ToList()));
+                        fixture.CreateMany<ApprenticeshipRevision>().OrderBy(x => x.ApprovedOn).ToList()));
                 return fixture;
             }
         }
