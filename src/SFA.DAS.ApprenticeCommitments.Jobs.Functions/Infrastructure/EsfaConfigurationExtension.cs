@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using SFA.DAS.Configuration.AzureTableStorage;
+using System;
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure
 {
@@ -23,22 +24,20 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure
             });
         }
 
-        public static void ConfigureOptions<TOptions>(this IServiceCollection services, string name)
-            where TOptions : class, new ()
+        public static void AddApplicationOptions(this IServiceCollection services)
         {
             services
-                .AddOptions<TOptions>()
+                .AddOptions<ApplicationSettings>()
                 .Configure<IConfiguration>((settings, configuration) =>
-                    configuration.Bind(name, settings));
-            services.AddSingleton(S => S.GetRequiredService<IOptions<TOptions>>().Value);
+                    configuration.Bind(settings));
+            services.AddSingleton(s => s.GetRequiredService<IOptions<ApplicationSettings>>().Value);
         }
 
-        public static void ConfigureFromOptions<TInterface, TOptions>(this IServiceCollection services)
-            where TInterface : class
-            where TOptions : class, TInterface, new()
+        public static void ConfigureFromOptions<TOptions>(this IServiceCollection services, Func<ApplicationSettings, TOptions> func)
+            where TOptions : class, new()
         {
-            services.AddSingleton<TInterface>(s =>
-                s.GetRequiredService<IOptions<TOptions>>().Value);
+            services.AddSingleton(s =>
+                func(s.GetRequiredService<IOptions<ApplicationSettings>>().Value));
         }
     }
 }

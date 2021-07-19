@@ -5,5 +5,7 @@
         public const string ApprenticeshipCommitmentsJobs = "SFA.DAS.ApprenticeCommitments.Apprenticeship";
 
         public const string LoginServiceQueue = "sfa.das.apprenticeloginservice";
+        
+        public const string NotificationsQueue = "SFA.DAS.Notifications.MessageHandlers";
     }
 }

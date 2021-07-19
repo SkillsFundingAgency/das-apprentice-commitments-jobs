@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.ApprenticeCommitmen
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.ApprenticeCommitments.Jobs.UnitTests", "SFA.DAS.ApprenticeCommitments.Jobs.UnitTests\SFA.DAS.ApprenticeCommitments.Jobs.UnitTests.csproj", "{AD46270A-476F-425D-8C01-ADA2DC2CB24C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.ApprenticeCommitments.Jobs", "SFA.DAS.ApprenticeCommitments.Jobs\SFA.DAS.ApprenticeCommitments.Jobs.csproj", "{C31A9EAC-D5A5-4CDF-B72A-226248252D0E}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,10 +21,6 @@ Global
 		{AD46270A-476F-425D-8C01-ADA2DC2CB24C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AD46270A-476F-425D-8C01-ADA2DC2CB24C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AD46270A-476F-425D-8C01-ADA2DC2CB24C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C31A9EAC-D5A5-4CDF-B72A-226248252D0E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C31A9EAC-D5A5-4CDF-B72A-226248252D0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C31A9EAC-D5A5-4CDF-B72A-226248252D0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C31A9EAC-D5A5-4CDF-B72A-226248252D0E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

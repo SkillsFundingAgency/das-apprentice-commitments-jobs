@@ -3,10 +3,10 @@ using AutoFixture.NUnit3;
 using Moq;
 using NServiceBus.Testing;
 using NUnit.Framework;
+using SFA.DAS.ApprenticeCommitments.Jobs.Api;
 using SFA.DAS.ApprenticeCommitments.Jobs.Functions;
 using SFA.DAS.CommitmentsV2.Messages.Events;
 using System.Threading.Tasks;
-
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
 {
@@ -22,8 +22,6 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
             api.Setup(x => x.CreateApprentice(It.IsAny<ApprenticeshipCreated>()))
 
                .ReturnsAsync(_fixture.Create<CreateApprenticeshipResponse>());
-
-
 
             var evt = _fixture.Build<ApprenticeshipCreatedEvent>()
                .Without(p => p.ContinuationOfId)

@@ -1,12 +1,13 @@
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using NServiceBus;
 using RestEase.HttpClientFactory;
 using SFA.DAS.Apprentice.LoginService.Messages;
+using SFA.DAS.ApprenticeCommitments.Jobs.Api;
 using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure;
 using SFA.DAS.Http.Configuration;
+using SFA.DAS.Notifications.Messages.Commands;
 using SFA.DAS.NServiceBus.Configuration.AzureServiceBus;
 using System;
 
@@ -51,6 +52,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
 
                 // when a SendInvitationCommand event is fired, route it to the login service queue
                 configuration.Transport.Routing().RouteToEndpoint(typeof(SendInvitation), QueueNames.LoginServiceQueue);
+                configuration.Transport.Routing().RouteToEndpoint(typeof(SendEmailCommand), QueueNames.NotificationsQueue);
 
                 configuration.AdvancedConfiguration.Pipeline.Register(new LogIncomingBehaviour(), nameof(LogIncomingBehaviour));
                 configuration.AdvancedConfiguration.Pipeline.Register(new LogOutgoingBehaviour(), nameof(LogOutgoingBehaviour));
@@ -58,19 +60,19 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
                 return configuration;
             });
 
-            builder.Services.ConfigureOptions<ApprenticeCommitmentsApiOptions>(
-                ApprenticeCommitmentsApiOptions.ApprenticeCommitmentsApi);
-            builder.Services.ConfigureFromOptions<IApimClientConfiguration, ApprenticeCommitmentsApiOptions>();
-            builder.Services.ConfigureOptions<NServiceBusOptions>(
-                "ApprenticeLoginApi");
+            builder.Services.AddApplicationOptions();
+            builder.Services.ConfigureFromOptions(f => f.ApprenticeCommitmentsApi);
+            builder.Services.ConfigureFromOptions(f => f.Notifications);
+            builder.Services.ConfigureFromOptions(f => f.ApprenticeLoginApi);
+            builder.Services.AddSingleton<IApimClientConfiguration>(x => x.GetRequiredService<ApprenticeCommitmentsApiOptions>());
             builder.Services.AddTransient<Http.MessageHandlers.DefaultHeadersHandler>();
             builder.Services.AddTransient<Http.MessageHandlers.LoggingMessageHandler>();
             builder.Services.AddTransient<Http.MessageHandlers.ApimHeadersHandler>();
 
             var url = builder.Services
                 .BuildServiceProvider()
-                .GetRequiredService<IOptions<ApprenticeCommitmentsApiOptions>>()
-                .Value.ApiBaseUrl;
+                .GetRequiredService<ApprenticeCommitmentsApiOptions>()
+                .ApiBaseUrl;
 
             builder.Services.AddRestEaseClient<IEcsApi>(url)
                 .AddHttpMessageHandler<Http.MessageHandlers.DefaultHeadersHandler>()
