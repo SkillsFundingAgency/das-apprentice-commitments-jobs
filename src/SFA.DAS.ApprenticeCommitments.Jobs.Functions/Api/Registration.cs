@@ -7,8 +7,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Api
 {
     public class Registration
     {
-        public Guid ApprenticeId { get; set; }
-        public long ApprenticeshipId { get; set; }
+        public Guid RegistrationId { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Email { get; set; }

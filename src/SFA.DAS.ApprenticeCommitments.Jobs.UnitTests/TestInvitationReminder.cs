@@ -68,7 +68,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
 
             endpoint.Verify(m => m.Send(
                 It.Is<SendInvitation>(n =>
-                    n.SourceId == registration.ApprenticeId.ToString() &&
+                    n.SourceId == registration.RegistrationId.ToString() &&
                     n.Email == registration.Email &&
                     n.GivenName == registration.FirstName &&
                     n.FamilyName == registration.LastName &&

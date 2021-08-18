@@ -50,7 +50,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
                     var invite = new SendInvitation()
                     {
                         ClientId = _nServiceBusOptions.IdentityServerClientId,
-                        SourceId = res.SourceId.ToString(),
+                        SourceId = res.RegistrationId.ToString(),
                         Email = res.Email,
                         GivenName = res.GivenName,
                         FamilyName = res.FamilyName,

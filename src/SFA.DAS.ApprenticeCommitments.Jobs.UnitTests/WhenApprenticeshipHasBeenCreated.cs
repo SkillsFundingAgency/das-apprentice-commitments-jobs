@@ -21,7 +21,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
         {
             api.Setup(x => x.CreateApprentice(It.IsAny<ApprenticeshipCreated>()))
 
-               .ReturnsAsync(_fixture.Create<CreateApprenticeshipResponse>());
+               .ReturnsAsync(_fixture.Create<CreateRegistrationResponse>());
 
             var evt = _fixture.Build<ApprenticeshipCreatedEvent>()
                .Without(p => p.ContinuationOfId)
