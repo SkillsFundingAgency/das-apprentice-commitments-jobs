@@ -58,7 +58,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
 
             sut
                 .Invoking(s => s.Handle(evt, new TestableMessageHandlerContext()))
-                .Should().Throw<Exception>().WithMessage("Missing configuration `Notifications:Templates:ApprenticeshipChangedEmail`");
+                .Should().ThrowAsync<Exception>().WithMessage("Missing configuration `Notifications:Templates:ApprenticeshipChangedEmail`");
         }
 
         [Test, TestAutoData]
