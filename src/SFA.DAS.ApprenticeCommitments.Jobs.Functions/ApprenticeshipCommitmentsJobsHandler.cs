@@ -17,6 +17,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
         , IHandleMessages<SendInvitationReply>
         , IHandleMessages<ApprenticeshipUpdatedApprovedEvent>
         , IHandleMessages<UpdateEmailAddressCommand>
+        , IHandleMessages<ApprenticeshipUpdatedEmailAddressEvent>
     {
         private readonly IEcsApi _api;
         private readonly ILogger<ApprenticeshipCommitmentsJobsHandler> _logger;
@@ -79,5 +80,8 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
 
         public async Task Handle(SendInvitationReply message, IMessageHandlerContext context)
             => await Task.CompletedTask;
+
+        public Task Handle(ApprenticeshipUpdatedEmailAddressEvent message, IMessageHandlerContext context)
+            => _api.UpdateApprenticeship(message.ToApprenticeshipUpdated());
     }
 }

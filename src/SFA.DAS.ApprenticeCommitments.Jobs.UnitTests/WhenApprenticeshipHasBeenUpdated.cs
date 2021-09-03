@@ -24,5 +24,19 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
                 n.CommitmentsApprenticeshipId == evt.ApprenticeshipId &&
                 n.CommitmentsApprovedOn == evt.ApprovedOn)));
         }
+
+        [Test, AutoMoqData]
+        public async Task Then_notify_apim(
+            [Frozen] Mock<IEcsApi> api,
+            ApprenticeshipCommitmentsJobsHandler sut,
+            ApprenticeshipUpdatedEmailAddressEvent evt)
+        {
+            await sut.Handle(evt, new TestableMessageHandlerContext());
+
+            api.Verify(m => m.UpdateApprenticeship(It.Is<ApprenticeshipUpdated>(n =>
+                n.CommitmentsContinuedApprenticeshipId == null &&
+                n.CommitmentsApprenticeshipId == evt.ApprenticeshipId &&
+                n.CommitmentsApprovedOn == evt.ApprovedOn)));
+        }
     }
 }
