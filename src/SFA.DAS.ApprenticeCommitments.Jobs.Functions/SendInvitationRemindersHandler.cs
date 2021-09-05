@@ -4,7 +4,9 @@ using NServiceBus;
 using SFA.DAS.Apprentice.LoginService.Messages;
 using SFA.DAS.ApprenticeCommitments.Jobs.Api;
 using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure;
+using SFA.DAS.Notifications.Messages.Commands;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -13,15 +15,18 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
     public class SendInvitationRemindersHandler
     {
         private readonly IEcsApi _api;
+        private readonly EmailService _emailer;
         private readonly IFunctionEndpoint _endpoint;
         private readonly ApplicationSettings _options;
 
         public SendInvitationRemindersHandler(
             IEcsApi api,
+            EmailService emailer,
             IFunctionEndpoint endpoint,
             ApplicationSettings options)
         {
             _api = api;
+            _emailer = emailer;
             _endpoint = endpoint;
             _options = options;
         }
@@ -54,18 +59,18 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
                 try
                 {
                     log.LogInformation($"Sending Invitation for Apprentice {registration.RegistrationId}");
-                    var invite = new SendInvitation
-                    {
-                        ClientId = _options.ApprenticeLoginApi.IdentityServerClientId,
-                        SourceId = registration.RegistrationId.ToString(),
-                        Email = registration.Email,
-                        GivenName = registration.FirstName,
-                        FamilyName = registration.LastName,
-                        OrganisationName = registration.EmployerName,
-                        ApprenticeshipName = registration.CourseName,
-                        Callback = new Uri(_options.ApprenticeLoginApi.CallbackUrl),
-                        UserRedirect = new Uri(_options.ApprenticeLoginApi.RedirectUrl),
-                    };
+                    
+                    var link = $"{_options.ApprenticeLoginApi.RedirectUrl}?Register={registration.RegistrationId}";
+                    
+                    var invite = new SendEmailCommand(
+                        _options.Notifications.ApprenticeSignUpInvitation.ToString(),
+                        registration.Email,
+                        new Dictionary<string, string>
+                        {
+                            { "GivenName", registration.FirstName },
+                            { "CreateAccountLink", link },
+                            { "LoginLink", link },
+                        });
 
                     await _endpoint.Send(invite, executionContext, log);
 
