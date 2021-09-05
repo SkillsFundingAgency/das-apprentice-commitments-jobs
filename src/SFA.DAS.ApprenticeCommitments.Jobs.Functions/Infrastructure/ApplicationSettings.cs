@@ -23,8 +23,8 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure
     {
         public Dictionary<string, string> Templates { get; set; } = new Dictionary<string, string>();
 
-        public Guid ApprenticeSignUp => GetTemplateId("ApprenticeSignUp");
-        public Guid ApprenticeshipChanged => GetTemplateId("ApprenticeshipChanged");
+        public Guid ApprenticeSignUp => Guid.Parse("4f04cf81-b291-4577-9452-ecab875ed6f8");// GetTemplateId("ApprenticeSignUp");
+        public Guid ApprenticeshipChanged => GetTemplateId("ApprenticeshipChangedEmail");
 
         private Guid GetTemplateId(string templateName)
         {

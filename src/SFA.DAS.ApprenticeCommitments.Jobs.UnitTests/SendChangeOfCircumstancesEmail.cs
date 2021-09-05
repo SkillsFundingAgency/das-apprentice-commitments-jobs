@@ -26,7 +26,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
             ApprenticeshipChangedEvent evt,
             Guid emailTemplateId)
         {
-            settings.Notifications.Templates.Add("ApprenticeshipChanged", emailTemplateId.ToString());
+            settings.Notifications.Templates.Add("ApprenticeshipChangedEmail", emailTemplateId.ToString());
 
             var context = new TestableMessageHandlerContext();
 
@@ -59,7 +59,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
 
             await sut
                 .Invoking(s => s.Handle(evt, new TestableMessageHandlerContext()))
-                .Should().ThrowAsync<Exception>().WithMessage("Missing configuration `Notifications:Templates:ApprenticeshipChanged`");
+                .Should().ThrowAsync<Exception>().WithMessage("Missing configuration `Notifications:Templates:ApprenticeshipChangedEmail`");
         }
 
         [Test, TestAutoData]
@@ -127,7 +127,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
                     With(s => s.TimeToWaitBeforeChangeOfApprenticeshipEmail, TimeSpan.FromHours(24)));
                 fixture.Customize<NotificationConfiguration>(c => c
                     .Without(s => s.Templates)
-                    .Do(s => s.Templates.Add("ApprenticeshipChanged", Guid.NewGuid().ToString())));
+                    .Do(s => s.Templates.Add("ApprenticeshipChangedEmail", Guid.NewGuid().ToString())));
                 fixture.Customize<ApprenticeshipHistory>(c => c
                     .With(s => s.LastViewed, default(DateTime))
                     .With(s => s.Revisions,
