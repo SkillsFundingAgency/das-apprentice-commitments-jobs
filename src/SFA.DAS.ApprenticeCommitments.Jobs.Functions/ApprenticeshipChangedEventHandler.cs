@@ -4,9 +4,7 @@ using NServiceBus;
 using SFA.DAS.ApprenticeCommitments.Jobs.Api;
 using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure;
 using SFA.DAS.ApprenticeCommitments.Messages.Events;
-using SFA.DAS.Notifications.Messages.Commands;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -34,8 +32,6 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
 
         public async Task Handle(ApprenticeshipChangedEvent message, IMessageHandlerContext context)
         {
-            var url = new Uri(settings.ApprenticeCommitmentsWeb.BaseUrl, "Apprenticeships");
-
             var (apprentice, apprenticeship) = await GetApprenticeship(message);
 
             var ordered = apprenticeship.Revisions
@@ -52,7 +48,8 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
             if (sinceLastApproval > TimeToWaitBeforeEmail || seenPreviousApproval)
             {
                 await emailer.SendApprenticeshipChanged(context,
-                    apprentice.Email, apprentice.FirstName, apprentice.LastName, url.ToString());
+                    apprentice.Email, apprentice.FirstName, apprentice.LastName,
+                    settings.ApprenticeCommitmentsWeb.ConfirmApprenticeshipUrl.ToString());
             }
         }
 

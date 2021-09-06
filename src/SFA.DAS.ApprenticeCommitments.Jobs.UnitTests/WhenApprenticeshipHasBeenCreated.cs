@@ -69,6 +69,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
         [Test, TestAutoData]
         public async Task Then_email_the_apprentice(
             [Frozen] Mock<IEcsApi> api,
+            [Frozen] UrlConfiguration _,
             [Frozen] ApplicationSettings settings,
             ApprenticeshipRegisteredEventHandler sut,
             ApprenticeshipRegisteredEvent evt,

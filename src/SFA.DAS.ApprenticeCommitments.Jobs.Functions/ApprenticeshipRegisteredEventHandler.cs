@@ -13,18 +13,18 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
     {
         private readonly IEcsApi _api;
         private readonly EmailService _emailer;
-        private readonly ApplicationSettings _settings;
+        private readonly UrlConfiguration _urls;
         private readonly ILogger<ApprenticeshipCommitmentsJobsHandler> _logger;
 
         public ApprenticeshipRegisteredEventHandler(
             IEcsApi api,
             EmailService emailer,
-            ApplicationSettings settings,
+            UrlConfiguration urls,
             ILogger<ApprenticeshipCommitmentsJobsHandler> logger)
         {
             _api = api;
             _emailer = emailer;
-            _settings = settings;
+            _urls = urls;
             _logger = logger;
         }
 
@@ -32,7 +32,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
         {
             _logger.LogInformation("Handle ApprenticeshipRegisteredEvent for apprenticeship registration {RegistrationId}", request.RegistrationId);
 
-            var link = $"{_settings.ApprenticeCommitmentsWeb.StartPageUrl}?Register={request.RegistrationId}";
+            var link = $"{_urls.StartPageUrl}?Register={request.RegistrationId}";
             
             var registration = await GetRegistration(request.RegistrationId);
 
