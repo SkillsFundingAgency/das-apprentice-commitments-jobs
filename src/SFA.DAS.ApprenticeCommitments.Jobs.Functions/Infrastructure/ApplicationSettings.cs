@@ -15,7 +15,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure
 
     public class UrlConfiguration
     {
-        public string BaseUrl { get; set; } = null!;
+        public Uri BaseUrl { get; set; } = null!;
         public string StartPageUrl { get; set; } = null!;
     }
 

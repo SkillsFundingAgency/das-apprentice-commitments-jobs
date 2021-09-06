@@ -32,7 +32,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
 
             await sut.Handle(evt, context);
 
-            var url = $"{settings.ApprenticeCommitmentsWeb.BaseUrl}/Apprenticeships";
+            var url = new Uri(settings.ApprenticeCommitmentsWeb.BaseUrl, "Apprenticeships").ToString();
 
             context.SentMessages
                 .Should().Contain(x => x.Message is SendEmailCommand)

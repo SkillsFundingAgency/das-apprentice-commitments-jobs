@@ -34,7 +34,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
 
         public async Task Handle(ApprenticeshipChangedEvent message, IMessageHandlerContext context)
         {
-            var url = $"{settings.ApprenticeCommitmentsWeb.BaseUrl}/Apprenticeships";
+            var url = new Uri(settings.ApprenticeCommitmentsWeb.BaseUrl, "Apprenticeships");
 
             var (apprentice, apprenticeship) = await GetApprenticeship(message);
 
@@ -51,7 +51,8 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
 
             if (sinceLastApproval > TimeToWaitBeforeEmail || seenPreviousApproval)
             {
-                await emailer.SendApprenticeshipChanged(context, apprentice.Email, apprentice.FirstName, apprentice.LastName, url);
+                await emailer.SendApprenticeshipChanged(context,
+                    apprentice.Email, apprentice.FirstName, apprentice.LastName, url.ToString());
             }
         }
 
