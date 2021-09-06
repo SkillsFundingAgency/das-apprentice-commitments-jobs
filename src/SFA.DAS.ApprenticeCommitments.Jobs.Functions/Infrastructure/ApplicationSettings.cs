@@ -16,7 +16,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure
     public class UrlConfiguration
     {
         public Uri BaseUrl { get; set; } = null!;
-        public string StartPageUrl { get; set; } = null!;
+        public Uri StartPageUrl { get; set; } = null!;
     }
 
     public class NotificationConfiguration
