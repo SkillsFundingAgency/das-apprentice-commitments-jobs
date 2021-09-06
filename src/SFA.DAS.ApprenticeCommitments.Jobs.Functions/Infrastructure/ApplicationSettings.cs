@@ -22,6 +22,16 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure
     public class NotificationConfiguration
     {
         public Dictionary<string, string> Templates { get; set; } = new Dictionary<string, string>();
+
+        public Guid ApprenticeSignUpInvitation => GetTemplateId("ApprenticeSignUpInvitation");
+        public Guid ApprenticeshipChangedEmail => GetTemplateId("ApprenticeshipChangedEmail");
+
+        private Guid GetTemplateId(string templateName)
+        {
+            return Templates.TryGetValue(templateName, out var templateId)
+                ? Guid.Parse(templateId)
+                : throw new MissingEmailTemplateConfigurationException(templateName);
+        }
     }
 
     public class ApprenticeCommitmentsApiOptions : IApimClientConfiguration

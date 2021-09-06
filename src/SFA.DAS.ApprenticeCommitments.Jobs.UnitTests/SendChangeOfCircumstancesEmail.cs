@@ -23,9 +23,10 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
             [Frozen] Api.Apprentice apprentice,
             [Frozen] ApplicationSettings settings,
             ApprenticeshipChangedEventHandler sut,
-            ApprenticeshipChangedEvent evt)
+            ApprenticeshipChangedEvent evt,
+            Guid emailTemplateId)
         {
-            settings.Notifications.Templates.Add("ApprenticeshipChangedEmail", "99");
+            settings.Notifications.Templates.Add("ApprenticeshipChangedEmail", emailTemplateId.ToString());
 
             var context = new TestableMessageHandlerContext();
 
@@ -37,7 +38,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
                 .Should().Contain(x => x.Message is SendEmailCommand)
                 .Which.Message.Should().BeEquivalentTo(new
                 {
-                    TemplateId = "99",
+                    TemplateId = emailTemplateId.ToString(),
                     RecipientsAddress = apprentice.Email,
                     Tokens = new Dictionary<string, string>
                     {
@@ -126,7 +127,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
                     With(s => s.TimeToWaitBeforeChangeOfApprenticeshipEmail, TimeSpan.FromHours(24)));
                 fixture.Customize<NotificationConfiguration>(c => c
                     .Without(s => s.Templates)
-                    .Do(s => s.Templates.Add("ApprenticeshipChangedEmail", "99")));
+                    .Do(s => s.Templates.Add("ApprenticeshipChangedEmail", Guid.NewGuid().ToString())));
                 fixture.Customize<ApprenticeshipHistory>(c => c
                     .With(s => s.LastViewed, default(DateTime))
                     .With(s => s.Revisions,

@@ -8,6 +8,7 @@ using SFA.DAS.Notifications.Messages.Commands;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
@@ -28,9 +29,6 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
 
         public async Task Handle(ApprenticeshipChangedEvent message, IMessageHandlerContext context)
         {
-            if (!settings.Notifications.Templates.TryGetValue("ApprenticeshipChangedEmail", out var templateId))
-                throw new InvalidOperationException("Missing configuration `Notifications:Templates:ApprenticeshipChangedEmail`");
-
             var url = $"{settings.ApprenticeCommitmentsWeb.BaseUrl}/Apprenticeships";
 
             var (apprentice, apprenticeship) = await GetApprenticeship(message);
@@ -49,7 +47,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
             if (sinceLastApproval > _timeToWaitBeforeEmail || seenPreviousApproval)
             {
                 await context.Send(new SendEmailCommand(
-                    templateId,
+                    settings.Notifications.ApprenticeshipChangedEmail.ToString(),
                     apprentice.Email,
                     new Dictionary<string, string>
                     {
