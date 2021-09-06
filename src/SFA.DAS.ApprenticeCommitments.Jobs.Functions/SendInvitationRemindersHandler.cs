@@ -63,7 +63,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
                     var link = $"{_options.ApprenticeLoginApi.RedirectUrl}?Register={registration.RegistrationId}";
                     
                     var invite = new SendEmailCommand(
-                        _options.Notifications.ApprenticeSignUpInvitation.ToString(),
+                        _options.Notifications.ApprenticeSignUp.ToString(),
                         registration.Email,
                         new Dictionary<string, string>
                         {

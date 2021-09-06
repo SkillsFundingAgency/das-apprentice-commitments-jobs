@@ -29,7 +29,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
 
         public async Task Handle(ApprenticeshipRegisteredEvent request, IMessageHandlerContext context)
         {
-            _logger.LogInformation("Apprenticeship registration {RegistrationId}", request.RegistrationId);
+            _logger.LogInformation("Handle ApprenticeshipRegisteredEvent for apprenticeship registration {RegistrationId}", request.RegistrationId);
 
             var link = $"{_settings.ApprenticeLoginApi.RedirectUrl}?Register={request.RegistrationId}";
             

@@ -68,6 +68,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
             builder.Services.AddTransient<Http.MessageHandlers.DefaultHeadersHandler>();
             builder.Services.AddTransient<Http.MessageHandlers.LoggingMessageHandler>();
             builder.Services.AddTransient<Http.MessageHandlers.ApimHeadersHandler>();
+            builder.Services.AddTransient<EmailService>();
 
             var url = builder.Services
                 .BuildServiceProvider()

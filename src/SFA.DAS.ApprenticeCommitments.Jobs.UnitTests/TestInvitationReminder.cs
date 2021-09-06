@@ -68,7 +68,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
             SendInvitationRemindersHandler sut,
             Guid emailTemplateId)
         {
-            settings.Notifications.Templates.Add("ApprenticeSignUpInvitation", emailTemplateId.ToString());
+            settings.Notifications.Templates.Add("ApprenticeSignUp", emailTemplateId.ToString());
             
             await sut.Run(null, Mock.Of<ExecutionContext>(), Mock.Of<ILogger>());
 

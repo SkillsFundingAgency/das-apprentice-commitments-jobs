@@ -28,7 +28,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
             string link)
         {
             await SendEmail(context, emailAddress,
-                _settings.Notifications.ApprenticeSignUpInvitation,
+                _settings.Notifications.ApprenticeSignUp,
                 new Dictionary<string, string>
                 {
                     { "GivenName", firstName },
@@ -40,7 +40,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
         internal async Task SendApprenticeshipChanged(IMessageHandlerContext context, string emailAddress, string firstName, string lastName, string url)
         {
             await SendEmail(context, emailAddress,
-                _settings.Notifications.ApprenticeshipChangedEmail,
+                _settings.Notifications.ApprenticeshipChanged,
                 new Dictionary<string, string>
                 {
                     { "GivenName", firstName },

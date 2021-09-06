@@ -85,7 +85,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
                 .Should().Contain(x => x.Message is SendEmailCommand)
                 .Which.Message.Should().BeEquivalentTo(new
                 {
-                    TemplateId = settings.Notifications.ApprenticeSignUpInvitation.ToString(),
+                    TemplateId = settings.Notifications.ApprenticeSignUp.ToString(),
                     RecipientsAddress = registration.Email,
                     Tokens = new Dictionary<string, string>
                     {
@@ -111,8 +111,8 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
                     .Without(s => s.Templates)
                     .Do(s =>
                     {
-                        s.Templates.Add("ApprenticeshipChangedEmail", Guid.NewGuid().ToString());
-                        s.Templates.Add("ApprenticeSignUpInvitation", Guid.NewGuid().ToString());
+                        s.Templates.Add("ApprenticeshipChanged", Guid.NewGuid().ToString());
+                        s.Templates.Add("ApprenticeSignUp", Guid.NewGuid().ToString());
                     }));
                 return fixture;
             }
