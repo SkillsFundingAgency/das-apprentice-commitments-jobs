@@ -8,7 +8,6 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure
     {
         public ApprenticeCommitmentsApiOptions ApprenticeCommitmentsApi { get; set; } = null!;
         public UrlConfiguration ApprenticeCommitmentsWeb { get; set; } = null!;
-        public LoginServiceOptions ApprenticeLoginApi { get; set; } = null!;
         public NotificationConfiguration Notifications { get; set; } = null!;
         public long SendRemindersAfterThisNumberDays { get; set; }
         public TimeSpan TimeToWaitBeforeChangeOfApprenticeshipEmail { get; set; } = TimeSpan.FromHours(24);
@@ -17,6 +16,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure
     public class UrlConfiguration
     {
         public string BaseUrl { get; set; } = null!;
+        public string StartPageUrl { get; set; } = null!;
     }
 
     public class NotificationConfiguration
@@ -40,12 +40,5 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure
         public string ApiBaseUrl { get; set; } = null!;
         public string SubscriptionKey { get; set; } = null!;
         public string ApiVersion { get; set; } = null!;
-    }
-
-    public class LoginServiceOptions
-    {
-        public Guid IdentityServerClientId { get; set; }
-        public string CallbackUrl { get; set; } = null!;
-        public string RedirectUrl { get; set; } = null!;
     }
 }

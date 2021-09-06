@@ -80,7 +80,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
             var context = new TestableMessageHandlerContext();
             await sut.Handle(evt, context);
 
-            var url = $"{settings.ApprenticeLoginApi.RedirectUrl}?Register={registration.RegistrationId}";
+            var url = $"{settings.ApprenticeCommitmentsWeb.StartPageUrl}?Register={registration.RegistrationId}";
             context.SentMessages
                 .Should().Contain(x => x.Message is SendEmailCommand)
                 .Which.Message.Should().BeEquivalentTo(new

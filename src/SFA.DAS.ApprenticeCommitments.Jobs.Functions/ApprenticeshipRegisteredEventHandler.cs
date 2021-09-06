@@ -32,7 +32,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
         {
             _logger.LogInformation("Handle ApprenticeshipRegisteredEvent for apprenticeship registration {RegistrationId}", request.RegistrationId);
 
-            var link = $"{_settings.ApprenticeLoginApi.RedirectUrl}?Register={request.RegistrationId}";
+            var link = $"{_settings.ApprenticeCommitmentsWeb.StartPageUrl}?Register={request.RegistrationId}";
             
             var registration = await GetRegistration(request.RegistrationId);
 

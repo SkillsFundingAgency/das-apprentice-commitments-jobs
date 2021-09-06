@@ -72,7 +72,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
             
             await sut.Run(null, Mock.Of<ExecutionContext>(), Mock.Of<ILogger>());
 
-            var url = $"{settings.ApprenticeLoginApi.RedirectUrl}?Register={registration.RegistrationId}";
+            var url = $"{settings.ApprenticeCommitmentsWeb.StartPageUrl}?Register={registration.RegistrationId}";
             endpoint.Verify(m => m.Send(
                 It.Is(new SendEmailCommand(
                     settings.Notifications.ApprenticeSignUp.ToString(),
