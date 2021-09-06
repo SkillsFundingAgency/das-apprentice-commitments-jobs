@@ -27,7 +27,23 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
             string firstName,
             string link)
         {
-            await SendEmail(context, emailAddress,
+            await SendEmail(o => context.Send(o), emailAddress,
+                _settings.Notifications.ApprenticeSignUp,
+                new Dictionary<string, string>
+                {
+                    { "GivenName", firstName },
+                    { "CreateAccountLink", link },
+                    { "LoginLink", link },
+                });
+        }
+
+        internal async Task SendApprenticeSignUpInvitation(
+            Func<object, Task> send,
+            string emailAddress,
+            string firstName,
+            string link)
+        {
+            await SendEmail(send, emailAddress,
                 _settings.Notifications.ApprenticeSignUp,
                 new Dictionary<string, string>
                 {
@@ -39,7 +55,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
 
         internal async Task SendApprenticeshipChanged(IMessageHandlerContext context, string emailAddress, string firstName, string lastName, string url)
         {
-            await SendEmail(context, emailAddress,
+            await SendEmail(o => context.Send(o), emailAddress,
                 _settings.Notifications.ApprenticeshipChanged,
                 new Dictionary<string, string>
                 {
@@ -48,12 +64,12 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
                     { "ConfirmApprenticeshipUrl", url },
                 });
         }
-
-        private async Task SendEmail(IMessageHandlerContext context, string emailAddress, Guid templateId, Dictionary<string, string> tokens)
+        
+        private async Task SendEmail(Func<object, Task> send, string emailAddress, Guid templateId, Dictionary<string, string> tokens)
         {
             var message = new SendEmailCommand(templateId.ToString(), emailAddress, tokens);
             _logger.LogInformation($"Send {{emailTemplateId}} to {{email}} with {{tokens}}", templateId, emailAddress, tokens);
-            await context.Send(message);
+            await send(message);
         }
     }
 }

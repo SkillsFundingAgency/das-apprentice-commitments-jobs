@@ -61,18 +61,9 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
                     log.LogInformation($"Sending Invitation for Apprentice {registration.RegistrationId}");
                     
                     var link = $"{_options.ApprenticeLoginApi.RedirectUrl}?Register={registration.RegistrationId}";
-                    
-                    var invite = new SendEmailCommand(
-                        _options.Notifications.ApprenticeSignUp.ToString(),
-                        registration.Email,
-                        new Dictionary<string, string>
-                        {
-                            { "GivenName", registration.FirstName },
-                            { "CreateAccountLink", link },
-                            { "LoginLink", link },
-                        });
 
-                    await _endpoint.Send(invite, executionContext, log);
+                    await _emailer.SendApprenticeSignUpInvitation(SendMessage,
+                        registration.Email, registration.FirstName, link);
 
                     log.LogInformation($"Updating Registration for Apprentice {registration.RegistrationId}");
                     await _api.InvitationReminderSent(registration.RegistrationId, new RegistrationReminderSentRequest
@@ -84,6 +75,8 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
                 {
                     log.LogError(e, $"Error Sending a Reminder for Apprentice {registration.RegistrationId}");
                 }
+
+                Task SendMessage(object message) => _endpoint.Send(message, executionContext, log);
             }
         }
 
