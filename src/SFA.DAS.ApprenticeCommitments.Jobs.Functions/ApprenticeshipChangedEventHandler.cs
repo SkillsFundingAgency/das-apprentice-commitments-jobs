@@ -49,7 +49,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
             {
                 await emailer.SendApprenticeshipChanged(context,
                     apprentice.Email, apprentice.FirstName, apprentice.LastName,
-                    settings.ApprenticeCommitmentsWeb.ConfirmApprenticeshipUrl.ToString());
+                    settings.ApprenticeWeb.ConfirmApprenticeshipUrl.ToString());
             }
         }
 

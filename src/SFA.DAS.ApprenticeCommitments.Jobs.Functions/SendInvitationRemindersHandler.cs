@@ -60,7 +60,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
                 {
                     log.LogInformation($"Sending Invitation for Apprentice {registration.RegistrationId}");
                     
-                    var link = $"{_options.ApprenticeCommitmentsWeb.StartPageUrl}?Register={registration.RegistrationId}";
+                    var link = $"{_options.ApprenticeWeb.StartPageUrl}?Register={registration.RegistrationId}";
 
                     await _emailer.SendApprenticeSignUpInvitation(SendMessage,
                         registration.Email, registration.FirstName, link);

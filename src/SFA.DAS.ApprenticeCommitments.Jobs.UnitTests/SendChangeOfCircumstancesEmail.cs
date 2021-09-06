@@ -42,9 +42,16 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
                     {
                         { "GivenName", apprentice.FirstName },
                         { "FamilyName", apprentice.LastName },
-                        { "ConfirmApprenticeshipUrl", settings.ApprenticeCommitmentsWeb.ConfirmApprenticeshipUrl.ToString() },
+                        { "ConfirmApprenticeshipUrl", settings.ApprenticeWeb.ConfirmApprenticeshipUrl.ToString() },
                     }
                 });
+        }
+
+        [Test, AutoData]
+        public void Confirm_apprenticeship_url_contains_subdomain(UrlConfiguration sut)
+        {
+            sut.ConfirmApprenticeshipUrl.ToString().ToLower().Should().Be(
+                $"{sut.BaseUrl.Scheme}://confirm.{sut.BaseUrl.Host}/apprenticeships");
         }
 
         [Test, AutoMoqData]

@@ -7,7 +7,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure
     public class ApplicationSettings
     {
         public ApprenticeCommitmentsApiOptions ApprenticeCommitmentsApi { get; set; } = null!;
-        public UrlConfiguration ApprenticeCommitmentsWeb { get; set; } = null!;
+        public UrlConfiguration ApprenticeWeb { get; set; } = null!;
         public NotificationConfiguration Notifications { get; set; } = null!;
         public long SendRemindersAfterThisNumberDays { get; set; }
         public TimeSpan TimeToWaitBeforeChangeOfApprenticeshipEmail { get; set; } = TimeSpan.FromHours(24);
@@ -15,9 +15,17 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure
 
     public class UrlConfiguration
     {
-        public Uri PortalBaseUrl { get; set; } = null!;
-        public Uri StartPageUrl => PortalBaseUrl;
-        public Uri ConfirmApprenticeshipUrl => new Uri(PortalBaseUrl, "Apprenticeships");
+        public Uri BaseUrl { get; set; } = null!;
+        public Uri StartPageUrl => BaseUrl;
+        public Uri ConfirmApprenticeshipUrl
+            => new Uri(AddSubdomain("confirm", BaseUrl), "Apprenticeships");
+
+        private static Uri AddSubdomain(string subdomain, Uri uri)
+        {
+            var builder = new UriBuilder(uri);
+            builder.Host = $"{subdomain}.{builder.Host}";
+            return builder.Uri;
+        }
     }
 
     public class NotificationConfiguration
