@@ -6,10 +6,10 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Api
 {
     public interface IEcsApi
     {
-        [Post("apprenticeships")]
-        Task<CreateApprenticeshipResponse> CreateApprentice([Body] ApprenticeshipCreated apprenticeship);
+        [Post("registrations")]
+        Task<CreateRegistrationResponse> CreateApprentice([Body] ApprenticeshipCreated apprenticeship);
 
-        [Post("apprenticeships/update")]
+        [Put("registrations")]
         Task UpdateApprenticeship([Body] ApprenticeshipUpdated apprenticeship);
 
         [Get("/apprentices/{apprenticeid}")]

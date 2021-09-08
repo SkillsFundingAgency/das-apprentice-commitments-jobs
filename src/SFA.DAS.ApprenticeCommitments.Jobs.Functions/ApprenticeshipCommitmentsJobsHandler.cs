@@ -6,7 +6,8 @@ using SFA.DAS.Apprentice.LoginService.Messages.Commands;
 using SFA.DAS.ApprenticeCommitments.Jobs.Api;
 using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure;
 using SFA.DAS.CommitmentsV2.Messages.Events;
-using System;
+using SFA.DAS.Notifications.Messages.Commands;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
@@ -19,21 +20,25 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
     {
         private readonly IEcsApi _api;
         private readonly ILogger<ApprenticeshipCommitmentsJobsHandler> _logger;
-        private readonly LoginServiceOptions _nServiceBusOptions;
+        private readonly ApplicationSettings _settings;
 
         public ApprenticeshipCommitmentsJobsHandler(
+            ApplicationSettings settings,
             IEcsApi api,
-            ILogger<ApprenticeshipCommitmentsJobsHandler> logger,
-            LoginServiceOptions nServiceBusOptions
-            )
+            ILogger<ApprenticeshipCommitmentsJobsHandler> logger
+                                                   )
         {
             _api = api;
             _logger = logger;
-            _nServiceBusOptions = nServiceBusOptions;
+            _settings = settings;
         }
 
         public async Task Handle(ApprenticeshipCreatedEvent message, IMessageHandlerContext context)
         {
+            var templateId = "4f04cf81-b291-4577-9452-ecab875ed6f8";
+            //if (!_settings.Notifications.Templates.TryGetValue("ApprenticeshipChangedEmail", out var templateId))
+            //    throw new InvalidOperationException("Missing configuration `Notifications:Templates:ApprenticeshipChangedEmail`");
+
             if (message.ContinuationOfId.HasValue)
             {
                 await _api.UpdateApprenticeship(message.ToApprenticeshipUpdated());
@@ -42,23 +47,19 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
             {
                 var res = await _api.CreateApprentice(message.ToApprenticeshipCreated());
 
-                _logger.LogInformation($"CreateApprentice returned {JsonConvert.SerializeObject(res)}");
-                _logger.LogInformation($"_nServiceBusOptions {JsonConvert.SerializeObject(_nServiceBusOptions)}");
+                _logger.LogInformation($"_nServiceBusOptions {JsonConvert.SerializeObject(_settings)}");
 
                 if (res != null)
                 {
-                    var invite = new SendInvitation()
-                    {
-                        ClientId = _nServiceBusOptions.IdentityServerClientId,
-                        SourceId = res.SourceId.ToString(),
-                        Email = res.Email,
-                        GivenName = res.GivenName,
-                        FamilyName = res.FamilyName,
-                        OrganisationName = message.LegalEntityName,
-                        ApprenticeshipName = res.ApprenticeshipName,
-                        Callback = new Uri(_nServiceBusOptions.CallbackUrl),
-                        UserRedirect = new Uri(_nServiceBusOptions.RedirectUrl),
-                    };
+                    var link = $"{_settings.ApprenticeLoginApi.RedirectUrl}?Register={res.RegistrationId}";
+
+                    var invite = new SendEmailCommand(templateId, res.Email,
+                        new Dictionary<string, string>
+                        {
+                            { "GivenName", res.GivenName },
+                            { "CreateAccountLink", link },
+                            { "LoginLink", link },
+                        });
 
                     _logger.LogInformation($"SendInvitation {JsonConvert.SerializeObject(invite)}");
 

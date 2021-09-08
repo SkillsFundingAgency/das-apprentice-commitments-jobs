@@ -53,11 +53,11 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
             {
                 try
                 {
-                    log.LogInformation($"Sending Invitation for Apprentice {registration.ApprenticeId}");
+                    log.LogInformation($"Sending Invitation for Apprentice {registration.RegistrationId}");
                     var invite = new SendInvitation
                     {
                         ClientId = _options.ApprenticeLoginApi.IdentityServerClientId,
-                        SourceId = registration.ApprenticeId.ToString(),
+                        SourceId = registration.RegistrationId.ToString(),
                         Email = registration.Email,
                         GivenName = registration.FirstName,
                         FamilyName = registration.LastName,
@@ -69,15 +69,15 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
 
                     await _endpoint.Send(invite, executionContext, log);
 
-                    log.LogInformation($"Updating Registration for Apprentice {registration.ApprenticeId}");
-                    await _api.InvitationReminderSent(registration.ApprenticeId, new RegistrationReminderSentRequest
+                    log.LogInformation($"Updating Registration for Apprentice {registration.RegistrationId}");
+                    await _api.InvitationReminderSent(registration.RegistrationId, new RegistrationReminderSentRequest
                     {
                         SentOn = DateTime.UtcNow
                     });
                 }
                 catch (Exception e)
                 {
-                    log.LogError(e, $"Error Sending a Reminder for Apprentice {registration.ApprenticeId}");
+                    log.LogError(e, $"Error Sending a Reminder for Apprentice {registration.RegistrationId}");
                 }
             }
         }

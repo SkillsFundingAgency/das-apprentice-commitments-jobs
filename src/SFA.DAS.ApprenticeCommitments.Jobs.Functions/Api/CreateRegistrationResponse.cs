@@ -4,9 +4,9 @@
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs
 {
-    public class CreateApprenticeshipResponse
+    public class CreateRegistrationResponse
     {
-        public Guid SourceId { get; set; }
+        public Guid RegistrationId { get; set; }
         public string Email { get; set; }
         public string GivenName { get; set; }
         public string FamilyName { get; set; }
