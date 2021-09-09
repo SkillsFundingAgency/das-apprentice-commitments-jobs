@@ -48,8 +48,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
             if (sinceLastApproval > TimeToWaitBeforeEmail || seenPreviousApproval)
             {
                 await emailer.SendApprenticeshipChanged(context,
-                    apprentice.Email, apprentice.FirstName, apprentice.LastName,
-                    settings.ApprenticeWeb.ConfirmApprenticeshipUrl.ToString());
+                    apprentice.Email, apprentice.FirstName, apprentice.LastName);
             }
         }
 

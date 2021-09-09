@@ -57,7 +57,11 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
                 });
         }
 
-        internal async Task SendApprenticeshipChanged(IMessageHandlerContext context, string emailAddress, string firstName, string lastName, string url)
+        internal async Task SendApprenticeshipChanged(
+            IMessageHandlerContext context,
+            string emailAddress,
+            string firstName,
+            string lastName)
         {
             await SendEmail(o => context.Send(o), emailAddress,
                 _settings.Notifications.ApprenticeshipChanged,
@@ -65,7 +69,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
                 {
                     { "GivenName", firstName },
                     { "FamilyName", lastName },
-                    { "ConfirmApprenticeshipUrl", url },
+                    { "ConfirmApprenticeshipUrl", _settings.ApprenticeWeb.ConfirmApprenticeshipUrl.ToString() },
                 });
         }
         
