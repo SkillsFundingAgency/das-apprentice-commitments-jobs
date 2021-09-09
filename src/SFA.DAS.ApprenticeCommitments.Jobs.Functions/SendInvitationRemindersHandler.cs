@@ -57,10 +57,8 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
                 {
                     log.LogInformation($"Sending Invitation for Apprentice {registration.RegistrationId}");
                     
-                    var link = $"{_options.ApprenticeWeb.StartPageUrl}?Register={registration.RegistrationId}";
-
                     await _emailer.SendApprenticeSignUpInvitation(SendMessage,
-                        registration.Email, registration.FirstName, link);
+                        registration.RegistrationId, registration.Email, registration.FirstName);
 
                     log.LogInformation($"Updating Registration for Apprentice {registration.RegistrationId}");
                     await _api.InvitationReminderSent(registration.RegistrationId, new RegistrationReminderSentRequest

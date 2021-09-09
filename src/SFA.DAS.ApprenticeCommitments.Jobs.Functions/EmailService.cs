@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
+using Newtonsoft.Json.Linq;
 using NServiceBus;
+using SFA.DAS.ApprenticeCommitments.Jobs.Api;
 using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure;
 using SFA.DAS.Notifications.Messages.Commands;
 using System;
@@ -23,26 +25,28 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
 
         internal async Task SendApprenticeSignUpInvitation(
             IMessageHandlerContext context,
+            Guid registrationId,
             string emailAddress,
-            string firstName,
-            string link)
+            string firstName)
         {
-            await SendEmail(o => context.Send(o), emailAddress,
-                _settings.Notifications.ApprenticeSignUp,
-                new Dictionary<string, string>
-                {
-                    { "GivenName", firstName },
-                    { "CreateAccountLink", link },
-                    { "LoginLink", link },
-                });
+            await SendApprenticeSignUpInvitation(
+                o => context.Send(o),
+                registrationId,
+                emailAddress,
+                firstName);
         }
 
         internal async Task SendApprenticeSignUpInvitation(
             Func<object, Task> send,
+            Guid registrationId,
             string emailAddress,
-            string firstName,
-            string link)
+            string firstName)
         {
+            var link = $"{_settings.ApprenticeWeb.StartPageUrl}?Register={registrationId}";
+
+            _logger.LogInformation($"Send ApprenticeSignUpInvitation ({{templateId}}) with {{link}}",
+                _settings.Notifications.ApprenticeSignUp, link);
+
             await SendEmail(send, emailAddress,
                 _settings.Notifications.ApprenticeSignUp,
                 new Dictionary<string, string>
@@ -68,7 +72,6 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
         private async Task SendEmail(Func<object, Task> send, string emailAddress, Guid templateId, Dictionary<string, string> tokens)
         {
             var message = new SendEmailCommand(templateId.ToString(), emailAddress, tokens);
-            _logger.LogInformation($"Send {{emailTemplateId}} to {{email}} with {{tokens}}", templateId, emailAddress, tokens);
             await send(message);
         }
     }

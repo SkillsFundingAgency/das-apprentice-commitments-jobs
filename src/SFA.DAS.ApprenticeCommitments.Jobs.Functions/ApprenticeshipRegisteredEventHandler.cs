@@ -32,13 +32,9 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
         {
             _logger.LogInformation("Handle ApprenticeshipRegisteredEvent for apprenticeship registration {RegistrationId}", request.RegistrationId);
 
-            var link = $"{_urls.StartPageUrl}?Register={request.RegistrationId}";
-            
             var registration = await GetRegistration(request.RegistrationId);
 
-            _logger.LogInformation($"Link `{{LoginLink}}` for apprenticeship registration {{registration}}", link, JsonConvert.SerializeObject(registration));
-
-            await _emailer.SendApprenticeSignUpInvitation(context, registration.Email, registration.FirstName, link);
+            await _emailer.SendApprenticeSignUpInvitation(context, request.RegistrationId, registration.Email, registration.FirstName);
         }
 
         private async Task<Registration> GetRegistration(System.Guid registrationId)
