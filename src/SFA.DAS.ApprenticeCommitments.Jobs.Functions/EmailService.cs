@@ -1,7 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
-using Newtonsoft.Json.Linq;
 using NServiceBus;
-using SFA.DAS.ApprenticeCommitments.Jobs.Api;
 using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure;
 using SFA.DAS.Notifications.Messages.Commands;
 using System;

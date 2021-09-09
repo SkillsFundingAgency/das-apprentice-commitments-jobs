@@ -1,10 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using NServiceBus;
 using SFA.DAS.ApprenticeCommitments.Jobs.Api;
 using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure;
 using SFA.DAS.ApprenticeCommitments.Messages.Events;
-using System;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
@@ -13,7 +11,6 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
     {
         private readonly IEcsApi _api;
         private readonly EmailService _emailer;
-        private readonly UrlConfiguration _urls;
         private readonly ILogger<ApprenticeshipCommitmentsJobsHandler> _logger;
 
         public ApprenticeshipRegisteredEventHandler(
@@ -24,7 +21,6 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
         {
             _api = api;
             _emailer = emailer;
-            _urls = urls;
             _logger = logger;
         }
 
