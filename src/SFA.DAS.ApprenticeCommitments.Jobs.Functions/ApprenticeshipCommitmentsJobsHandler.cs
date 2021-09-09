@@ -3,7 +3,6 @@ using NServiceBus;
 using SFA.DAS.Apprentice.LoginService.Messages;
 using SFA.DAS.Apprentice.LoginService.Messages.Commands;
 using SFA.DAS.ApprenticeCommitments.Jobs.Api;
-using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure;
 using SFA.DAS.CommitmentsV2.Messages.Events;
 using System.Threading.Tasks;
 
@@ -18,17 +17,13 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
     {
         private readonly IEcsApi _api;
         private readonly ILogger<ApprenticeshipCommitmentsJobsHandler> _logger;
-        private readonly ApplicationSettings _settings;
 
         public ApprenticeshipCommitmentsJobsHandler(
-            ApplicationSettings settings,
             IEcsApi api,
-            ILogger<ApprenticeshipCommitmentsJobsHandler> logger
-                                                   )
+            ILogger<ApprenticeshipCommitmentsJobsHandler> logger)
         {
             _api = api;
             _logger = logger;
-            _settings = settings;
         }
 
         public async Task Handle(ApprenticeshipCreatedEvent message, IMessageHandlerContext context)
