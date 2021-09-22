@@ -1,5 +1,6 @@
 ﻿using SFA.DAS.Apprentice.LoginService.Messages.Commands;
-using SFA.DAS.ApprenticeCommitments.Jobs.Api;
+using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Api;
+using SFA.DAS.ApprenticeCommitments.Messages.Events;
 using SFA.DAS.CommitmentsV2.Messages.Events;
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
@@ -36,6 +37,12 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
             new EmailUpdate
             {
                 Email = source.NewEmailAddress
+            };
+
+        public static ApprenticeshipEmailAddressConfirmation ToApprenticeshipEmailConfirmation(this ApprenticeshipEmailAddressConfirmedEvent source) =>
+            new ApprenticeshipEmailAddressConfirmation
+            {
+                CommitmentsApprenticeshipId = source.CommitmentsApprenticeshipId
             };
     }
 }

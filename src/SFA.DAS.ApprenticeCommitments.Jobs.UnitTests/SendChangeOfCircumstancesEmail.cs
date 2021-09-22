@@ -4,7 +4,6 @@ using AutoFixture.NUnit3;
 using FluentAssertions;
 using NServiceBus.Testing;
 using NUnit.Framework;
-using SFA.DAS.ApprenticeCommitments.Jobs.Api;
 using SFA.DAS.ApprenticeCommitments.Jobs.Functions;
 using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure;
 using SFA.DAS.ApprenticeCommitments.Messages.Events;
@@ -13,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Api;
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
 {
@@ -20,7 +20,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
     {
         [Test, AutoMoqData]
         public async Task Send_email_with_template_fields(
-            [Frozen] Api.Apprentice apprentice,
+            [Frozen] Functions.Api.Apprentice apprentice,
             [Frozen] ApplicationSettings settings,
             ApprenticeshipChangedEventHandler sut,
             ApprenticeshipChangedEvent evt)

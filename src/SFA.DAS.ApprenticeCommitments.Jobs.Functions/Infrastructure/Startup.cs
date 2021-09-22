@@ -1,19 +1,18 @@
+using System;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NServiceBus;
 using RestEase.HttpClientFactory;
 using SFA.DAS.Apprentice.LoginService.Messages;
-using SFA.DAS.ApprenticeCommitments.Jobs.Api;
+using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Api;
 using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure;
 using SFA.DAS.Http.Configuration;
 using SFA.DAS.Notifications.Messages.Commands;
-using SFA.DAS.NServiceBus.Configuration.AzureServiceBus;
-using System;
 
-[assembly: FunctionsStartup(typeof(SFA.DAS.ApprenticeCommitments.Jobs.Functions.Startup))]
+[assembly: FunctionsStartup(typeof(Startup))]
 
-namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
+namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure
 {
     public class Startup : FunctionsStartup
     {

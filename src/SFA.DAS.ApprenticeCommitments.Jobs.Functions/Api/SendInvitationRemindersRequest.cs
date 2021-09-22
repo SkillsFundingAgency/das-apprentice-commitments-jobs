@@ -1,6 +1,6 @@
 using System;
 
-namespace SFA.DAS.ApprenticeCommitments.Jobs.Api
+namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Api
 {
     public class SendInvitationRemindersRequest
     {

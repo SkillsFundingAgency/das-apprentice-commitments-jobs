@@ -2,11 +2,11 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 using NServiceBus;
 using SFA.DAS.Apprentice.LoginService.Messages;
-using SFA.DAS.ApprenticeCommitments.Jobs.Api;
 using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Api;
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
 {

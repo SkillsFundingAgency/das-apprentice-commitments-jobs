@@ -1,10 +1,9 @@
-﻿using Microsoft.Extensions.Logging;
-using NServiceBus.Pipeline;
-using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure;
-using System;
+﻿using System;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using NServiceBus.Pipeline;
 
-namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
+namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure
 {
     internal class LogIncomingBehaviour
         : IBehavior<IIncomingLogicalMessageContext, IIncomingLogicalMessageContext>

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 #nullable disable
 
-namespace SFA.DAS.ApprenticeCommitments.Jobs.Api
+namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Api
 {
     public class Registration
     {

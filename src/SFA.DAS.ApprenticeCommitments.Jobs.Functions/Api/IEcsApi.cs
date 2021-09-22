@@ -1,8 +1,8 @@
-﻿using RestEase;
-using System;
+﻿using System;
 using System.Threading.Tasks;
+using RestEase;
 
-namespace SFA.DAS.ApprenticeCommitments.Jobs.Api
+namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Api
 {
     public interface IEcsApi
     {
@@ -13,7 +13,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Api
         Task UpdateApprenticeship([Body] ApprenticeshipUpdated apprenticeship);
 
         [Get("/apprentices/{apprenticeid}")]
-        Task<Api.Apprentice> GetApprentice([Path] Guid apprenticeid);
+        Task<Functions.Api.Apprentice> GetApprentice([Path] Guid apprenticeid);
 
         [Get("/apprentices/{apprenticeid}/apprenticeships/{apprenticeshipid}/revisions")]
         Task<ApprenticeshipHistory> GetApprenticeshipHistory([Path] Guid apprenticeid, [Path] long apprenticeshipid);
@@ -29,5 +29,8 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Api
 
         [Post("apprentices/{id}/email")]
         Task UpdateApprenticeEmail([Path] Guid id, [Body] EmailUpdate request);
+
+        [Post("apprentices/{id}/email-confirmation")]
+        Task SetEmailAddressConfirmed([Path] Guid id, [Body] ApprenticeshipEmailAddressConfirmation request);
     }
 }

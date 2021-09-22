@@ -4,7 +4,6 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure;
 using SFA.DAS.CommitmentsV2.Messages.Events;
-using SFA.DAS.NServiceBus.Configuration.AzureServiceBus;
 using System;
 using System.Threading;
 using System.Threading.Tasks;

@@ -3,12 +3,13 @@ using Newtonsoft.Json;
 using NServiceBus;
 using SFA.DAS.Apprentice.LoginService.Messages;
 using SFA.DAS.Apprentice.LoginService.Messages.Commands;
-using SFA.DAS.ApprenticeCommitments.Jobs.Api;
 using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure;
 using SFA.DAS.CommitmentsV2.Messages.Events;
 using SFA.DAS.Notifications.Messages.Commands;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Api;
+using SFA.DAS.ApprenticeCommitments.Messages.Events;
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
 {
@@ -17,6 +18,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
         , IHandleMessages<SendInvitationReply>
         , IHandleMessages<ApprenticeshipUpdatedApprovedEvent>
         , IHandleMessages<UpdateEmailAddressCommand>
+        , IHandleMessages<ApprenticeshipEmailAddressConfirmedEvent>
     {
         private readonly IEcsApi _api;
         private readonly ILogger<ApprenticeshipCommitmentsJobsHandler> _logger;
@@ -75,6 +77,12 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
         {
             _logger.LogInformation($"Received {nameof(UpdateEmailAddressCommand)} for apprentice {message.ApprenticeId}");
             return _api.UpdateApprenticeEmail(message.ApprenticeId, message.ToEmailUpdate());
+        }
+
+        public Task Handle(ApprenticeshipEmailAddressConfirmedEvent message, IMessageHandlerContext context)
+        {
+            _logger.LogInformation($"Received {nameof(ApprenticeshipEmailAddressConfirmedEvent)} for apprentice {message.ApprenticeId} and commitments apprenticeship {message.CommitmentsApprenticeshipId}");
+            return _api.SetEmailAddressConfirmed(message.ApprenticeId, message.ToApprenticeshipEmailConfirmation());
         }
 
         public async Task Handle(SendInvitationReply message, IMessageHandlerContext context)

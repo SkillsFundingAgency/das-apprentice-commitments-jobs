@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace SFA.DAS.ApprenticeCommitments.Jobs
+namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Api
 {
     public class CreateRegistrationResponse
     {

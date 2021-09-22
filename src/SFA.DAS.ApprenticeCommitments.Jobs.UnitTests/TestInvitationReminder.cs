@@ -4,12 +4,12 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using NServiceBus;
 using NUnit.Framework;
-using SFA.DAS.ApprenticeCommitments.Jobs.Api;
 using SFA.DAS.Apprentice.LoginService.Messages;
 using SFA.DAS.ApprenticeCommitments.Jobs.Functions;
 using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure;
 using System;
 using System.Threading.Tasks;
+using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Api;
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
 {

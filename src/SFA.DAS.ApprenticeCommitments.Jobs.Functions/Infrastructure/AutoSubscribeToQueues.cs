@@ -1,14 +1,14 @@
-﻿using Microsoft.Azure.ServiceBus;
+﻿using System;
+using System.Linq;
+using System.Reflection;
+using System.Threading.Tasks;
+using Microsoft.Azure.ServiceBus;
 using Microsoft.Azure.ServiceBus.Management;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
 
-namespace SFA.DAS.NServiceBus.Configuration.AzureServiceBus
+namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure
 {
     public static class AutoSubscribeToQueues
     {
