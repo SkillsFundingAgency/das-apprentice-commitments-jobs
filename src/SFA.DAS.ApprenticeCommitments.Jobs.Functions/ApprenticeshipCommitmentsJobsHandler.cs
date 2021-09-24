@@ -38,7 +38,10 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
         }
 
         public Task Handle(ApprenticeshipUpdatedApprovedEvent message, IMessageHandlerContext context)
-            => _api.UpdateApprenticeship(message.ToApprenticeshipUpdated());
+        {
+            _logger.LogInformation("Handling ApprenticeshipUpdatedApprovedEvent for {ApprenticeshipId}", message.ApprenticeshipId);
+            return _api.UpdateApprenticeship(message.ToApprenticeshipUpdated());
+        }
 
         public Task Handle(UpdateEmailAddressCommand message, IMessageHandlerContext context)
         {
@@ -50,6 +53,9 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
             => await Task.CompletedTask;
 
         public Task Handle(ApprenticeshipUpdatedEmailAddressEvent message, IMessageHandlerContext context)
-            => _api.UpdateApprenticeship(message.ToApprenticeshipUpdated());
+        {
+            _logger.LogInformation("Handling ApprenticeshipUpdatedEmailAddressEvent for {ApprenticeshipId}", message.ApprenticeshipId);
+            return _api.UpdateApprenticeship(message.ToApprenticeshipUpdated());
+        }
     }
 }
