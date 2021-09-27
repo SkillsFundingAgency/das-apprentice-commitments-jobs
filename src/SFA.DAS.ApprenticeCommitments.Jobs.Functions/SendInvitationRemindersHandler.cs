@@ -1,7 +1,6 @@
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 using NServiceBus;
-using SFA.DAS.Apprentice.LoginService.Messages;
 using SFA.DAS.ApprenticeCommitments.Jobs.Api;
 using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure;
 using System;
@@ -13,15 +12,18 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
     public class SendInvitationRemindersHandler
     {
         private readonly IEcsApi _api;
+        private readonly EmailService _emailer;
         private readonly IFunctionEndpoint _endpoint;
         private readonly ApplicationSettings _options;
 
         public SendInvitationRemindersHandler(
             IEcsApi api,
+            EmailService emailer,
             IFunctionEndpoint endpoint,
             ApplicationSettings options)
         {
             _api = api;
+            _emailer = emailer;
             _endpoint = endpoint;
             _options = options;
         }
@@ -54,20 +56,9 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
                 try
                 {
                     log.LogInformation($"Sending Invitation for Apprentice {registration.RegistrationId}");
-                    var invite = new SendInvitation
-                    {
-                        ClientId = _options.ApprenticeLoginApi.IdentityServerClientId,
-                        SourceId = registration.RegistrationId.ToString(),
-                        Email = registration.Email,
-                        GivenName = registration.FirstName,
-                        FamilyName = registration.LastName,
-                        OrganisationName = registration.EmployerName,
-                        ApprenticeshipName = registration.CourseName,
-                        Callback = new Uri(_options.ApprenticeLoginApi.CallbackUrl),
-                        UserRedirect = new Uri(_options.ApprenticeLoginApi.RedirectUrl),
-                    };
-
-                    await _endpoint.Send(invite, executionContext, log);
+                    
+                    await _emailer.SendApprenticeSignUpInvitation(SendMessage,
+                        registration.RegistrationId, registration.Email, registration.FirstName);
 
                     log.LogInformation($"Updating Registration for Apprentice {registration.RegistrationId}");
                     await _api.InvitationReminderSent(registration.RegistrationId, new RegistrationReminderSentRequest
@@ -79,6 +70,8 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
                 {
                     log.LogError(e, $"Error Sending a Reminder for Apprentice {registration.RegistrationId}");
                 }
+
+                Task SendMessage(object message) => _endpoint.Send(message, executionContext, log);
             }
         }
 

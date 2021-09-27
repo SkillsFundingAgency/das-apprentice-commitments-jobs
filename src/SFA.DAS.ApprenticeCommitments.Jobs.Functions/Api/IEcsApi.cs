@@ -12,6 +12,9 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Api
         [Put("registrations")]
         Task UpdateApprenticeship([Body] ApprenticeshipUpdated apprenticeship);
 
+        [Get("registrations/{id}")]
+        Task<Registration> GetRegistration([Path] Guid id);
+
         [Get("/apprentices/{apprenticeid}")]
         Task<Api.Apprentice> GetApprentice([Path] Guid apprenticeid);
 

@@ -5,10 +5,12 @@ using Moq;
 using NServiceBus;
 using NUnit.Framework;
 using SFA.DAS.ApprenticeCommitments.Jobs.Api;
-using SFA.DAS.Apprentice.LoginService.Messages;
 using SFA.DAS.ApprenticeCommitments.Jobs.Functions;
 using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure;
+using SFA.DAS.Notifications.Messages.Commands;
 using System;
+using System.Collections.Generic;
+using System.Security.Policy;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
@@ -60,20 +62,28 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
 
         [Test, AutoMoqData]
         public async Task Send_reminder_invite_command_with_correct_details(
+            [Frozen] ApplicationSettings settings,
             [Frozen] Mock<IFunctionEndpoint> endpoint,
             [Frozen] Registration registration,
-            SendInvitationRemindersHandler sut)
+            SendInvitationRemindersHandler sut,
+            Guid emailTemplateId)
         {
+            settings.Notifications.Templates.Add("ApprenticeSignUp", emailTemplateId.ToString());
+            
             await sut.Run(null, Mock.Of<ExecutionContext>(), Mock.Of<ILogger>());
 
+            var url = $"{settings.ApprenticeWeb.StartPageUrl}?Register={registration.RegistrationId}";
             endpoint.Verify(m => m.Send(
-                It.Is<SendInvitation>(n =>
-                    n.SourceId == registration.RegistrationId.ToString() &&
-                    n.Email == registration.Email &&
-                    n.GivenName == registration.FirstName &&
-                    n.FamilyName == registration.LastName &&
-                    n.OrganisationName == registration.EmployerName &&
-                    n.ApprenticeshipName == registration.CourseName
+                It.Is(new SendEmailCommand(
+                    settings.Notifications.ApprenticeSignUp.ToString(),
+                    registration.Email,
+                    new Dictionary<string, string>
+                    {
+                        { "GivenName", registration.FirstName },
+                        { "CreateAccountLink", url },
+                        { "LoginLink", url },
+                    }),
+                    new SendEmailCommandComparer()
                     ),
                 It.IsAny<ExecutionContext>(),
                 It.IsAny<ILogger>()));

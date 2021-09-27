@@ -29,6 +29,11 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
             [HttpTrigger] HttpRequestMessage req, ExecutionContext executionContext, ILogger log)
             => Simulate<ApprenticeshipUpdatedApprovedEvent>(req, executionContext, log);
 
+        [FunctionName("ApprenticeshipUpdatedEmailAddressEventTrigger")]
+        public Task<IActionResult> ApprenticeshipUpdatedEmailAddressEvent(
+            [HttpTrigger] HttpRequestMessage req, ExecutionContext executionContext, ILogger log)
+            => Simulate<ApprenticeshipUpdatedEmailAddressEvent>(req, executionContext, log);
+
         public async Task<IActionResult> Simulate<T>(HttpRequestMessage req, ExecutionContext executionContext, ILogger log)
         {
             try

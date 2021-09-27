@@ -3,7 +3,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NServiceBus;
 using RestEase.HttpClientFactory;
-using SFA.DAS.Apprentice.LoginService.Messages;
 using SFA.DAS.ApprenticeCommitments.Jobs.Api;
 using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure;
 using SFA.DAS.Http.Configuration;
@@ -50,8 +49,6 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
 
                 configuration.Transport.SubscriptionRuleNamingConvention(AzureQueueNameShortener.Shorten);
 
-                // when a SendInvitationCommand event is fired, route it to the login service queue
-                configuration.Transport.Routing().RouteToEndpoint(typeof(SendInvitation), QueueNames.LoginServiceQueue);
                 configuration.Transport.Routing().RouteToEndpoint(typeof(SendEmailCommand), QueueNames.NotificationsQueue);
 
                 configuration.AdvancedConfiguration.Pipeline.Register(new LogIncomingBehaviour(), nameof(LogIncomingBehaviour));
@@ -62,12 +59,13 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
 
             builder.Services.AddApplicationOptions();
             builder.Services.ConfigureFromOptions(f => f.ApprenticeCommitmentsApi);
+            builder.Services.ConfigureFromOptions(f => f.ApprenticeWeb);
             builder.Services.ConfigureFromOptions(f => f.Notifications);
-            builder.Services.ConfigureFromOptions(f => f.ApprenticeLoginApi);
             builder.Services.AddSingleton<IApimClientConfiguration>(x => x.GetRequiredService<ApprenticeCommitmentsApiOptions>());
             builder.Services.AddTransient<Http.MessageHandlers.DefaultHeadersHandler>();
             builder.Services.AddTransient<Http.MessageHandlers.LoggingMessageHandler>();
             builder.Services.AddTransient<Http.MessageHandlers.ApimHeadersHandler>();
+            builder.Services.AddTransient<EmailService>();
 
             var url = builder.Services
                 .BuildServiceProvider()
