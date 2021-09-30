@@ -19,11 +19,16 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
             [TimerTrigger("* * * 1 1 *", RunOnStartup = true)] TimerInfo myTimer,
             ILogger logger, ExecutionContext executionContext)
         {
-            var sendOptions = new SendOptions();
+            var sendOptions = SendLocally.Options;
             sendOptions.SetHeader(Headers.ControlMessageHeader, bool.TrueString);
             sendOptions.SetHeader(Headers.MessageIntent, nameof(MessageIntentEnum.Send));
-            sendOptions.RouteToThisEndpoint();
             await functionEndpoint.Send(new ForceAutoEventSubscription(), sendOptions, executionContext, logger);
         }
+    }
+
+    public class ForceAutoEventSubscriptionHandler : IHandleMessages<ForceAutoEventSubscription>
+    {
+        public Task Handle(ForceAutoEventSubscription message, IMessageHandlerContext context)
+            => Task.CompletedTask;
     }
 }

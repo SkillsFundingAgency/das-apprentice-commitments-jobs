@@ -56,13 +56,9 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
                     RegistrationId = registration.RegistrationId,
                 };
 
-                await _endpoint.Send(command, SendLocally, executionContext, log);
+                await _endpoint.Send(command, SendLocally.Options, executionContext, log);
             }
         }
-
-        private static readonly SendOptions SendLocally = new SendOptions();
-
-        static SendInvitationRemindersHandler() => SendLocally.RouteToThisEndpoint();
 
         internal long ReminderAfterDays
         {
