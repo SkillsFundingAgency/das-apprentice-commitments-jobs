@@ -11,6 +11,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure
         public NotificationConfiguration Notifications { get; set; } = null!;
         public long SendRemindersAfterThisNumberDays { get; set; }
         public TimeSpan TimeToWaitBeforeChangeOfApprenticeshipEmail { get; set; } = TimeSpan.FromHours(24);
+        public Uri SurveyLink { get; set; } = null!;
     }
 
     public class UrlConfiguration
@@ -32,8 +33,9 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure
     {
         public Dictionary<string, string> Templates { get; set; } = new Dictionary<string, string>();
 
-        public Guid ApprenticeSignUp => GetTemplateId("ApprenticeSignUp");
-        public Guid ApprenticeshipChanged => GetTemplateId("ApprenticeshipChanged");
+        public Guid ApprenticeSignUp => GetTemplateId(nameof(ApprenticeSignUp));
+        public Guid ApprenticeshipChanged => GetTemplateId(nameof(ApprenticeshipChanged));
+        public Guid ApprenticeshipConfirmed => GetTemplateId(nameof(ApprenticeshipConfirmed));
 
         private Guid GetTemplateId(string templateName)
         {
