@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using NServiceBus;
 using SFA.DAS.ApprenticeCommitments.Jobs.Api;
 using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure;
+using SFA.DAS.ApprenticeCommitments.Jobs.Functions.InternalMessages.Commands;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,18 +13,15 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
     public class SendInvitationRemindersHandler
     {
         private readonly IEcsApi _api;
-        private readonly EmailService _emailer;
         private readonly IFunctionEndpoint _endpoint;
         private readonly ApplicationSettings _options;
 
         public SendInvitationRemindersHandler(
             IEcsApi api,
-            EmailService emailer,
             IFunctionEndpoint endpoint,
             ApplicationSettings options)
         {
             _api = api;
-            _emailer = emailer;
             _endpoint = endpoint;
             _options = options;
         }
@@ -53,25 +51,12 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
 
             async Task SendReminder(Registration registration)
             {
-                try
+                var command = new RemindApprenticeCommand
                 {
-                    log.LogInformation($"Sending Invitation for Apprentice {registration.RegistrationId}");
-                    
-                    await _emailer.SendApprenticeSignUpInvitation(SendMessage,
-                        registration.RegistrationId, registration.Email, registration.FirstName);
+                    RegistrationId = registration.RegistrationId,
+                };
 
-                    log.LogInformation($"Updating Registration for Apprentice {registration.RegistrationId}");
-                    await _api.InvitationReminderSent(registration.RegistrationId, new RegistrationReminderSentRequest
-                    {
-                        SentOn = DateTime.UtcNow
-                    });
-                }
-                catch (Exception e)
-                {
-                    log.LogError(e, $"Error Sending a Reminder for Apprentice {registration.RegistrationId}");
-                }
-
-                Task SendMessage(object message) => _endpoint.Send(message, executionContext, log);
+                await _endpoint.Send(command, SendLocally.Options, executionContext, log);
             }
         }
 
