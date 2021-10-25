@@ -70,7 +70,22 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
                     { "ConfirmApprenticeshipUrl", _settings.ApprenticeWeb.ConfirmApprenticeshipUrl.ToString() },
                 });
         }
-        
+
+        internal async Task SendApprenticeshipConfirmed(
+            IMessageHandlerContext context,
+            string emailAddress,
+            string firstName)
+        {
+            await SendEmail(o => context.Send(o), emailAddress,
+                _settings.Notifications.ApprenticeshipConfirmed,
+                new Dictionary<string, string>
+                {
+                    { "FirstName", firstName },
+                    { "SurveyLink", _settings.SurveyLink.ToString() },
+                    { "MyApprenticeshipUrl", _settings.ApprenticeWeb.StartPageUrl.ToString() },
+                });
+        }
+
         private async Task SendEmail(Func<object, Task> send, string emailAddress, Guid templateId, Dictionary<string, string> tokens)
         {
             var message = new SendEmailCommand(templateId.ToString(), emailAddress, tokens);
