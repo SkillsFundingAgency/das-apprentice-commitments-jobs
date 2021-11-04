@@ -5,6 +5,7 @@ using SFA.DAS.Apprentice.LoginService.Messages.Commands;
 using SFA.DAS.ApprenticeCommitments.Jobs.Api;
 using SFA.DAS.CommitmentsV2.Messages.Events;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.JsonPatch;
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
 {
@@ -45,7 +46,8 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
         public Task Handle(UpdateEmailAddressCommand message, IMessageHandlerContext context)
         {
             _logger.LogInformation($"Received {nameof(UpdateEmailAddressCommand)} for apprentice {message.ApprenticeId}");
-            return _api.UpdateApprenticeEmail(message.ApprenticeId, message.ToEmailUpdate());
+            var requestBody = new JsonPatchDocument<Api.Apprentice>().Replace(x => x.Email, message.NewEmailAddress);
+            return _api.UpdateApprentice(message.ApprenticeId, requestBody);
         }
 
         public async Task Handle(SendInvitationReply message, IMessageHandlerContext context)

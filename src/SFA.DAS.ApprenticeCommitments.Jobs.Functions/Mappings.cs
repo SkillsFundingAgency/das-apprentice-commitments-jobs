@@ -38,11 +38,5 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
                 CommitmentsApprenticeshipId = source.ApprenticeshipId,
                 CommitmentsApprovedOn = source.ApprovedOn
             };
-
-        public static EmailUpdate ToEmailUpdate(this UpdateEmailAddressCommand source) =>
-            new EmailUpdate
-            {
-                Email = source.NewEmailAddress
-            };
     }
 }

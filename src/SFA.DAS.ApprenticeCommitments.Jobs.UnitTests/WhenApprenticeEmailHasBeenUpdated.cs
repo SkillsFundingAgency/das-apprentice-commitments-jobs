@@ -6,6 +6,8 @@ using SFA.DAS.Apprentice.LoginService.Messages.Commands;
 using SFA.DAS.ApprenticeCommitments.Jobs.Api;
 using SFA.DAS.ApprenticeCommitments.Jobs.Functions;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.AspNetCore.JsonPatch.Operations;
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
 {
@@ -19,8 +21,8 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
         {
             await sut.Handle(evt, new TestableMessageHandlerContext());
 
-            api.Verify(m => m.UpdateApprenticeEmail(evt.ApprenticeId, It.Is<EmailUpdate>(n =>
-                n.Email == evt.NewEmailAddress)));
+            api.Verify(m => m.UpdateApprentice(evt.ApprenticeId, It.Is<JsonPatchDocument<Api.Apprentice>>(n =>
+                n.Operations.Count == 1 && n.Operations[0].OperationType == OperationType.Replace && n.Operations[0].path == "/Email" && (string)n.Operations[0].value == evt.NewEmailAddress)));
         }
     }
 }
