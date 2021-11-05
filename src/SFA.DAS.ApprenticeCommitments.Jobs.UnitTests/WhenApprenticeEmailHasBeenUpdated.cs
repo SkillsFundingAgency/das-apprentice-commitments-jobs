@@ -16,13 +16,19 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
         [Test, AutoMoqData]
         public async Task Then_notify_apim(
             [Frozen] Mock<IEcsApi> api,
-            ApprenticeshipCommitmentsJobsHandler sut,
+            ApprenticeshipUpdateEmailAddressCommandHandler sut,
             UpdateEmailAddressCommand evt)
         {
             await sut.Handle(evt, new TestableMessageHandlerContext());
 
+            VerifyPatchRequestIsConstructedAsExpected(api, evt);
+        }
+
+        private static void VerifyPatchRequestIsConstructedAsExpected(Mock<IEcsApi> api, UpdateEmailAddressCommand evt)
+        {
             api.Verify(m => m.UpdateApprentice(evt.ApprenticeId, It.Is<JsonPatchDocument<Api.Apprentice>>(n =>
-                n.Operations.Count == 1 && n.Operations[0].OperationType == OperationType.Replace && n.Operations[0].path == "/Email" && (string)n.Operations[0].value == evt.NewEmailAddress)));
+                n.Operations.Count == 1 && n.Operations[0].OperationType == OperationType.Replace &&
+                n.Operations[0].path == "/Email" && (string) n.Operations[0].value == evt.NewEmailAddress)));
         }
     }
 }

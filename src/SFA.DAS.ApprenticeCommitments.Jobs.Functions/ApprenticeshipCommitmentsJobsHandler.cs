@@ -1,11 +1,9 @@
 using Microsoft.Extensions.Logging;
 using NServiceBus;
 using SFA.DAS.Apprentice.LoginService.Messages;
-using SFA.DAS.Apprentice.LoginService.Messages.Commands;
 using SFA.DAS.ApprenticeCommitments.Jobs.Api;
 using SFA.DAS.CommitmentsV2.Messages.Events;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.JsonPatch;
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
 {
@@ -13,7 +11,6 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
         : IHandleMessages<ApprenticeshipCreatedEvent>
         , IHandleMessages<SendInvitationReply>
         , IHandleMessages<ApprenticeshipUpdatedApprovedEvent>
-        , IHandleMessages<UpdateEmailAddressCommand>
     {
         private readonly IEcsApi _api;
         private readonly ILogger<ApprenticeshipCommitmentsJobsHandler> _logger;
@@ -41,13 +38,6 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
         {
             _logger.LogInformation("Handling ApprenticeshipUpdatedApprovedEvent for {ApprenticeshipId}", message.ApprenticeshipId);
             return _api.UpdateApprenticeship(message.ToApprenticeshipUpdated());
-        }
-
-        public Task Handle(UpdateEmailAddressCommand message, IMessageHandlerContext context)
-        {
-            _logger.LogInformation($"Received {nameof(UpdateEmailAddressCommand)} for apprentice {message.ApprenticeId}");
-            var requestBody = new JsonPatchDocument<Api.Apprentice>().Replace(x => x.Email, message.NewEmailAddress);
-            return _api.UpdateApprentice(message.ApprenticeId, requestBody);
         }
 
         public async Task Handle(SendInvitationReply message, IMessageHandlerContext context)
