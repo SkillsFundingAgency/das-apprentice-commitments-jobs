@@ -4,7 +4,7 @@ using NServiceBus.Testing;
 using NUnit.Framework;
 using SFA.DAS.Apprentice.LoginService.Messages.Commands;
 using SFA.DAS.ApprenticeCommitments.Jobs.Api;
-using SFA.DAS.ApprenticeCommitments.Jobs.Functions;
+using SFA.DAS.ApprenticeCommitments.Jobs.Functions.EventHandlers.CommitmentsEventHandlerss;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
@@ -14,7 +14,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
         [Test, AutoMoqData]
         public async Task Then_notify_apim(
             [Frozen] Mock<IEcsApi> api,
-            ApprenticeshipCommitmentsJobsHandler sut,
+            CommitmentsEventHandler sut,
             UpdateEmailAddressCommand evt)
         {
             await sut.Handle(evt, new TestableMessageHandlerContext());

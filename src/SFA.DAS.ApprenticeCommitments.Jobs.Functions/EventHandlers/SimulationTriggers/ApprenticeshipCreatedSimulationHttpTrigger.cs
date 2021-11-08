@@ -9,7 +9,7 @@ using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
+namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.EventHandlers.SimulationTriggers
 {
     public class ApprenticeshipCreatedSimulationHttpTrigger
     {
