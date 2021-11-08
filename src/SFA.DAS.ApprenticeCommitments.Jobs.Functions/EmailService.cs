@@ -10,12 +10,12 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
 {
     public class EmailService
     {
-        private readonly ILogger<ApprenticeshipCommitmentsJobsHandler> _logger;
+        private readonly ILogger<EmailService> _logger;
         private readonly ApplicationSettings _settings;
 
         public EmailService(
             ApplicationSettings settings,
-            ILogger<ApprenticeshipCommitmentsJobsHandler> logger)
+            ILogger<EmailService> logger)
         {
             _logger = logger;
             _settings = settings;

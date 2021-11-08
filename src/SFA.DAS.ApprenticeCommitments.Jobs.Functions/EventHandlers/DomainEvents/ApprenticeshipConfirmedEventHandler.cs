@@ -4,18 +4,18 @@ using SFA.DAS.ApprenticeCommitments.Jobs.Api;
 using SFA.DAS.ApprenticeCommitments.Messages.Events;
 using System.Threading.Tasks;
 
-namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
+namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.EventHandlers.DomainEvents
 {
     public class ApprenticeshipConfirmedEventHandler : IHandleMessages<ApprenticeshipConfirmationConfirmedEvent>
     {
         private readonly IEcsApi _api;
         private readonly EmailService _emailer;
-        private readonly ILogger<ApprenticeshipCommitmentsJobsHandler> _logger;
+        private readonly ILogger<ApprenticeshipConfirmedEventHandler> _logger;
 
         public ApprenticeshipConfirmedEventHandler(
             IEcsApi api,
             EmailService emailer,
-            ILogger<ApprenticeshipCommitmentsJobsHandler> logger)
+            ILogger<ApprenticeshipConfirmedEventHandler> logger)
         {
             _api = api;
             _emailer = emailer;
