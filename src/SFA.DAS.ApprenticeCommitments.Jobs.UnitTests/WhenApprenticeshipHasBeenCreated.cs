@@ -1,22 +1,20 @@
 using AutoFixture;
 using AutoFixture.AutoMoq;
 using AutoFixture.NUnit3;
+using FluentAssertions;
 using Moq;
 using NServiceBus.Testing;
 using NUnit.Framework;
 using SFA.DAS.ApprenticeCommitments.Jobs.Api;
-using SFA.DAS.ApprenticeCommitments.Jobs.Functions;
+using SFA.DAS.ApprenticeCommitments.Jobs.Functions.EventHandlers.DomainEvents;
 using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure;
 using SFA.DAS.ApprenticeCommitments.Messages.Events;
 using SFA.DAS.CommitmentsV2.Messages.Events;
-using System.Linq;
-using System;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using System.Security.Policy;
-using FluentAssertions;
 using SFA.DAS.Notifications.Messages.Commands;
-using System.Runtime;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using SFA.DAS.ApprenticeCommitments.Jobs.Functions.EventHandlers.CommitmentsEventHandlers;
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
 {
@@ -27,7 +25,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
         [Test, AutoMoqData]
         public async Task And_it_is_a_new_apprenticeship_Then_create_the_apprentice_record(
             [Frozen] Mock<IEcsApi> api,
-            ApprenticeshipCommitmentsJobsHandler sut)
+            CommitmentsEventHandler sut)
         {
             api.Setup(x => x.CreateApprentice(It.IsAny<ApprenticeshipCreated>()))
                .ReturnsAsync(_fixture.Create<CreateRegistrationResponse>());
@@ -47,7 +45,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
         [Test, AutoMoqData]
         public async Task And_it_is_a_continuation_apprenticeship_Then_update_the_apprentice_record(
             [Frozen] Mock<IEcsApi> api,
-            ApprenticeshipCommitmentsJobsHandler sut)
+            CommitmentsEventHandler sut)
         {
             var continuationId = _fixture.Create<long>();
 

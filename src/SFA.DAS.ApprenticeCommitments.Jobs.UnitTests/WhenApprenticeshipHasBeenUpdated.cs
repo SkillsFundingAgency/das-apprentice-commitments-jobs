@@ -3,9 +3,9 @@ using Moq;
 using NServiceBus.Testing;
 using NUnit.Framework;
 using SFA.DAS.ApprenticeCommitments.Jobs.Api;
-using SFA.DAS.ApprenticeCommitments.Jobs.Functions;
 using SFA.DAS.CommitmentsV2.Messages.Events;
 using System.Threading.Tasks;
+using SFA.DAS.ApprenticeCommitments.Jobs.Functions.EventHandlers.CommitmentsEventHandlers;
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
 {
@@ -14,7 +14,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
         [Test, AutoMoqData]
         public async Task Then_notify_apim(
             [Frozen] Mock<IEcsApi> api,
-            ApprenticeshipCommitmentsJobsHandler sut,
+            CommitmentsEventHandler sut,
             ApprenticeshipUpdatedApprovedEvent evt)
         {
             await sut.Handle(evt, new TestableMessageHandlerContext());

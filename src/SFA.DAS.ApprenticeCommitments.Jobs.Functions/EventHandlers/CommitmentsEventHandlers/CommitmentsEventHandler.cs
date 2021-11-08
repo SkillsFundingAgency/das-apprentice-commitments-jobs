@@ -1,23 +1,23 @@
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using NServiceBus;
 using SFA.DAS.Apprentice.LoginService.Messages;
 using SFA.DAS.ApprenticeCommitments.Jobs.Api;
 using SFA.DAS.CommitmentsV2.Messages.Events;
-using System.Threading.Tasks;
 
-namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
+namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.EventHandlers.CommitmentsEventHandlers
 {
-    public class ApprenticeshipCommitmentsJobsHandler
+    public class CommitmentsEventHandler
         : IHandleMessages<ApprenticeshipCreatedEvent>
         , IHandleMessages<SendInvitationReply>
         , IHandleMessages<ApprenticeshipUpdatedApprovedEvent>
     {
         private readonly IEcsApi _api;
-        private readonly ILogger<ApprenticeshipCommitmentsJobsHandler> _logger;
+        private readonly ILogger<CommitmentsEventHandler> _logger;
 
-        public ApprenticeshipCommitmentsJobsHandler(
+        public CommitmentsEventHandler(
             IEcsApi api,
-            ILogger<ApprenticeshipCommitmentsJobsHandler> logger)
+            ILogger<CommitmentsEventHandler> logger)
         {
             _api = api;
             _logger = logger;

@@ -1,11 +1,11 @@
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.Extensions.Logging;
 using NServiceBus;
 using SFA.DAS.Apprentice.LoginService.Messages.Commands;
 using SFA.DAS.ApprenticeCommitments.Jobs.Api;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.JsonPatch;
 
-namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
+namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.EventHandlers.LoginServiceEventHandler
 {
     public class ApprenticeshipUpdateEmailAddressCommandHandler : IHandleMessages<UpdateEmailAddressCommand>
     {

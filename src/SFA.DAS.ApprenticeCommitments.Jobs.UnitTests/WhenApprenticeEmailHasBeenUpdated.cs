@@ -4,10 +4,10 @@ using NServiceBus.Testing;
 using NUnit.Framework;
 using SFA.DAS.Apprentice.LoginService.Messages.Commands;
 using SFA.DAS.ApprenticeCommitments.Jobs.Api;
-using SFA.DAS.ApprenticeCommitments.Jobs.Functions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.JsonPatch.Operations;
+using SFA.DAS.ApprenticeCommitments.Jobs.Functions.EventHandlers.LoginServiceEventHandler;
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
 {
