@@ -7,12 +7,12 @@ using SFA.DAS.ApprenticeCommitments.Jobs.Api;
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.EventHandlers.LoginServiceEventHandler
 {
-    public class ApprenticeshipUpdateEmailAddressCommandHandler : IHandleMessages<UpdateEmailAddressCommand>
+    public class UpdateEmailAddressCommandHandler : IHandleMessages<UpdateEmailAddressCommand>
     {
         private readonly IEcsApi _api;
-        private readonly ILogger<ApprenticeshipUpdateEmailAddressCommandHandler> _logger;
+        private readonly ILogger<UpdateEmailAddressCommandHandler> _logger;
 
-        public ApprenticeshipUpdateEmailAddressCommandHandler(IEcsApi api, ILogger<ApprenticeshipUpdateEmailAddressCommandHandler> logger)
+        public UpdateEmailAddressCommandHandler(IEcsApi api, ILogger<UpdateEmailAddressCommandHandler> logger)
         {
             _api = api;
             _logger = logger;
