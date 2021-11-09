@@ -1,4 +1,4 @@
-﻿using RestEase;
+using RestEase;
 using System;
 using System.Threading.Tasks;
 
@@ -11,6 +11,9 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Api
 
         [Put("registrations")]
         Task UpdateApprenticeship([Body] ApprenticeshipUpdated apprenticeship);
+
+        [Post("registrations/stopped")]
+        Task<CreateRegistrationResponse> StopApprenticeship([Body] ApprenticeshipStopped apprenticeship);
 
         [Get("registrations/{id}")]
         Task<Registration> GetRegistration([Path] Guid id);

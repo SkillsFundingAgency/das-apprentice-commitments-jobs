@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
@@ -28,6 +28,11 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.EventHandlers.SimulationT
         public Task<IActionResult> ApprenticeshipUpdatedEvent(
             [HttpTrigger] HttpRequestMessage req, ExecutionContext executionContext, ILogger log)
             => Simulate<ApprenticeshipUpdatedApprovedEvent>(req, executionContext, log);
+
+        [FunctionName("TestApprenticeshipStopped")]
+        public Task<IActionResult> ApprenticeshipStoppedEvent(
+            [HttpTrigger] HttpRequestMessage req, ExecutionContext executionContext, ILogger log)
+            => Simulate<ApprenticeshipStoppedEvent>(req, executionContext, log);
 
         [FunctionName("ApprenticeshipUpdatedEmailAddressEventTrigger")]
         public Task<IActionResult> ApprenticeshipUpdatedEmailAddressEvent(
