@@ -18,15 +18,23 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.EventHandlers.Commitments
         , IHandleMessages<ApprenticeshipCreatedEvent>
     {
         private readonly IDurableClient _durableClient;
+        private readonly ILogger<StoppedApprenticeshipHandler> _logger;
 
-        public StoppedApprenticeshipHandler(IDurableClientFactory clientFactory, IConfiguration configuration)
-            => _durableClient = clientFactory.CreateClient(new DurableClientOptions
+        public StoppedApprenticeshipHandler(
+            IDurableClientFactory clientFactory,
+            IConfiguration configuration,
+            ILogger<StoppedApprenticeshipHandler> logger)
+        {
+            _durableClient = clientFactory.CreateClient(new DurableClientOptions
             {
                 TaskHub = configuration["TaskHub"],
             });
+            _logger = logger;
+        }
 
         public async Task Handle(ApprenticeshipStoppedEvent message, IMessageHandlerContext context)
         {
+            _logger.LogInformation("Starting delay for stopped apprenticeship {apprenticeshipId}", message.ApprenticeshipId);
             await _durableClient.StartNewAsync(
                 nameof(DelayedStoppedApprenticeshipHandler.DelayApprenticeshipStopped),
                 $"StoppedApprenticeshipFor{message.ApprenticeshipId}",
@@ -40,7 +48,14 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.EventHandlers.Commitments
             var state = await _durableClient.GetStatusAsync(instanceId);
 
             if (state?.RuntimeStatus == OrchestrationRuntimeStatus.Running)
+            {
+                _logger.LogInformation("Interrupting stopped apprenticeship {apprenticeshipId} - continued by {continuationOfId}", message.ApprenticeshipId, message.ContinuationOfId);
                 await _durableClient.RaiseEventAsync(instanceId, "ApprenticeshipContinued");
+            }
+            else
+            {
+                _logger.LogInformation("Too late to interrupt stopped apprenticeship {apprenticeshipId} - continued by {continuationOfId}", message.ApprenticeshipId, message.ContinuationOfId);
+            }
         }
     }
 
@@ -52,18 +67,19 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.EventHandlers.Commitments
 
         [FunctionName(nameof(DelayApprenticeshipStopped))]
         public static async Task DelayApprenticeshipStopped(
-            [OrchestrationTrigger] IDurableOrchestrationContext context)
+            [OrchestrationTrigger] IDurableOrchestrationContext context,
+            ILogger logger)
         {
-            //var deadline = context.CurrentUtcDateTime.Add(TimeSpan.FromSeconds(14));
             try
             {
-                var deadline = TimeSpan.FromMinutes(1);
+                var deadline = TimeSpan.FromDays(14); // TODO needs to come from configuration
                 await context.WaitForExternalEvent("ApprenticeshipContinued", deadline);
             }
             catch(TimeoutException)
             {
                 var message = context.GetInput<ApprenticeshipStoppedEvent>();
                 await context.CallActivityAsync(nameof(SendApprenticeStopped), message);
+                logger.LogInformation("Notied API of stopped apprenticeship {apprenticeshipId}", message.ApprenticeshipId);
             }
         }
 
