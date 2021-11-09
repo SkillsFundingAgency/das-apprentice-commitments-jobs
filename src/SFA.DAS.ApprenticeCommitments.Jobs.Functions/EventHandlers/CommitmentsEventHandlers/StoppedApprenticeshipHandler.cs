@@ -6,9 +6,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using NServiceBus;
 using SFA.DAS.ApprenticeCommitments.Jobs.Api;
+using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure;
 using SFA.DAS.CommitmentsV2.Messages.Events;
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.EventHandlers.CommitmentsEventHandlerss
@@ -62,17 +62,19 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.EventHandlers.Commitments
     public class DelayedStoppedApprenticeshipHandler
     {
         private readonly IEcsApi _api;
+        private readonly ApplicationSettings _settings;
 
-        public DelayedStoppedApprenticeshipHandler(IEcsApi api) => _api = api;
+        public DelayedStoppedApprenticeshipHandler(IEcsApi api, ApplicationSettings settings)
+            => (_api, _settings) = (api, settings);
 
         [FunctionName(nameof(DelayApprenticeshipStopped))]
-        public static async Task DelayApprenticeshipStopped(
+        public async Task DelayApprenticeshipStopped(
             [OrchestrationTrigger] IDurableOrchestrationContext context,
             ILogger logger)
         {
             try
             {
-                var deadline = TimeSpan.FromDays(14); // TODO needs to come from configuration
+                var deadline = _settings.TimeToWaitBeforeStoppingApprenticeship;
                 await context.WaitForExternalEvent("ApprenticeshipContinued", deadline);
             }
             catch(TimeoutException)
