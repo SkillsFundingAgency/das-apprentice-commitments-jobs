@@ -13,20 +13,35 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.EventHandlers.CommitmentsEventHandlerss
 {
-    public class StoppedApprenticeshipHandler : IHandleMessages<ApprenticeshipStoppedEvent>
+    public class StoppedApprenticeshipHandler
+        : IHandleMessages<ApprenticeshipStoppedEvent>
+        , IHandleMessages<ApprenticeshipCreatedEvent>
     {
         private readonly IDurableClient _durableClient;
 
         public StoppedApprenticeshipHandler(IDurableClientFactory clientFactory, IConfiguration configuration)
             => _durableClient = clientFactory.CreateClient(new DurableClientOptions
-                {
-                    TaskHub = configuration["TaskHub"],
-                });
+            {
+                TaskHub = configuration["TaskHub"],
+            });
 
         public async Task Handle(ApprenticeshipStoppedEvent message, IMessageHandlerContext context)
-            => await _durableClient.StartNewAsync(
+        {
+            await _durableClient.StartNewAsync(
                 nameof(DelayedStoppedApprenticeshipHandler.DelayApprenticeshipStopped),
+                $"StoppedApprenticeshipFor{message.ApprenticeshipId}",
                 message);
+        }
+
+        public async Task Handle(ApprenticeshipCreatedEvent message, IMessageHandlerContext context)
+        {
+            var instanceId = $"StoppedApprenticeshipFor{message.ContinuationOfId}";
+
+            var state = await _durableClient.GetStatusAsync(instanceId);
+
+            if (state?.RuntimeStatus == OrchestrationRuntimeStatus.Running)
+                await _durableClient.RaiseEventAsync(instanceId, "ApprenticeshipContinued");
+        }
     }
 
     public class DelayedStoppedApprenticeshipHandler
@@ -39,10 +54,17 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.EventHandlers.Commitments
         public static async Task DelayApprenticeshipStopped(
             [OrchestrationTrigger] IDurableOrchestrationContext context)
         {
-            var message = context.GetInput<ApprenticeshipStoppedEvent>();
-            var deadline = context.CurrentUtcDateTime.Add(TimeSpan.FromSeconds(14));
-            await context.CreateTimer(deadline, CancellationToken.None);
-            await context.CallActivityAsync(nameof(SendApprenticeStopped), message);
+            //var deadline = context.CurrentUtcDateTime.Add(TimeSpan.FromSeconds(14));
+            try
+            {
+                var deadline = TimeSpan.FromMinutes(1);
+                await context.WaitForExternalEvent("ApprenticeshipContinued", deadline);
+            }
+            catch(TimeoutException)
+            {
+                var message = context.GetInput<ApprenticeshipStoppedEvent>();
+                await context.CallActivityAsync(nameof(SendApprenticeStopped), message);
+            }
         }
 
         [FunctionName(nameof(SendApprenticeStopped))]
