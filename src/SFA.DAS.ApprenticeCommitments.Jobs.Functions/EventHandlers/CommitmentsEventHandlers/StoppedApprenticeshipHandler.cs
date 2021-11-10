@@ -91,7 +91,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.EventHandlers.Commitments
             ILogger log)
         {
             log.LogInformation("Notifying API of stopped apprenticeship {commitmentsApprenticeshipId}", message.ApprenticeshipId);
-            _api.StopApprenticeship(new ApprenticeshipStopped
+            _api.StopApprenticeship(new ApprovalStopped
             {
                 CommitmentsApprenticeshipId = message.ApprenticeshipId,
                 CommitmentsStoppedOn = message.StopDate,

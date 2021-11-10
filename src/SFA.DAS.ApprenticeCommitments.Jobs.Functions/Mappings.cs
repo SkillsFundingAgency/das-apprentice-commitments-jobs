@@ -6,8 +6,8 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
 {
     public static class Mappings
     {
-        public static ApprenticeshipCreated ToApprenticeshipCreated(this ApprenticeshipCreatedEvent source) =>
-            new ApprenticeshipCreated
+        public static ApprovalCreated ToApprenticeshipCreated(this ApprenticeshipCreatedEvent source) =>
+            new ApprovalCreated
             {
                 CommitmentsApprenticeshipId = source.ApprenticeshipId,
                 EmployerName = source.LegalEntityName,
@@ -17,23 +17,23 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
                 CommitmentsApprovedOn = source.CreatedOn
             };
 
-        public static ApprenticeshipUpdated ToApprenticeshipUpdated(this ApprenticeshipCreatedEvent source) =>
-            new ApprenticeshipUpdated
+        public static ApprovalUpdated ToApprenticeshipUpdated(this ApprenticeshipCreatedEvent source) =>
+            new ApprovalUpdated
             {
                 CommitmentsContinuedApprenticeshipId = source.ContinuationOfId,
                 CommitmentsApprenticeshipId = source.ApprenticeshipId,
                 CommitmentsApprovedOn = source.CreatedOn
             };
 
-        public static ApprenticeshipUpdated ToApprenticeshipUpdated(this ApprenticeshipUpdatedApprovedEvent source) =>
-            new ApprenticeshipUpdated
+        public static ApprovalUpdated ToApprenticeshipUpdated(this ApprenticeshipUpdatedApprovedEvent source) =>
+            new ApprovalUpdated
             {
                 CommitmentsApprenticeshipId = source.ApprenticeshipId,
                 CommitmentsApprovedOn = source.ApprovedOn
             };
 
-        public static ApprenticeshipUpdated ToApprenticeshipUpdated(this ApprenticeshipUpdatedEmailAddressEvent source) =>
-            new ApprenticeshipUpdated
+        public static ApprovalUpdated ToApprenticeshipUpdated(this ApprenticeshipUpdatedEmailAddressEvent source) =>
+            new ApprovalUpdated
             {
                 CommitmentsApprenticeshipId = source.ApprenticeshipId,
                 CommitmentsApprovedOn = source.ApprovedOn
