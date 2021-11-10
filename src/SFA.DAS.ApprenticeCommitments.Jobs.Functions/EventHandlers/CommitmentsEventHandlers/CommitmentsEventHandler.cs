@@ -1,18 +1,16 @@
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using NServiceBus;
 using SFA.DAS.Apprentice.LoginService.Messages;
-using SFA.DAS.Apprentice.LoginService.Messages.Commands;
 using SFA.DAS.ApprenticeCommitments.Jobs.Api;
 using SFA.DAS.CommitmentsV2.Messages.Events;
-using System.Threading.Tasks;
 
-namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.EventHandlers.CommitmentsEventHandlerss
+namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.EventHandlers.CommitmentsEventHandlers
 {
     public class CommitmentsEventHandler
         : IHandleMessages<ApprenticeshipCreatedEvent>
         , IHandleMessages<SendInvitationReply>
         , IHandleMessages<ApprenticeshipUpdatedApprovedEvent>
-        , IHandleMessages<UpdateEmailAddressCommand>
     {
         private readonly IEcsApi _api;
         private readonly ILogger<CommitmentsEventHandler> _logger;
@@ -40,12 +38,6 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.EventHandlers.Commitments
         {
             _logger.LogInformation("Handling ApprenticeshipUpdatedApprovedEvent for {ApprenticeshipId}", message.ApprenticeshipId);
             return _api.UpdateApprenticeship(message.ToApprenticeshipUpdated());
-        }
-
-        public Task Handle(UpdateEmailAddressCommand message, IMessageHandlerContext context)
-        {
-            _logger.LogInformation($"Received {nameof(UpdateEmailAddressCommand)} for apprentice {message.ApprenticeId}");
-            return _api.UpdateApprenticeEmail(message.ApprenticeId, message.ToEmailUpdate());
         }
 
         public async Task Handle(SendInvitationReply message, IMessageHandlerContext context)

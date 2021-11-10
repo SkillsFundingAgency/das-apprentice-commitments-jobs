@@ -3,9 +3,9 @@ using Moq;
 using NServiceBus.Testing;
 using NUnit.Framework;
 using SFA.DAS.ApprenticeCommitments.Jobs.Api;
-using SFA.DAS.ApprenticeCommitments.Jobs.Functions.EventHandlers.CommitmentsEventHandlerss;
 using SFA.DAS.CommitmentsV2.Messages.Events;
 using System.Threading.Tasks;
+using SFA.DAS.ApprenticeCommitments.Jobs.Functions.EventHandlers.CommitmentsEventHandlers;
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
 {

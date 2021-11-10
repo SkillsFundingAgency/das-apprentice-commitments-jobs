@@ -1,6 +1,7 @@
 ﻿using RestEase;
 using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.JsonPatch;
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs.Api
 {
@@ -30,7 +31,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Api
         [Post("registrations/{apprenticeId}/reminder")]
         Task InvitationReminderSent([Path] Guid apprenticeId, [Body] RegistrationReminderSentRequest request);
 
-        [Post("apprentices/{id}/email")]
-        Task UpdateApprenticeEmail([Path] Guid id, [Body] EmailUpdate request);
+        [Patch("/apprentices/{apprenticeId}")]
+        Task UpdateApprentice([Path] Guid apprenticeId, [Body] JsonPatchDocument<Apprentice> patch);
     }
 }

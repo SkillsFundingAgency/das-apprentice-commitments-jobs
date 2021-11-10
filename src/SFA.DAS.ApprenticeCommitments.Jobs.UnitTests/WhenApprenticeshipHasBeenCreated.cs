@@ -6,7 +6,6 @@ using Moq;
 using NServiceBus.Testing;
 using NUnit.Framework;
 using SFA.DAS.ApprenticeCommitments.Jobs.Api;
-using SFA.DAS.ApprenticeCommitments.Jobs.Functions.EventHandlers.CommitmentsEventHandlerss;
 using SFA.DAS.ApprenticeCommitments.Jobs.Functions.EventHandlers.DomainEvents;
 using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure;
 using SFA.DAS.ApprenticeCommitments.Messages.Events;
@@ -15,6 +14,7 @@ using SFA.DAS.Notifications.Messages.Commands;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using SFA.DAS.ApprenticeCommitments.Jobs.Functions.EventHandlers.CommitmentsEventHandlers;
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
 {
