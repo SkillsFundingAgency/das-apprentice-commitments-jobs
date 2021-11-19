@@ -16,8 +16,8 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
     {
         [Test, AutoMoqData]
         public async Task Create_timeout(
-                    StoppedApprenticeshipHandler sut,
-                    ApprenticeshipStoppedEvent evt)
+            StoppedApprenticeshipHandler sut,
+            ApprenticeshipStoppedEvent evt)
         {
             var context = new TestableMessageHandlerContext();
             sut.Data = new StoppedApprenticeshipSagaData();
@@ -30,8 +30,8 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
 
         [Test, AutoMoqData]
         public async Task Process_stop(
-                    StoppedApprenticeshipHandler sut,
-                    StoppedApprenticeshipSagaData data)
+            StoppedApprenticeshipHandler sut,
+            StoppedApprenticeshipSagaData data)
         {
             var context = new TestableMessageHandlerContext();
             sut.Data = data;
@@ -47,14 +47,32 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
 
         [Test, AutoMoqData]
         public async Task Notify_apim(
-                    [Frozen] Mock<IEcsApi> api,
-                    ProcessStoppedApprenticeshipsHandler sut,
-                    ProcessStoppedApprenticeship evt)
+            [Frozen] Mock<IEcsApi> api,
+            ProcessStoppedApprenticeshipsHandler sut,
+            ProcessStoppedApprenticeship evt)
         {
             await sut.Handle(evt, new TestableMessageHandlerContext());
 
             api.Verify(x => x.StopApprenticeship(It.Is<ApprenticeshipStopped>(p
                 => p.CommitmentsApprenticeshipId == evt.CommitmentsApprenticeshipId)));
+        }
+
+        [Test, AutoMoqData]
+        public async Task Abandon_stop_if_apprenticeship_is_continued(
+            StoppedApprenticeshipHandler sut,
+            ApprenticeshipStoppedEvent stopEvent,
+            ApprenticeshipCreatedEvent continueEvent)
+        {
+            // Given
+            continueEvent.ApprenticeshipId = stopEvent.ApprenticeshipId;
+
+            // When
+            var context = new TestableMessageHandlerContext();
+            await sut.Handle(stopEvent, context);
+            await sut.Handle(continueEvent, context);
+
+            // Then
+            sut.Completed.Should().BeTrue();
         }
     }
 }

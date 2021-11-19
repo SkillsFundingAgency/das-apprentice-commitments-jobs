@@ -18,6 +18,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.EventHandlers.Commitments
     public class StoppedApprenticeshipHandler
         : Saga<StoppedApprenticeshipSagaData>
         , IAmStartedByMessages<ApprenticeshipStoppedEvent>
+        , IHandleMessages<ApprenticeshipCreatedEvent>
         , IHandleTimeouts<StoppedApprenticeshipTimeout>
     {
         private readonly ILogger<StoppedApprenticeshipHandler> _logger;
@@ -30,6 +31,9 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.EventHandlers.Commitments
             mapper
                 .ConfigureMapping<ApprenticeshipStoppedEvent>(message => message.ApprenticeshipId)
                 .ToSaga(saga => saga.CommitmentsApprenticeshipId);
+            mapper
+                .ConfigureMapping<ApprenticeshipCreatedEvent>(message => message.ContinuationOfId ?? 0)
+                .ToSaga(saga => saga.CommitmentsApprenticeshipId);
         }
 
         public async Task Handle(ApprenticeshipStoppedEvent message, IMessageHandlerContext context)
@@ -37,6 +41,13 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.EventHandlers.Commitments
             var delay = TimeSpan.FromSeconds(14);
             _logger.LogInformation("Deferring ApprenticeshipStoppedEvent for {commitmentsApprenticeshipId} until {delay}", message.ApprenticeshipId, delay);
             await RequestTimeout(context, delay, new StoppedApprenticeshipTimeout());
+        }
+
+        public Task Handle(ApprenticeshipCreatedEvent message, IMessageHandlerContext context)
+        {
+            _logger.LogInformation("Abandoning ApprenticeshipStoppedEvent for {commitmentsApprenticeshipId} due to continuation by {continuationApprenticeshipId}", message.ApprenticeshipId, message.ApprenticeshipId);
+            MarkAsComplete();
+            return Task.CompletedTask;
         }
 
         public async Task Timeout(StoppedApprenticeshipTimeout state, IMessageHandlerContext context)
