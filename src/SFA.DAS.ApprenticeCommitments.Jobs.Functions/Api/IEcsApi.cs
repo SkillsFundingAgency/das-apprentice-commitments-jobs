@@ -7,14 +7,14 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Api
 {
     public interface IEcsApi
     {
-        [Post("registrations")]
-        Task<CreateRegistrationResponse> CreateApprentice([Body] ApprenticeshipCreated apprenticeship);
+        [Post("approvals")]
+        Task CreateApproval([Body] ApprovalCreated approval);
 
-        [Put("registrations")]
-        Task UpdateApprenticeship([Body] ApprenticeshipUpdated apprenticeship);
+        [Put("approvals")]
+        Task UpdateApproval([Body] ApprovalUpdated approval);
 
-        [Post("registrations/stopped")]
-        Task<CreateRegistrationResponse> StopApprenticeship([Body] ApprenticeshipStopped apprenticeship);
+        [Post("approvals/stopped")]
+        Task StopApprenticeship([Body] ApprovalStopped approval);
 
         [Get("registrations/{id}")]
         Task<Registration> GetRegistration([Path] Guid id);
