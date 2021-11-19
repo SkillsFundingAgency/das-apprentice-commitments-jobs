@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using NServiceBus;
+using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure;
 using SFA.DAS.ApprenticeCommitments.Jobs.Functions.InternalMessages.Commands;
 using SFA.DAS.CommitmentsV2.Messages.Events;
 using System;
@@ -21,10 +22,11 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.EventHandlers.Commitments
         , IHandleMessages<ApprenticeshipCreatedEvent>
         , IHandleTimeouts<StoppedApprenticeshipTimeout>
     {
+        private readonly ApplicationSettings _settings;
         private readonly ILogger<StoppedApprenticeshipHandler> _logger;
 
-        public StoppedApprenticeshipHandler(ILogger<StoppedApprenticeshipHandler> logger)
-            => _logger = logger;
+        public StoppedApprenticeshipHandler(ApplicationSettings settings, ILogger<StoppedApprenticeshipHandler> logger)
+            => (_settings, _logger) = (settings, logger);
 
         protected override void ConfigureHowToFindSaga(SagaPropertyMapper<StoppedApprenticeshipSagaData> mapper)
         {
@@ -38,8 +40,9 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.EventHandlers.Commitments
 
         public async Task Handle(ApprenticeshipStoppedEvent message, IMessageHandlerContext context)
         {
-            var delay = TimeSpan.FromSeconds(14);
-            _logger.LogInformation("Deferring ApprenticeshipStoppedEvent for {commitmentsApprenticeshipId} until {delay}", message.ApprenticeshipId, delay);
+            var delay = _settings.TimeToWaitBeforeStoppingApprenticeship;
+            _logger.LogInformation("Deferring ApprenticeshipStoppedEvent for {commitmentsApprenticeshipId} until {delay}",
+                message.ApprenticeshipId, DateTime.UtcNow.Add(delay));
             await RequestTimeout(context, delay, new StoppedApprenticeshipTimeout());
         }
 

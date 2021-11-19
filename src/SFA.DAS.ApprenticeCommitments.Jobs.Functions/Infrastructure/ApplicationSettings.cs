@@ -11,6 +11,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure
         public NotificationConfiguration Notifications { get; set; } = null!;
         public long SendRemindersAfterThisNumberDays { get; set; }
         public TimeSpan TimeToWaitBeforeChangeOfApprenticeshipEmail { get; set; } = TimeSpan.FromHours(24);
+        public TimeSpan TimeToWaitBeforeStoppingApprenticeship { get; set; } = TimeSpan.FromDays(14);
         public Uri SurveyLink { get; set; } = null!;
     }
 
