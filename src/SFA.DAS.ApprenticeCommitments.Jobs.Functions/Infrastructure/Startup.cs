@@ -54,6 +54,8 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
                 configuration.AdvancedConfiguration.Pipeline.Register(new LogIncomingBehaviour(), nameof(LogIncomingBehaviour));
                 configuration.AdvancedConfiguration.Pipeline.Register(new LogOutgoingBehaviour(), nameof(LogOutgoingBehaviour));
 
+                var persistence = configuration.AdvancedConfiguration.UsePersistence<LearningPersistence>();
+
                 return configuration;
             });
 
