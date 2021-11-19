@@ -64,6 +64,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
             ApprenticeshipCreatedEvent continueEvent)
         {
             // Given
+            sut.Data = new StoppedApprenticeshipSagaData();
             continueEvent.ApprenticeshipId = stopEvent.ApprenticeshipId;
 
             // When

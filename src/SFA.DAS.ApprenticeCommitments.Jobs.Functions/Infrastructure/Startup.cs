@@ -1,4 +1,5 @@
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NServiceBus;
@@ -33,7 +34,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
                 logger: logger)
                 .GetAwaiter().GetResult();
 
-            builder.UseNServiceBus(() =>
+            builder.UseNServiceBus((IConfiguration appConfiguration) =>
             {
                 var configuration = new ServiceBusTriggeredEndpointConfiguration(
                     endpointName: QueueNames.ApprenticeshipCommitmentsJobs,
@@ -54,7 +55,10 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
                 configuration.AdvancedConfiguration.Pipeline.Register(new LogIncomingBehaviour(), nameof(LogIncomingBehaviour));
                 configuration.AdvancedConfiguration.Pipeline.Register(new LogOutgoingBehaviour(), nameof(LogOutgoingBehaviour));
 
-                var persistence = configuration.AdvancedConfiguration.UsePersistence<LearningPersistence>();
+                var persistence = configuration.AdvancedConfiguration.UsePersistence<AzureTablePersistence>();
+                persistence.ConnectionString(appConfiguration.GetConnectionStringOrSetting("AzureWebJobsStorage"));
+
+                configuration.AdvancedConfiguration.EnableInstallers();
 
                 return configuration;
             });

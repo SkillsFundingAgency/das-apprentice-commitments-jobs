@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 using NServiceBus;
 using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure;
 using SFA.DAS.ApprenticeCommitments.Jobs.Functions.InternalMessages.Commands;
@@ -40,6 +40,8 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.EventHandlers.Commitments
 
         public async Task Handle(ApprenticeshipStoppedEvent message, IMessageHandlerContext context)
         {
+            Data.CommitmentsStoppedOn = message.StopDate;
+
             var delay = _settings.TimeToWaitBeforeStoppingApprenticeship;
             _logger.LogInformation("Deferring ApprenticeshipStoppedEvent for {commitmentsApprenticeshipId} until {delay}",
                 message.ApprenticeshipId, DateTime.UtcNow.Add(delay));
