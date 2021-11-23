@@ -37,6 +37,8 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure
         public Guid ApprenticeSignUp => GetTemplateId(nameof(ApprenticeSignUp));
         public Guid ApprenticeshipChanged => GetTemplateId(nameof(ApprenticeshipChanged));
         public Guid ApprenticeshipConfirmed => GetTemplateId(nameof(ApprenticeshipConfirmed));
+        public Guid ApprenticeshipStopped => GetTemplateId(nameof(ApprenticeshipStopped));
+
 
         private Guid GetTemplateId(string templateName)
         {

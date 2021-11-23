@@ -1,4 +1,6 @@
-﻿using AutoFixture.NUnit3;
+﻿using AutoFixture.AutoMoq;
+using AutoFixture;
+using AutoFixture.NUnit3;
 using FluentAssertions;
 using Moq;
 using NServiceBus.Testing;
@@ -6,9 +8,14 @@ using NUnit.Framework;
 using SFA.DAS.ApprenticeCommitments.Jobs.Api;
 using SFA.DAS.ApprenticeCommitments.Jobs.Functions.EventHandlers.CommitmentsEventHandlers;
 using SFA.DAS.ApprenticeCommitments.Jobs.Functions.EventHandlers.DomainEvents;
+using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure;
 using SFA.DAS.ApprenticeCommitments.Jobs.Functions.InternalMessages.Commands;
 using SFA.DAS.CommitmentsV2.Messages.Events;
+using SFA.DAS.Notifications.Messages.Commands;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using CmadApprenticeshipStoppedEvent = SFA.DAS.ApprenticeCommitments.Messages.Events.ApprenticeshipStoppedEvent;
+using System;
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
 {
@@ -74,6 +81,55 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
 
             // Then
             sut.Completed.Should().BeTrue();
+        }
+
+        [Test, TestAutoData]
+        public async Task Send_email(
+            [Frozen] Api.Apprentice apprentice,
+            [Frozen] ApplicationSettings settings,
+            StoppedApprenticeshipEventHandler sut,
+            CmadApprenticeshipStoppedEvent evt
+            )
+        {
+            var context = new TestableMessageHandlerContext();
+            await sut.Handle(evt, context);
+
+            context.SentMessages
+                .Should().Contain(x => x.Message is SendEmailCommand)
+                .Which.Message.Should().BeEquivalentTo(new
+                {
+                    TemplateId = settings.Notifications.ApprenticeshipStopped.ToString(),
+                    RecipientsAddress = apprentice.Email,
+                    Tokens = new Dictionary<string, string>
+                    {
+                        { "GivenName", apprentice.FirstName },
+                        { "FamilyName", apprentice.LastName },
+                        { "ConfirmApprenticeshipUrl", settings.ApprenticeWeb.ConfirmApprenticeshipUrl.ToString() },
+                        { "CourseName", evt.CourseName },
+                        { "EmployerName", evt.EmployerName },
+                    }
+                });
+        }
+
+        public class TestAutoDataAttribute : AutoDataAttribute
+        {
+            public TestAutoDataAttribute()
+                : base(() => Fixture())
+            {
+            }
+
+            private static IFixture Fixture()
+            {
+                var fixture = new Fixture();
+                fixture.Customize(new AutoMoqCustomization { ConfigureMembers = true });
+                fixture.Customize<NotificationConfiguration>(c => c
+                    .Without(s => s.Templates)
+                    .Do(s =>
+                    {
+                        s.Templates.Add("ApprenticeshipStopped", Guid.NewGuid().ToString());
+                    }));
+                return fixture;
+            }
         }
     }
 }
