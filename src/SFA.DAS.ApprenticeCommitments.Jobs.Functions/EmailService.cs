@@ -98,7 +98,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
                 _settings.Notifications.ApprenticeshipStopped,
                 new Dictionary<string, string>
                 {
-                    { "GivenName", firstName },
+                    { "FirstName", firstName },
                     { "FamilyName", lastName },
                     { "EmployerName", employerName },
                     { "CourseName", apprenticeshipName },

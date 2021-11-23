@@ -24,7 +24,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.EventHandlers.DomainEvent
 
         public async Task Handle(ApprenticeshipStoppedEvent message, IMessageHandlerContext context)
 {
-            _logger.LogInformation("Handle ApprenticeshipRegisteredEvent for apprenticeship {RegistrationId}", message.ApprenticeshipId);
+            _logger.LogInformation("Handle ApprenticeshipStoppedEvent for apprenticeship {RegistrationId}", message.ApprenticeshipId);
             
             var apprentice = await _api.GetApprentice(message.ApprenticeId);
 

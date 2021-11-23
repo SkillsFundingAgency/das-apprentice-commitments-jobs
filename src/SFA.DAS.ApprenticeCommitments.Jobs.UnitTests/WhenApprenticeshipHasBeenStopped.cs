@@ -102,7 +102,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
                     RecipientsAddress = apprentice.Email,
                     Tokens = new Dictionary<string, string>
                     {
-                        { "GivenName", apprentice.FirstName },
+                        { "FirstName", apprentice.FirstName },
                         { "FamilyName", apprentice.LastName },
                         { "ConfirmApprenticeshipUrl", settings.ApprenticeWeb.ConfirmApprenticeshipUrl.ToString() },
                         { "CourseName", evt.CourseName },
