@@ -63,6 +63,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.EventHandlers.Commitments
                 CommitmentsApprenticeshipId = Data.CommitmentsApprenticeshipId,
                 CommitmentsStoppedOn = Data.CommitmentsStoppedOn,
             });
+            MarkAsComplete();
         }
     }
 }
