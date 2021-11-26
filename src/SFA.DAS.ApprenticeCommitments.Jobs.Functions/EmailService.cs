@@ -102,7 +102,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
                     { "FamilyName", lastName },
                     { "EmployerName", employerName },
                     { "CourseName", apprenticeshipName },
-                    { "ConfirmApprenticeshipUrl", _settings.ApprenticeWeb.ConfirmApprenticeshipUrl.ToString() },
+                    { "ConfirmApprenticeshipUrl", _settings.ApprenticeWeb.StartPageUrl.ToString() },
                 });
         }
 
