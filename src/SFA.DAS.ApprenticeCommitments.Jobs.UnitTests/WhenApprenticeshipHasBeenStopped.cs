@@ -104,7 +104,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
                     {
                         { "FirstName", apprentice.FirstName },
                         { "FamilyName", apprentice.LastName },
-                        { "ConfirmApprenticeshipUrl", settings.ApprenticeWeb.StartPageUrl.ToString() },
+                        { "ConfirmApprenticeshipUrl", settings.ApprenticeWeb.StartPageUrl + "/home" },
                         { "CourseName", evt.CourseName },
                         { "EmployerName", evt.EmployerName },
                     }
