@@ -29,15 +29,15 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.EventHandlers.Commitments
                 , message.ApprenticeshipId, message.ContinuationOfId);
 
             if (message.ContinuationOfId.HasValue)
-                await _api.UpdateApprenticeship(message.ToApprenticeshipUpdated());
+                await _api.UpdateApproval(message.ToApprenticeshipUpdated());
             else
-                await _api.CreateApprentice(message.ToApprenticeshipCreated());
+                await _api.CreateApproval(message.ToApprenticeshipCreated());
         }
 
         public Task Handle(ApprenticeshipUpdatedApprovedEvent message, IMessageHandlerContext context)
         {
             _logger.LogInformation("Handling ApprenticeshipUpdatedApprovedEvent for {ApprenticeshipId}", message.ApprenticeshipId);
-            return _api.UpdateApprenticeship(message.ToApprenticeshipUpdated());
+            return _api.UpdateApproval(message.ToApprenticeshipUpdated());
         }
 
         public async Task Handle(SendInvitationReply message, IMessageHandlerContext context)

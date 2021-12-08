@@ -2,7 +2,7 @@
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs.Api
 {
-    public class ApprenticeshipCreated
+    public class ApprovalCreated
     {
         public long CommitmentsApprenticeshipId { get; set; }
         public DateTime CommitmentsApprovedOn { get; set; }

@@ -27,16 +27,13 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
             [Frozen] Mock<IEcsApi> api,
             CommitmentsEventHandler sut)
         {
-            api.Setup(x => x.CreateApprentice(It.IsAny<ApprenticeshipCreated>()))
-               .ReturnsAsync(_fixture.Create<CreateRegistrationResponse>());
-
             var evt = _fixture.Build<ApprenticeshipCreatedEvent>()
                .Without(p => p.ContinuationOfId)
                .Create();
 
             await sut.Handle(evt, new TestableMessageHandlerContext());
 
-            api.Verify(m => m.CreateApprentice(It.Is<ApprenticeshipCreated>(n =>
+            api.Verify(m => m.CreateApproval(It.Is<ApprovalCreated>(n =>
                 n.CommitmentsApprenticeshipId == evt.ApprenticeshipId &&
                 n.EmployerName == evt.LegalEntityName &&
                 n.CommitmentsApprovedOn == evt.CreatedOn)));
@@ -55,7 +52,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
 
             await sut.Handle(evt, new TestableMessageHandlerContext());
 
-            api.Verify(m => m.UpdateApprenticeship(It.Is<ApprenticeshipUpdated>(n =>
+            api.Verify(m => m.UpdateApproval(It.Is<ApprovalUpdated>(n =>
                 n.CommitmentsContinuedApprenticeshipId == continuationId &&
                 n.CommitmentsApprenticeshipId == evt.ApprenticeshipId &&
                 n.CommitmentsApprovedOn == evt.CreatedOn)));

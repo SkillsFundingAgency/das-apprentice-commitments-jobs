@@ -86,6 +86,26 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
                 });
         }
 
+        internal async Task SendApprenticeshipStopped(
+                    IMessageHandlerContext context,
+                    string emailAddress,
+                    string firstName,
+                    string lastName,
+                    string employerName,
+                    string apprenticeshipName)
+        {
+            await SendEmail(o => context.Send(o), emailAddress,
+                _settings.Notifications.ApprenticeshipStopped,
+                new Dictionary<string, string>
+                {
+                    { "FirstName", firstName },
+                    { "FamilyName", lastName },
+                    { "EmployerName", employerName },
+                    { "CourseName", apprenticeshipName },
+                    { "ConfirmApprenticeshipUrl", _settings.ApprenticeWeb.StartPageUrl + "/home" },
+                });
+        }
+
         private async Task SendEmail(Func<object, Task> send, string emailAddress, Guid templateId, Dictionary<string, string> tokens)
         {
             var message = new SendEmailCommand(templateId.ToString(), emailAddress, tokens);
