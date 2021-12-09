@@ -1,7 +1,6 @@
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using NServiceBus;
-using SFA.DAS.Apprentice.LoginService.Messages;
 using SFA.DAS.ApprenticeCommitments.Jobs.Api;
 using SFA.DAS.CommitmentsV2.Messages.Events;
 
@@ -9,7 +8,6 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.EventHandlers.Commitments
 {
     public class CommitmentsEventHandler
         : IHandleMessages<ApprenticeshipCreatedEvent>
-        , IHandleMessages<SendInvitationReply>
         , IHandleMessages<ApprenticeshipUpdatedApprovedEvent>
     {
         private readonly IEcsApi _api;
@@ -39,8 +37,5 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.EventHandlers.Commitments
             _logger.LogInformation("Handling ApprenticeshipUpdatedApprovedEvent for {ApprenticeshipId}", message.ApprenticeshipId);
             return _api.UpdateApproval(message.ToApprenticeshipUpdated());
         }
-
-        public async Task Handle(SendInvitationReply message, IMessageHandlerContext context)
-            => await Task.CompletedTask;
     }
 }
