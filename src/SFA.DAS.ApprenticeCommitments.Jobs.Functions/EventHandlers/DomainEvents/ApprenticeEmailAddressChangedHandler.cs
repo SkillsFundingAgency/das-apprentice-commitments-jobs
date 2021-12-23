@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.JsonPatch;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using NServiceBus;
 using SFA.DAS.ApprenticeAccounts.Messages.Events;
 using SFA.DAS.ApprenticeCommitments.Jobs.Api;
+using SFA.DAS.ApprenticeCommitments.Messages.Events;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.EventHandlers.DomainEvents
@@ -21,7 +21,16 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.EventHandlers.DomainEvent
         public async Task Handle(ApprenticeEmailAddressChanged message, IMessageHandlerContext context)
         {
             _logger.LogInformation("Apprentice {ApprenticeId} changed their email address", message.ApprenticeId);
-            await _api.UpdateApprentice(message.ApprenticeId, new JsonPatchDocument<Apprentice>());
+            var apprenticeships = await _api.GetApprenticeships(message.ApprenticeId);
+
+            foreach (var a in apprenticeships.Apprenticeships)
+            {
+                await context.Publish(new ApprenticeshipEmailAddressChangedEvent
+                {
+                    ApprenticeId = a.ApprenticeId,
+                    CommitmentsApprenticeshipId = a.CommitmentsApprenticeshipId,
+                });
+            }
         }
     }
 }
