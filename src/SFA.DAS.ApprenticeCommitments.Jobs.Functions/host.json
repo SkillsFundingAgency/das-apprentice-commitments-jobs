@@ -1,11 +1,25 @@
 {
-    "version": "2.0",
-    "logging": {
-        "applicationInsights": {
-            "samplingExcludedTypes": "Request",
-            "samplingSettings": {
-                "isEnabled": true
-            }
-        }
+  "version": "2.0",
+  "logging": {
+    "applicationInsights": {
+      "samplingExcludedTypes": "Request",
+      "samplingSettings": {
+        "isEnabled": true
+      }
     }
+  },
+  "extensions": {
+    "http": {
+      "hsts": {
+        "isEnabled": true,
+        "maxAge": "30"
+      },
+      "customHeaders": {
+        "Content-Security-Policy": "default-src 'none';",
+        "X-Frame-Options": "DENY",
+        "X-Content-Type-Options": "nosniff",
+        "X-XSS-Protection": 0
+      }
+    }
+  }
 }
