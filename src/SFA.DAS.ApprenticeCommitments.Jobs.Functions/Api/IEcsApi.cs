@@ -22,6 +22,9 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Api
         [Get("/apprentices/{apprenticeid}")]
         Task<Api.Apprentice> GetApprentice([Path] Guid apprenticeid);
 
+        [Get("/apprentices/{apprenticeid}/apprenticeships")]
+        Task<ApprenticeshipsWrapper> GetApprenticeships([Path] Guid apprenticeid);
+
         [Get("/apprentices/{apprenticeid}/apprenticeships/{apprenticeshipid}/revisions")]
         Task<ApprenticeshipHistory> GetApprenticeshipHistory([Path] Guid apprenticeid, [Path] long apprenticeshipid);
 
