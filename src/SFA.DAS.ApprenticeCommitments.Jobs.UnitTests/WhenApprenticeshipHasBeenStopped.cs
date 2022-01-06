@@ -1,10 +1,11 @@
-﻿using AutoFixture.AutoMoq;
-using AutoFixture;
+﻿using AutoFixture;
+using AutoFixture.AutoMoq;
 using AutoFixture.NUnit3;
 using FluentAssertions;
 using Moq;
 using NServiceBus.Testing;
 using NUnit.Framework;
+using RestEase;
 using SFA.DAS.ApprenticeCommitments.Jobs.Api;
 using SFA.DAS.ApprenticeCommitments.Jobs.Functions.EventHandlers.CommitmentsEventHandlers;
 using SFA.DAS.ApprenticeCommitments.Jobs.Functions.EventHandlers.DomainEvents;
@@ -12,10 +13,12 @@ using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure;
 using SFA.DAS.ApprenticeCommitments.Jobs.Functions.InternalMessages.Commands;
 using SFA.DAS.CommitmentsV2.Messages.Events;
 using SFA.DAS.Notifications.Messages.Commands;
+using System;
 using System.Collections.Generic;
+using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using CmadApprenticeshipStoppedEvent = SFA.DAS.ApprenticeCommitments.Messages.Events.ApprenticeshipStoppedEvent;
-using System;
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
 {
@@ -109,6 +112,21 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
                         { "EmployerName", evt.EmployerName },
                     }
                 });
+        }
+
+        [Test, TestAutoData]
+        public async Task Ignore_unknown_stopped_apprenticeships(
+            [Frozen] Mock<IEcsApi> api,
+            ProcessStoppedApprenticeshipsHandler sut,
+            ProcessStoppedApprenticeship evt)
+        {
+            api
+                .Setup(x => x.StopApprenticeship(It.IsAny<ApprovalStopped>()))
+                .Throws(new ApiException(HttpMethod.Post, null, HttpStatusCode.NotFound, null, null, null, null));
+
+            Func<Task> act = () => sut.Handle(evt, new TestableMessageHandlerContext());
+
+            await act.Should().NotThrowAsync();
         }
 
         public class TestAutoDataAttribute : AutoDataAttribute
