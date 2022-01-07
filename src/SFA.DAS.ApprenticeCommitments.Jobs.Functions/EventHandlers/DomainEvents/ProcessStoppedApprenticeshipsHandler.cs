@@ -1,8 +1,10 @@
 ﻿using Microsoft.Extensions.Logging;
 using NServiceBus;
+using RestEase;
 using SFA.DAS.ApprenticeCommitments.Jobs.Api;
 using SFA.DAS.ApprenticeCommitments.Jobs.Functions.EventHandlers.CommitmentsEventHandlers;
 using SFA.DAS.ApprenticeCommitments.Jobs.Functions.InternalMessages.Commands;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.EventHandlers.DomainEvents
@@ -17,12 +19,19 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.EventHandlers.DomainEvent
 
         public async Task Handle(ProcessStoppedApprenticeship message, IMessageHandlerContext context)
         {
-            _logger.LogInformation("Notifying API of stopped apprenticeship {commitmentsApprenticeshipId}", message.CommitmentsApprenticeshipId);
-            await _api.StopApprenticeship(new ApprovalStopped
+            try
             {
-                CommitmentsApprenticeshipId = message.CommitmentsApprenticeshipId,
-                CommitmentsStoppedOn = message.CommitmentsStoppedOn,
-            });
+                _logger.LogInformation("Notifying API of stopped apprenticeship {commitmentsApprenticeshipId}", message.CommitmentsApprenticeshipId);
+                await _api.StopApprenticeship(new ApprovalStopped
+                {
+                    CommitmentsApprenticeshipId = message.CommitmentsApprenticeshipId,
+                    CommitmentsStoppedOn = message.CommitmentsStoppedOn,
+                });
+            }
+            catch (ApiException e) when (e.StatusCode == HttpStatusCode.NotFound)
+            {
+                _logger.LogInformation("Stopped apprenticeship {commitmentsApprenticeshipId} does not exist in domain", message.CommitmentsApprenticeshipId);
+            }
         }
     }
 }
