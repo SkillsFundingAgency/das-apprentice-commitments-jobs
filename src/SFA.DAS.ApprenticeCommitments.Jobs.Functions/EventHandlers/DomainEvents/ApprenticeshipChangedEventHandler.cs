@@ -52,7 +52,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.EventHandlers.DomainEvent
             }
         }
 
-        private async Task<(Api.Apprentice, ApprenticeshipHistory)> GetApprenticeship(ApprenticeshipChangedEvent message)
+        private async Task<(Apprentice, ApprenticeshipHistory)> GetApprenticeship(ApprenticeshipChangedEvent message)
         {
             var apprentice = api.GetApprentice(message.ApprenticeId);
             var apprenticeship = api.GetApprenticeshipHistory(message.ApprenticeId, message.ApprenticeshipId);
