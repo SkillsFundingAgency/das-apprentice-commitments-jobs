@@ -1,16 +1,17 @@
-﻿using System;
-using AutoFixture.NUnit3;
+﻿using AutoFixture.NUnit3;
 using FluentAssertions;
 using Moq;
 using NServiceBus.Testing;
 using NUnit.Framework;
 using SFA.DAS.ApprenticeCommitments.Jobs.Api;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using SFA.DAS.ApprenticeCommitments.Jobs.Functions.EventHandlers.CommitmentsEventHandlers;
 using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure;
-using SFA.DAS.CommitmentsV2.Messages.Events;
+using SFA.DAS.ApprenticeCommitments.Messages.Commands;
 using SFA.DAS.Notifications.Messages.Commands;
+using System;
+using System.Collections.Generic;
+using System.Net;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
 {
@@ -22,11 +23,11 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
             [Frozen] ApplicationSettings applicationSettings,
             Guid emailTemplateId,
             ApprenticeshipResendInvitationEventHandler sut,
-            ApprenticeshipResendInvitationEvent evt,
+            SendApprenticeshipInvitationCommand evt,
             Registration registration)
         {
             registration.ApprenticeId = null;
-            api.Setup(x => x.GetApprovalsRegistration(evt.ApprenticeshipId)).ReturnsAsync(registration);
+            api.Setup(x => x.GetApprovalsRegistration(evt.CommitmentsApprenticeshipId)).ReturnsAsync(registration);
 
             applicationSettings.Notifications.Templates.Add("ApprenticeSignUp", emailTemplateId.ToString());
             var link = $"{applicationSettings.ApprenticeWeb.StartPageUrl}?Register={registration.RegistrationId}";
@@ -53,30 +54,30 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
         public async Task Then_do_not_SendEmailCommand_if_apprentice_has_been_assigned(
             [Frozen] Mock<IEcsApi> api,
             ApprenticeshipResendInvitationEventHandler sut,
-            ApprenticeshipResendInvitationEvent evt,
+            SendApprenticeshipInvitationCommand evt,
             Registration registration)
         {
-            api.Setup(x => x.GetApprovalsRegistration(evt.ApprenticeshipId)).ReturnsAsync(registration);
+            api.Setup(x => x.GetApprovalsRegistration(evt.CommitmentsApprenticeshipId)).ReturnsAsync(registration);
 
             var context = new TestableMessageHandlerContext();
             await sut.Handle(evt, context);
 
-            context.SentMessages
-                .Should().BeEmpty();
+            context.SentMessages.Should().BeEmpty();
         }
 
         [Test, AutoMoqData]
         public async Task Then_do_not_SendEmailCommand_if_no_Registration_record_found(
             [Frozen] Mock<IEcsApi> api,
             ApprenticeshipResendInvitationEventHandler sut,
-            ApprenticeshipResendInvitationEvent evt,
-            Registration registration)
+            SendApprenticeshipInvitationCommand evt)
         {
+            api.Setup(x => x.GetApprovalsRegistration(It.IsAny<long>()))
+                .ThrowsAsync(RestEase.Testing.CreateApiException(HttpStatusCode.NotFound));
+
             var context = new TestableMessageHandlerContext();
             await sut.Handle(evt, context);
 
-            context.SentMessages
-                .Should().BeEmpty();
+            context.SentMessages.Should().BeEmpty();
         }
     }
 }
