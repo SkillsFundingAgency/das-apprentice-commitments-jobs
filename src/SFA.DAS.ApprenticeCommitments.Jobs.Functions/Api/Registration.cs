@@ -11,6 +11,8 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Api
         public string FirstName { get; set; }
         public string Email { get; set; }
         public Guid? ApprenticeId { get; set; }
+
+        public bool IsMatchedToApprentice => ApprenticeId != null;
     }
 
     public class RegistrationsWrapper

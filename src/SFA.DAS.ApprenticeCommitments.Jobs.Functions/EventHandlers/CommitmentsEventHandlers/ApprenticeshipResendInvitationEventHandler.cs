@@ -30,14 +30,16 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.EventHandlers.Commitments
             try
             {
                 _logger.LogInformation("Handling ApprenticeshipResendInvitationEvent for {ApprenticeshipId}", message.CommitmentsApprenticeshipId);
+                
                 var registration = await _api.GetApprovalsRegistration(message.CommitmentsApprenticeshipId);
-                if (!registration.ApprenticeId.HasValue)
+                
+                if (registration.IsMatchedToApprentice)
                 {
-                    await _emailService.SendApprenticeSignUpInvitation(context, registration.RegistrationId, registration.Email, registration.FirstName);
+                    _logger.LogInformation("Commitments Apprenticeship {ApprenticeshipId}, already assigned to an apprentice, invitation email not required", message.CommitmentsApprenticeshipId);
                 }
                 else
                 {
-                    _logger.LogInformation("Commitments Apprenticeship {ApprenticeshipId}, already assigned to an apprentice, invitation email not required", message.CommitmentsApprenticeshipId);
+                    await _emailService.SendApprenticeSignUpInvitation(context, registration.RegistrationId, registration.Email, registration.FirstName);
                 }
             }
             catch (ApiException e) when (e.StatusCode == HttpStatusCode.NotFound)
