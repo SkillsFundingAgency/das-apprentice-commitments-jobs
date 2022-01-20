@@ -90,7 +90,6 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
                     IMessageHandlerContext context,
                     string emailAddress,
                     string firstName,
-                    string lastName,
                     string employerName,
                     string apprenticeshipName)
         {
@@ -99,7 +98,6 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
                 new Dictionary<string, string>
                 {
                     { "FirstName", firstName },
-                    { "FamilyName", lastName },
                     { "EmployerName", employerName },
                     { "CourseName", apprenticeshipName },
                     { "ConfirmApprenticeshipUrl", _settings.ApprenticeWeb.StartPageUrl + "/home" },
