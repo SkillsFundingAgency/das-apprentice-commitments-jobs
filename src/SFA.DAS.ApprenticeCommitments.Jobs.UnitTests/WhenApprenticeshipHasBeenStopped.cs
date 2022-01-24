@@ -106,7 +106,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
                     Tokens = new Dictionary<string, string>
                     {
                         { "FirstName", apprentice.FirstName },
-                        { "ConfirmApprenticeshipUrl", settings.ApprenticeWeb.StartPageUrl + "/home" },
+                        { "ConfirmApprenticeshipUrl", settings.ApprenticeWeb.StartPageUrl + "home" },
                         { "CourseName", evt.CourseName },
                         { "EmployerName", evt.EmployerName },
                     }
