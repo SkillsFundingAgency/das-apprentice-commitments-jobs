@@ -4,7 +4,7 @@ using Moq;
 using NServiceBus.Testing;
 using NUnit.Framework;
 using SFA.DAS.ApprenticeCommitments.Jobs.Api;
-using SFA.DAS.ApprenticeCommitments.Jobs.Functions.EventHandlers.CommitmentsEventHandlers;
+using SFA.DAS.ApprenticeCommitments.Jobs.Functions.EventHandlers.CommandHandlers;
 using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure;
 using SFA.DAS.ApprenticeCommitments.Messages.Commands;
 using SFA.DAS.Notifications.Messages.Commands;
@@ -22,7 +22,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
             [Frozen] Mock<IEcsApi> api,
             [Frozen] ApplicationSettings applicationSettings,
             Guid emailTemplateId,
-            ApprenticeshipResendInvitationEventHandler sut,
+            SendApprenticeshipInvitationCommandHandler sut,
             SendApprenticeshipInvitationCommand evt,
             Registration registration)
         {
@@ -53,7 +53,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
         [Test, AutoMoqData]
         public async Task Then_do_not_SendEmailCommand_if_apprentice_has_been_assigned(
             [Frozen] Mock<IEcsApi> api,
-            ApprenticeshipResendInvitationEventHandler sut,
+            SendApprenticeshipInvitationCommandHandler sut,
             SendApprenticeshipInvitationCommand evt,
             Registration registration)
         {
@@ -68,7 +68,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
         [Test, AutoMoqData]
         public async Task Then_do_not_SendEmailCommand_if_no_Registration_record_found(
             [Frozen] Mock<IEcsApi> api,
-            ApprenticeshipResendInvitationEventHandler sut,
+            SendApprenticeshipInvitationCommandHandler sut,
             SendApprenticeshipInvitationCommand evt)
         {
             api.Setup(x => x.GetApprovalsRegistration(It.IsAny<long>()))
