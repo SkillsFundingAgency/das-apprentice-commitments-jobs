@@ -4,7 +4,7 @@ using NServiceBus;
 using SFA.DAS.ApprenticeCommitments.Jobs.Api;
 using SFA.DAS.CommitmentsV2.Messages.Events;
 
-namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.EventHandlers.CommitmentsEventHandlers
+namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Handlers.CommitmentsEventHandlers
 {
     public class CommitmentsEventHandler
         : IHandleMessages<ApprenticeshipCreatedEvent>

@@ -4,7 +4,7 @@ using Moq;
 using NServiceBus.Testing;
 using NUnit.Framework;
 using SFA.DAS.ApprenticeCommitments.Jobs.Api;
-using SFA.DAS.ApprenticeCommitments.Jobs.Functions.EventHandlers.CommandHandlers;
+using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Handlers.CommandHandlers;
 using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure;
 using SFA.DAS.ApprenticeCommitments.Messages.Commands;
 using SFA.DAS.Notifications.Messages.Commands;

@@ -6,7 +6,7 @@ using SFA.DAS.ApprenticeCommitments.Messages.Commands;
 using System.Net;
 using System.Threading.Tasks;
 
-namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.EventHandlers.CommandHandlers
+namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Handlers.CommandHandlers
 {
     public class SendApprenticeshipInvitationCommandHandler
         : IHandleMessages<SendApprenticeshipInvitationCommand>
@@ -34,13 +34,9 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.EventHandlers.CommandHand
                 var registration = await _api.GetApprovalsRegistration(message.CommitmentsApprenticeshipId);
 
                 if (registration.IsMatchedToApprentice)
-                {
                     _logger.LogInformation("Commitments Apprenticeship {ApprenticeshipId}, already assigned to an apprentice, invitation email not required", message.CommitmentsApprenticeshipId);
-                }
                 else
-                {
                     await _emailService.SendApprenticeSignUpInvitation(context, registration.RegistrationId, registration.Email, registration.FirstName);
-                }
             }
             catch (ApiException e) when (e.StatusCode == HttpStatusCode.NotFound)
             {

@@ -8,7 +8,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.EventHandlers.DomainEvents
+namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Handlers.DomainEvents
 {
     public class ApprenticeshipChangedEventHandler : IHandleMessages<ApprenticeshipChangedEvent>
     {
@@ -46,10 +46,8 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.EventHandlers.DomainEvent
             var seenPreviousApproval = apprenticeship.LastViewed > previous.ApprovedOn;
 
             if (sinceLastApproval > TimeToWaitBeforeEmail || seenPreviousApproval)
-            {
                 await emailer.SendApprenticeshipChanged(context,
                     apprentice.Email, apprentice.FirstName, apprentice.LastName);
-            }
         }
 
         private async Task<(Apprentice, ApprenticeshipHistory)> GetApprenticeship(ApprenticeshipChangedEvent message)

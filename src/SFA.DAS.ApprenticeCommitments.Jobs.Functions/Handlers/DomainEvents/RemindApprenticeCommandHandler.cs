@@ -4,7 +4,7 @@ using SFA.DAS.ApprenticeCommitments.Jobs.Functions.InternalMessages.Commands;
 using System;
 using System.Threading.Tasks;
 
-namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.EventHandlers.DomainEvents
+namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Handlers.DomainEvents
 {
     public class RemindApprenticeCommandHandler : IHandleMessages<RemindApprenticeCommand>
     {

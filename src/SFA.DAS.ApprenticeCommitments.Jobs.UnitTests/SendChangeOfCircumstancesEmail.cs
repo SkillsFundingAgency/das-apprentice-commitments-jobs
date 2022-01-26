@@ -5,7 +5,7 @@ using FluentAssertions;
 using NServiceBus.Testing;
 using NUnit.Framework;
 using SFA.DAS.ApprenticeCommitments.Jobs.Api;
-using SFA.DAS.ApprenticeCommitments.Jobs.Functions.EventHandlers.DomainEvents;
+using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Handlers.DomainEvents;
 using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure;
 using SFA.DAS.ApprenticeCommitments.Messages.Events;
 using SFA.DAS.Notifications.Messages.Commands;

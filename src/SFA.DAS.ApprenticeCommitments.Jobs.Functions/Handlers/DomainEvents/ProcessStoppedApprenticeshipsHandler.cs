@@ -2,7 +2,7 @@
 using NServiceBus;
 using RestEase;
 using SFA.DAS.ApprenticeCommitments.Jobs.Api;
-using SFA.DAS.ApprenticeCommitments.Jobs.Functions.EventHandlers.CommitmentsEventHandlers;
+using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Handlers.CommitmentsEventHandlers;
 using SFA.DAS.ApprenticeCommitments.Jobs.Functions.InternalMessages.Commands;
 using System.Net;
 using System.Threading.Tasks;
