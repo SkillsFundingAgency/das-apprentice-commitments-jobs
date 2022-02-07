@@ -88,7 +88,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
 
         [Test, TestAutoData]
         public async Task Send_email(
-            [Frozen] Api.Apprentice apprentice,
+            [Frozen] Apprentice apprentice,
             [Frozen] ApplicationSettings settings,
             StoppedApprenticeshipEventHandler sut,
             CmadApprenticeshipStoppedEvent evt
@@ -106,11 +106,32 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
                     Tokens = new Dictionary<string, string>
                     {
                         { "FirstName", apprentice.FirstName },
-                        { "FamilyName", apprentice.LastName },
-                        { "ConfirmApprenticeshipUrl", settings.ApprenticeWeb.StartPageUrl + "/home" },
+                        { "ConfirmApprenticeshipUrl", settings.ApprenticeWeb.StartPageUrl + "home" },
                         { "CourseName", evt.CourseName },
                         { "EmployerName", evt.EmployerName },
                     }
+                });
+        }
+
+        [Test, TestAutoData]
+        public async Task Send_email_to_registration_email_address_if_unmatched(
+            [Frozen] Registration registration,
+            [Frozen] ApplicationSettings settings,
+            StoppedApprenticeshipEventHandler sut,
+            CmadApprenticeshipStoppedEvent evt)
+        {
+            evt.ApprenticeId = null;
+            evt.ApprenticeshipId = null;
+
+            var context = new TestableMessageHandlerContext();
+            await sut.Handle(evt, context);
+
+            context.SentMessages
+                .Should().Contain(x => x.Message is SendEmailCommand)
+                .Which.Message.Should().BeEquivalentTo(new
+                {
+                    TemplateId = settings.Notifications.ApprenticeshipStopped.ToString(),
+                    RecipientsAddress = registration.Email,
                 });
         }
 

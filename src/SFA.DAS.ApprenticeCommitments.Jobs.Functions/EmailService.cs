@@ -87,22 +87,48 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
         }
 
         internal async Task SendApprenticeshipStopped(
-                    IMessageHandlerContext context,
-                    string emailAddress,
-                    string firstName,
-                    string lastName,
-                    string employerName,
-                    string apprenticeshipName)
+            IMessageHandlerContext context,
+            string emailAddress,
+            string firstName,
+            string employerName,
+            string apprenticeshipName)
+        {
+            var link = new Uri(_settings.ApprenticeWeb.StartPageUrl, "home");
+
+            await SendApprenticeshipStopped(context, emailAddress, firstName
+                , employerName, apprenticeshipName, link);
+        }
+
+        internal async Task SendUnmatchedApprenticeshipStopped(
+            IMessageHandlerContext context,
+            string emailAddress,
+            string firstName,
+            string employerName,
+            string apprenticeshipName,
+            Guid? registrationId)
+        {
+            var link = new Uri(_settings.ApprenticeWeb.StartPageUrl, $"?Register={registrationId}");
+
+            await SendApprenticeshipStopped(context, emailAddress, firstName,
+                employerName, apprenticeshipName, link);
+        }
+
+        private async Task SendApprenticeshipStopped(
+            IMessageHandlerContext context,
+            string emailAddress,
+            string firstName,
+            string employerName,
+            string apprenticeshipName,
+            Uri link)
         {
             await SendEmail(o => context.Send(o), emailAddress,
                 _settings.Notifications.ApprenticeshipStopped,
                 new Dictionary<string, string>
                 {
                     { "FirstName", firstName },
-                    { "FamilyName", lastName },
                     { "EmployerName", employerName },
                     { "CourseName", apprenticeshipName },
-                    { "ConfirmApprenticeshipUrl", _settings.ApprenticeWeb.StartPageUrl + "/home" },
+                    { "ConfirmApprenticeshipUrl", link.ToString() },
                 });
         }
 
