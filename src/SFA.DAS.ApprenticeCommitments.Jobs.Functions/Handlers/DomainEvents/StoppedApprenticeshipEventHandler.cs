@@ -23,17 +23,35 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Handlers.DomainEvents
         }
 
         public async Task Handle(ApprenticeshipStoppedEvent message, IMessageHandlerContext context)
-{
-            _logger.LogInformation("Handle ApprenticeshipStoppedEvent for apprenticeship {RegistrationId}", message.ApprenticeshipId);
-            
-            var apprentice = await _api.GetApprentice(message.ApprenticeId);
+        {
+            _logger.LogInformation("Handle ApprenticeshipStoppedEvent for approval {CommitmentsApprenticeshipId}", message.CommitmentsApprenticeshipId);
 
-            await _emailer.SendApprenticeshipStopped(context,
-                apprentice.Email,
-                apprentice.FirstName,
-                apprentice.LastName,
-                message.EmployerName,
-                message.CourseName);
+            if (message.ApprenticeId != null)
+            {
+                var apprentice = await _api.GetApprentice(message.ApprenticeId.Value);
+                await _emailer.SendApprenticeshipStopped(context,
+                    apprentice.Email,
+                    apprentice.FirstName,
+                    message.EmployerName,
+                    message.CourseName);
+            }
+            else if(message.RegistrationId != null)
+            {
+                var registration = await _api.GetRegistration(message.RegistrationId.Value);
+                await _emailer.SendUnmatchedApprenticeshipStopped(context,
+                    registration.Email,
+                    registration.FirstName,
+                    message.EmployerName,
+                    message.CourseName,
+                    message.RegistrationId.Value);
+            }
+            else
+            {
+                _logger.LogWarning(
+                    "ApprenticeshipStoppedEvent for approval {CommitmentsApprenticeshipId} " +
+                    "could not find Apprentice {ApprenticeId} or Registration {RegistrationId}",
+                    message.CommitmentsApprenticeshipId, message.ApprenticeId, message.RegistrationId);
+            }
         }
     }
 }
