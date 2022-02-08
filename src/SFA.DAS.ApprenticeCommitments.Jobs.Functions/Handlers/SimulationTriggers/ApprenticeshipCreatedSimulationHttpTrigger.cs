@@ -9,7 +9,7 @@ using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.EventHandlers.SimulationTriggers
+namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Handlers.SimulationTriggers
 {
     public class ApprenticeshipCreatedSimulationHttpTrigger
     {
@@ -33,7 +33,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.EventHandlers.SimulationT
         public Task<IActionResult> ApprenticeshipStoppedEvent(
                     [HttpTrigger] HttpRequestMessage req, ExecutionContext executionContext, ILogger log)
                     => Simulate<ApprenticeshipStoppedEvent>(req, executionContext, log);
-        
+
         [FunctionName("ApprenticeshipUpdatedEmailAddressEventTrigger")]
         public Task<IActionResult> ApprenticeshipUpdatedEmailAddressEvent(
             [HttpTrigger] HttpRequestMessage req, ExecutionContext executionContext, ILogger log)

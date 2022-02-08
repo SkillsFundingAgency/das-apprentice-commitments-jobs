@@ -5,7 +5,7 @@ using SFA.DAS.ApprenticeCommitments.Jobs.Api;
 using SFA.DAS.ApprenticeCommitments.Messages.Events;
 using System.Threading.Tasks;
 
-namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.EventHandlers.DomainEvents
+namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Handlers.DomainEvents
 {
     public class ApprenticeEmailAddressChangedHandler : IHandleMessages<ApprenticeEmailAddressChanged>
     {
@@ -24,13 +24,11 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.EventHandlers.DomainEvent
             var apprenticeships = await _api.GetApprenticeships(message.ApprenticeId);
 
             foreach (var a in apprenticeships.Apprenticeships)
-            {
                 await context.Publish(new ApprenticeshipEmailAddressChangedEvent
                 {
                     ApprenticeId = a.ApprenticeId,
                     CommitmentsApprenticeshipId = a.CommitmentsApprenticeshipId,
                 });
-            }
         }
     }
 }

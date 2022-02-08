@@ -16,6 +16,9 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Api
         [Post("approvals/stopped")]
         Task StopApprenticeship([Body] ApprovalStopped approval);
 
+        [Get("approvals/{commitmentsApprenticeshipId}/registration")]
+        Task<Registration> GetApprovalsRegistration([Path]long commitmentsApprenticeshipId);
+
         [Get("registrations/{id}")]
         Task<Registration> GetRegistration([Path] Guid id);
 
