@@ -18,8 +18,6 @@ jobs:
     parameters:
       SonarCloudProjectKey: SkillsFundingAgency_das-apprentice-commitments-jobs
 
-  - template: azure-pipelines-templates/build/step/dependency-check.yml@das-platform-building-blocks
-
   - task: DotNetCoreCLI@2
     displayName: 'Publish Function App Apprentice Commitments Jobs'
     inputs:
