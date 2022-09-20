@@ -24,7 +24,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
 
         public override void Configure(IFunctionsHostBuilder builder)
         {
-            //builder.ConfigureLogging();
+            builder.ConfigureLogging();
 
             var logger = LoggerFactory.Create(b => b.ConfigureLogging()).CreateLogger<Startup>();
 
