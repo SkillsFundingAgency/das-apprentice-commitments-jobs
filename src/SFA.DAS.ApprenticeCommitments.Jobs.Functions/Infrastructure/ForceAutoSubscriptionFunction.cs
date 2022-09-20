@@ -14,7 +14,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
         public ForceAutoEventSubscriptionFunction(IFunctionEndpoint functionEndpoint)
             => this.functionEndpoint = functionEndpoint;
 
-        [FunctionName("ForceAutoSubscriptionFunction")]
+        //[FunctionName("ForceAutoSubscriptionFunction")]
         public async Task Run(
             [TimerTrigger("* * * 1 1 *", RunOnStartup = true)] TimerInfo myTimer,
             ILogger logger, ExecutionContext executionContext)

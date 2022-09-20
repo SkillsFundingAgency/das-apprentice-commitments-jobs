@@ -24,44 +24,44 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
 
         public override void Configure(IFunctionsHostBuilder builder)
         {
-            builder.ConfigureLogging();
+            //builder.ConfigureLogging();
 
             var logger = LoggerFactory.Create(b => b.ConfigureLogging()).CreateLogger<Startup>();
 
-            AutoSubscribeToQueues.CreateQueuesWithReflection(
-                builder.GetContext().Configuration,
-                connectionStringName: "NServiceBusConnectionString",
-                logger: logger)
-                .GetAwaiter().GetResult();
+            //AutoSubscribeToQueues.CreateQueuesWithReflection(
+            //    builder.GetContext().Configuration,
+            //    connectionStringName: "NServiceBusConnectionString",
+            //    logger: logger)
+            //    .GetAwaiter().GetResult();
 
-            builder.UseNServiceBus((IConfiguration appConfiguration) =>
-            {
-                var configuration = new ServiceBusTriggeredEndpointConfiguration(
-                    endpointName: QueueNames.ApprenticeshipCommitmentsJobs,
-                    connectionStringName: "NServiceBusConnectionString");
+            //builder.UseNServiceBus((IConfiguration appConfiguration) =>
+            //{
+            //    var configuration = new ServiceBusTriggeredEndpointConfiguration(
+            //        endpointName: QueueNames.ApprenticeshipCommitmentsJobs,
+            //        connectionStringName: "NServiceBusConnectionString");
 
-                configuration.AdvancedConfiguration.SendFailedMessagesTo($"{QueueNames.ApprenticeshipCommitmentsJobs}-error");
-                configuration.LogDiagnostics();
+            //    configuration.AdvancedConfiguration.SendFailedMessagesTo($"{QueueNames.ApprenticeshipCommitmentsJobs}-error");
+            //    configuration.LogDiagnostics();
 
-                configuration.AdvancedConfiguration.Conventions()
-                    .DefiningMessagesAs(IsMessage)
-                    .DefiningEventsAs(IsEvent)
-                    .DefiningCommandsAs(IsCommand);
+            //    configuration.AdvancedConfiguration.Conventions()
+            //        .DefiningMessagesAs(IsMessage)
+            //        .DefiningEventsAs(IsEvent)
+            //        .DefiningCommandsAs(IsCommand);
 
-                configuration.Transport.SubscriptionRuleNamingConvention(AzureQueueNameShortener.Shorten);
+            //    configuration.Transport.SubscriptionRuleNamingConvention(AzureQueueNameShortener.Shorten);
 
-                configuration.Transport.Routing().RouteToEndpoint(typeof(SendEmailCommand), QueueNames.NotificationsQueue);
+            //    configuration.Transport.Routing().RouteToEndpoint(typeof(SendEmailCommand), QueueNames.NotificationsQueue);
 
-                configuration.AdvancedConfiguration.Pipeline.Register(new LogIncomingBehaviour(), nameof(LogIncomingBehaviour));
-                configuration.AdvancedConfiguration.Pipeline.Register(new LogOutgoingBehaviour(), nameof(LogOutgoingBehaviour));
+            //    configuration.AdvancedConfiguration.Pipeline.Register(new LogIncomingBehaviour(), nameof(LogIncomingBehaviour));
+            //    configuration.AdvancedConfiguration.Pipeline.Register(new LogOutgoingBehaviour(), nameof(LogOutgoingBehaviour));
 
-                var persistence = configuration.AdvancedConfiguration.UsePersistence<AzureTablePersistence>();
-                persistence.ConnectionString(appConfiguration.GetConnectionStringOrSetting("AzureWebJobsStorage"));
+            //    var persistence = configuration.AdvancedConfiguration.UsePersistence<AzureTablePersistence>();
+            //    persistence.ConnectionString(appConfiguration.GetConnectionStringOrSetting("AzureWebJobsStorage"));
 
-                configuration.AdvancedConfiguration.EnableInstallers();
+            //    configuration.AdvancedConfiguration.EnableInstallers();
 
-                return configuration;
-            });
+            //    return configuration;
+            //});
 
             builder.Services.AddApplicationOptions();
             builder.Services.ConfigureFromOptions(f => f.ApprenticeCommitmentsApi);

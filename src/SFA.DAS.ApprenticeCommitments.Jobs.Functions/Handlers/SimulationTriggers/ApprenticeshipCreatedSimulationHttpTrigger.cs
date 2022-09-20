@@ -45,7 +45,8 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Handlers.SimulationTrigge
             {
                 var @event = JsonConvert.DeserializeObject<T>(await req.Content.ReadAsStringAsync());
 
-                await endpoint.Publish(@event, executionContext, log);
+                var a = await Task.FromResult(1);
+                //await endpoint.Publish(@event, executionContext, log);
 
                 return new AcceptedResult();
             }

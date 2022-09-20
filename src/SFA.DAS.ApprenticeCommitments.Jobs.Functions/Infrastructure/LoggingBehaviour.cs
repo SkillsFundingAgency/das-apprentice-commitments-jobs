@@ -18,7 +18,8 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
 
         public async Task Invoke(IIncomingLogicalMessageContext context, Func<IIncomingLogicalMessageContext, Task> next)
         {
-            context.MessageHeaders.TryGetValue("NServiceBus.MessageIntent", out var intent);
+            var intent = "fake";
+            //context.MessageHeaders.TryGetValue("NServiceBus.MessageIntent", out var intent);
             var types = context.Message.MessageType.Name;
             _logger.LogInformation($"Received message {context.MessageId} (`{types}` intent `{intent}`)");
 
