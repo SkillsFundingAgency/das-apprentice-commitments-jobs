@@ -15,8 +15,8 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Handlers.SimulationTrigge
     {
         private readonly IFunctionEndpoint endpoint;
 
-        public ApprenticeshipCreatedSimulationHttpTrigger(IFunctionEndpoint endpoint) => this.endpoint = endpoint;
-
+        //public ApprenticeshipCreatedSimulationHttpTrigger(IFunctionEndpoint endpoint) => this.endpoint = endpoint;
+        
         [FunctionName("HandleApprenticeshipCreatedEventTrigger")]
         public Task<IActionResult> ApprenticeshipCreatedEvent(
             [HttpTrigger(AuthorizationLevel.Function, "POST", Route = "test-apprenticeship-created-event")] HttpRequestMessage req,
