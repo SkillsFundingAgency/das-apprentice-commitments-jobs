@@ -263,7 +263,7 @@
                                 },
                                 {
                                     "name": "FUNCTIONS_EXTENSION_VERSION",
-                                    "value": "~4"
+                                    "value": "[parameters('functionsExtensionVersion')]"
                                 },
                                 {
                                     "name": "AppName",
