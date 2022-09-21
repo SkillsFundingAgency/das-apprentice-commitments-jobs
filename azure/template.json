@@ -35,7 +35,7 @@
         },
         "functionsExtensionVersion": {
             "type": "string",
-            "defaultValue": "~3"
+            "defaultValue": "~4"
         },
         "tags": {
             "type": "object"
