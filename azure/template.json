@@ -227,6 +227,9 @@
                     "appServicePlanResourceGroup": {
                         "value": "[variables('resourceGroupName')]"
                     },
+                    "netFrameworkVersion": {
+                        "value": "v6.0"
+                    },
                     "subnetResourceId": {
                         "value": "[reference(concat('function-app-subnet-', parameters('utcValue'))).outputs.SubnetResourceId.value]"
                     },
