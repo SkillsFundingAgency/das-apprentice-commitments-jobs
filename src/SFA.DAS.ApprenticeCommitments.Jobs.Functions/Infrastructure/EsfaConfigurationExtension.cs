@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using SFA.DAS.Configuration.AzureTableStorage;
 using System;
+using System.IO;
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure
 {
@@ -11,17 +12,22 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure
     {
         internal static void ConfigureConfiguration(this IFunctionsConfigurationBuilder builder)
         {
-            builder.ConfigurationBuilder.AddJsonFile("local.settings.json", optional: true);
+            builder.ConfigurationBuilder
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("local.settings.json", optional: true);
 
             var preConfig = builder.ConfigurationBuilder.Build();
 
-            builder.ConfigurationBuilder.AddAzureTableStorage(options =>
+            if (!preConfig.IsLocalAcceptanceOrDev())
             {
-                options.ConfigurationKeys = preConfig["ConfigNames"].Split(",");
-                options.StorageConnectionString = preConfig["ConfigurationStorageConnectionString"];
-                options.EnvironmentName = preConfig["EnvironmentName"];
-                options.PreFixConfigurationKeys = false;
-            });
+                builder.ConfigurationBuilder.AddAzureTableStorage(options =>
+                {
+                    options.ConfigurationKeys = preConfig["ConfigNames"].Split(",");
+                    options.StorageConnectionString = preConfig["ConfigurationStorageConnectionString"];
+                    options.EnvironmentName = preConfig["EnvironmentName"];
+                    options.PreFixConfigurationKeys = false;
+                });
+            }
         }
 
         public static void AddApplicationOptions(this IServiceCollection services)

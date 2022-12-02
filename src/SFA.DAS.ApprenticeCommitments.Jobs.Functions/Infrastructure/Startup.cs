@@ -41,7 +41,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
                     connectionStringName: "NServiceBusConnectionString");
 
                 configuration.AdvancedConfiguration.SendFailedMessagesTo($"{QueueNames.ApprenticeshipCommitmentsJobs}-error");
-                configuration.LogDiagnostics();
+                //configuration.LogDiagnostics();
 
                 configuration.AdvancedConfiguration.Conventions()
                     .DefiningMessagesAs(IsMessage)
