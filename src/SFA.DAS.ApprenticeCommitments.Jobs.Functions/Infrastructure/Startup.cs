@@ -1,3 +1,5 @@
+/*
+
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,11 +13,13 @@ using SFA.DAS.Notifications.Messages.Commands;
 using SFA.DAS.NServiceBus.Configuration.AzureServiceBus;
 using System;
 
+
 [assembly: FunctionsStartup(typeof(SFA.DAS.ApprenticeCommitments.Jobs.Functions.Startup))]
+
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
 {
-    public class Startup : FunctionsStartup
+    public class StartupOLD : FunctionsStartup
     {
         public override void ConfigureAppConfiguration(IFunctionsConfigurationBuilder builder)
         {
@@ -28,6 +32,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
 
             var logger = LoggerFactory.Create(b => b.ConfigureLogging()).CreateLogger<Startup>();
 
+            // Chas - replaced in new implementation
             AutoSubscribeToQueues.CreateQueuesWithReflection(
                 builder.GetContext().Configuration,
                 connectionStringName: "NServiceBusConnectionString",
@@ -98,3 +103,4 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
                 t.Namespace.EndsWith(namespaceSuffix);
     }
 }
+*/

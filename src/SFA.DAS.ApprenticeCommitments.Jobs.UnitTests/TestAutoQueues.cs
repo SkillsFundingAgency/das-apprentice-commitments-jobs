@@ -1,4 +1,5 @@
-﻿using Microsoft.Azure.ServiceBus;
+﻿/*
+using Microsoft.Azure.ServiceBus;
 using Microsoft.Azure.ServiceBus.Management;
 using Moq;
 using NUnit.Framework;
@@ -107,3 +108,4 @@ namespace LongNamespaceButUnder50Chars
     public class AFairlyLongNameButUnder50Chars { }
     public class ThisIsTheReallyReallyReallyLongNameThatIsOver50CharsItself { }
 }
+*/

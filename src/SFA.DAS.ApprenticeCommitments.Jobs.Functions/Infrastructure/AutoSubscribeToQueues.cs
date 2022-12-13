@@ -1,4 +1,6 @@
-﻿using Microsoft.Azure.ServiceBus;
+﻿
+/*
+using Microsoft.Azure.ServiceBus;
 using Microsoft.Azure.ServiceBus.Management;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Configuration;
@@ -76,3 +78,5 @@ namespace SFA.DAS.NServiceBus.Configuration.AzureServiceBus
         }
     }
 }
+
+*/

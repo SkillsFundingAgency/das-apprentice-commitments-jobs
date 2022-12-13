@@ -1,4 +1,6 @@
-﻿using System;
+﻿
+/*
+using System;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -49,3 +51,4 @@ namespace SFA.DAS.NServiceBus.Configuration.AzureServiceBus
         }
     }
 }
+*/

@@ -1,4 +1,5 @@
-﻿using Microsoft.Azure.WebJobs;
+﻿/*
+using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 using NServiceBus;
 using System.Threading.Tasks;
@@ -32,3 +33,4 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
             => Task.CompletedTask;
     }
 }
+*/

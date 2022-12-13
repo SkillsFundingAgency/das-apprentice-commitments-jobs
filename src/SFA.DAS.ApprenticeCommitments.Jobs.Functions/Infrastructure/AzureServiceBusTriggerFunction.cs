@@ -1,4 +1,5 @@
-﻿using Microsoft.Azure.ServiceBus;
+﻿using Azure.Messaging.ServiceBus;
+using Microsoft.Azure.ServiceBus;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 using NServiceBus;
@@ -19,7 +20,9 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure
             ILogger logger,
             ExecutionContext context)
         {
-            await endpoint.Process(message, context, logger);
+            //await endpoint.Process(message, context, logger);
+            //await endpoint.ProcessNonAtomic(message, context, logger);
+            await endpoint.Publish(message, context, logger);
         }
     }
 }
