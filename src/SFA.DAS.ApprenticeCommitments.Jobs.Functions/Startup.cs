@@ -15,7 +15,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
 {
     public class Startup : FunctionsStartup
     {
-        public IConfiguration Configuration { get; set; }
+        public IConfiguration? Configuration { get; set; }
 
         public override void ConfigureAppConfiguration(IFunctionsConfigurationBuilder builder)
         {

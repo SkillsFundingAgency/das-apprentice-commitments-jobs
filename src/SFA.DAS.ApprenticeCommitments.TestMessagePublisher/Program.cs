@@ -1,11 +1,8 @@
 ﻿using Microsoft.Extensions.Configuration;
 using NServiceBus;
-//using SFA.DAS.ApprenticeCommitments.Messages.Commands;
 using SFA.DAS.ApprenticeCommitments.Messages.Events;
 using SFA.DAS.NServiceBus.Extensions;
 using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure;
-//using SFA.DAS.CommitmentsV2.Messages.Events;
-//using SFA.DAS.ApprenticeCommitments.Jobs.Functions.InternalMessages.Commands;
 
 IConfiguration config = new ConfigurationBuilder()
     .AddEnvironmentVariables()
