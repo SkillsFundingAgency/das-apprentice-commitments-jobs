@@ -5,6 +5,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="C:\Users\cball\.nuget\packages\sfa.das.nservicebus.azurefunction.extensions\17.1.14\contentFiles\cs\net6.0\AutoSubscribe\ForceAutoEventSubscription.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <Content Include="nlog.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
