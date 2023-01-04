@@ -39,7 +39,7 @@ while (true)
 
     Console.WriteLine("1.  Send nSendApprenticeshipInvitationCommand");
     Console.WriteLine("2.  Send RemindApprenticeCommand");
-    Console.WriteLine("3.  Send ProcessStoppedApprenticeship");
+    //Console.WriteLine("3.  Send ProcessStoppedApprenticeship");
 
     Console.WriteLine("4.  Publish ApprenticeshipCreatedEvent");
     Console.WriteLine("5.  Publish ApprenticeshipUpdatedApprovedEvent");
@@ -58,19 +58,19 @@ while (true)
             await SendMessage(endpointInstance, new SFA.DAS.ApprenticeCommitments.Messages.Commands.SendApprenticeshipInvitationCommand { CommitmentsApprenticeshipId = 123, ResendOn = DateTime.Now.AddDays(7) });
             break;
 
-        // Internal - fired by timer
+        // Internal - fired by timer (this errors when called manually here)
         case "2":
             await SendMessage(endpointInstance, new SFA.DAS.ApprenticeCommitments.Jobs.Functions.InternalMessages.Commands.RemindApprenticeCommand { RegistrationId = Guid.NewGuid() });
             break;
 
-        // Nothing looks to call this?
-        case "3":
-            await SendMessage(endpointInstance, new SFA.DAS.ApprenticeCommitments.Jobs.Functions.InternalMessages.Commands.ProcessStoppedApprenticeship
-            {
-                CommitmentsApprenticeshipId = 888,
-                CommitmentsStoppedOn = DateTime.Now,
-            });
-            break;
+        // Internal - fired by timer, ok as its tested in 6 - this errors when called manually here
+        //case "3":
+        //    await SendMessage(endpointInstance, new SFA.DAS.ApprenticeCommitments.Jobs.Functions.InternalMessages.Commands.ProcessStoppedApprenticeship
+        //    {
+        //        CommitmentsApprenticeshipId = 888,
+        //        CommitmentsStoppedOn = DateTime.Now,
+        //    });
+        //    break;
 
         case "4":
             await PublishMessage(endpointInstance, new SFA.DAS.CommitmentsV2.Messages.Events.ApprenticeshipCreatedEvent { 
@@ -85,7 +85,7 @@ while (true)
                                                             });
             break;
 
-        case "5":  // Keeps repeating
+        case "5": 
             await PublishMessage(endpointInstance, new SFA.DAS.CommitmentsV2.Messages.Events.ApprenticeshipUpdatedApprovedEvent {
                                                             ApprenticeshipId = 123,
                                                             StartDate = DateTime.Now.AddMonths(1),
