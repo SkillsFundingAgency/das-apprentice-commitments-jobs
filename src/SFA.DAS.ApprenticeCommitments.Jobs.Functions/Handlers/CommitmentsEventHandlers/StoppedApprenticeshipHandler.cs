@@ -19,13 +19,10 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Handlers.CommitmentsEvent
         public DateTime CommitmentsStoppedOn { get; set; }
     }
 
-    public class StoppedApprenticeshipTimeout { }
-
     public class StoppedApprenticeshipHandler
         : Saga<StoppedApprenticeshipSagaData>
         , IAmStartedByMessages<ApprenticeshipStoppedEvent>
         , IHandleMessages<ApprenticeshipCreatedEvent>
-        , IHandleTimeouts<StoppedApprenticeshipTimeout>
         , IHandleTimeouts<EventHandlers.CommitmentsEventHandlers.StoppedApprenticeshipTimeout>
     {
         private readonly ApplicationSettings _settings;
@@ -51,7 +48,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Handlers.CommitmentsEvent
             var delay = _settings.TimeToWaitBeforeStoppingApprenticeship;
             _logger.LogInformation("Deferring ApprenticeshipStoppedEvent for {commitmentsApprenticeshipId} until {delay}",
                 message.ApprenticeshipId, DateTime.UtcNow.Add(delay));
-            await RequestTimeout(context, delay, new StoppedApprenticeshipTimeout());
+            await RequestTimeout(context, delay, new EventHandlers.CommitmentsEventHandlers.StoppedApprenticeshipTimeout());
         }
 
         public Task Handle(ApprenticeshipCreatedEvent message, IMessageHandlerContext context)
@@ -61,7 +58,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Handlers.CommitmentsEvent
             return Task.CompletedTask;
         }
 
-        public async Task Timeout(StoppedApprenticeshipTimeout state, IMessageHandlerContext context)
+        public async Task Timeout(EventHandlers.CommitmentsEventHandlers.StoppedApprenticeshipTimeout state, IMessageHandlerContext context)
         {
             _logger.LogInformation("Processing ApprenticeshipStoppedEvent for {commitmentsApprenticeshipId}", Data.CommitmentsApprenticeshipId);
             await context.SendLocal(new ProcessStoppedApprenticeship
@@ -71,9 +68,5 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Handlers.CommitmentsEvent
             });
             MarkAsComplete();
         }
-
-        public Task Timeout(EventHandlers.CommitmentsEventHandlers.StoppedApprenticeshipTimeout state, IMessageHandlerContext context)
-            => Timeout(new StoppedApprenticeshipTimeout(), context);
-
     }
 }

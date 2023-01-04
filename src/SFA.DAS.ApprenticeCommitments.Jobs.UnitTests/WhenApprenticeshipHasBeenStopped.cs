@@ -7,6 +7,7 @@ using NServiceBus.Testing;
 using NUnit.Framework;
 using RestEase;
 using SFA.DAS.ApprenticeCommitments.Jobs.Api;
+using SFA.DAS.ApprenticeCommitments.Jobs.Functions.EventHandlers.CommitmentsEventHandlers;
 using SFA.DAS.ApprenticeCommitments.Jobs.Functions.EventHandlers.DomainEvents;
 using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Handlers.CommitmentsEventHandlers;
 using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Handlers.DomainEvents;
