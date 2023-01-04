@@ -89,6 +89,7 @@ public class OuterApiBuilder
                 Request.Create()
                     .WithPath("/apprentices/*/apprenticeships")
                     .WithPath(x => x.Contains("apprenticeships"))
+                    .WithPath(x => !x.Contains("revisions"))
                     .UsingGet())
             .RespondWith(
                 Response.Create()
