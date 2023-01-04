@@ -42,6 +42,7 @@ public class OuterApiBuilder
         var reg = _fixture.Build<Api.Registration>()
                     .With(x => x.ApprenticeId, Guid.NewGuid()).Create();
 
+        // https://localhost:5121/approvals/1/registration
         _server.Given(
                 Request.Create()
                     .WithPath("/approvals/*/registration")
@@ -83,9 +84,11 @@ public class OuterApiBuilder
         var apr = _fixture.Create<Api.Apprenticeship>();
         var aprw = new Api.ApprenticeshipsWrapper { Apprenticeships = new List<Api.Apprenticeship> { apr }};
 
+        // https://localhost:5121/apprentices/1/apprenticeships
         _server.Given(
                 Request.Create()
                     .WithPath("/apprentices/*/apprenticeships")
+                    .WithPath(x => x.Contains("apprenticeships"))
                     .UsingGet())
             .RespondWith(
                 Response.Create()
@@ -115,7 +118,7 @@ public class OuterApiBuilder
         _server.Given(
                 Request.Create()
                     .WithPath("/apprentices/*/apprenticeships/*/revisions")
-                    .WithPath(x => x.Contains("apprenticeships"))
+                    .WithPath(x => x.Contains("revisions"))
                     .UsingGet())
             .RespondWith(
                 Response.Create()
