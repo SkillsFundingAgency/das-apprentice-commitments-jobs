@@ -6,11 +6,6 @@ using SFA.DAS.CommitmentsV2.Messages.Events;
 using System;
 using System.Threading.Tasks;
 
-namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.EventHandlers.CommitmentsEventHandlers
-{
-    public class StoppedApprenticeshipTimeout { }
-}
-
 namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Handlers.CommitmentsEventHandlers
 {
     public class StoppedApprenticeshipSagaData : ContainSagaData
@@ -19,11 +14,13 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Handlers.CommitmentsEvent
         public DateTime CommitmentsStoppedOn { get; set; }
     }
 
+    public class StoppedApprenticeshipTimeout { }
+
     public class StoppedApprenticeshipHandler
         : Saga<StoppedApprenticeshipSagaData>
         , IAmStartedByMessages<ApprenticeshipStoppedEvent>
         , IHandleMessages<ApprenticeshipCreatedEvent>
-        , IHandleTimeouts<EventHandlers.CommitmentsEventHandlers.StoppedApprenticeshipTimeout>
+        , IHandleTimeouts<StoppedApprenticeshipTimeout>
     {
         private readonly ApplicationSettings _settings;
         private readonly ILogger<StoppedApprenticeshipHandler> _logger;
@@ -48,7 +45,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Handlers.CommitmentsEvent
             var delay = _settings.TimeToWaitBeforeStoppingApprenticeship;
             _logger.LogInformation("Deferring ApprenticeshipStoppedEvent for {commitmentsApprenticeshipId} until {delay}",
                 message.ApprenticeshipId, DateTime.UtcNow.Add(delay));
-            await RequestTimeout(context, delay, new EventHandlers.CommitmentsEventHandlers.StoppedApprenticeshipTimeout());
+            await RequestTimeout(context, delay, new StoppedApprenticeshipTimeout());
         }
 
         public Task Handle(ApprenticeshipCreatedEvent message, IMessageHandlerContext context)
@@ -58,7 +55,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Handlers.CommitmentsEvent
             return Task.CompletedTask;
         }
 
-        public async Task Timeout(EventHandlers.CommitmentsEventHandlers.StoppedApprenticeshipTimeout state, IMessageHandlerContext context)
+        public async Task Timeout(StoppedApprenticeshipTimeout state, IMessageHandlerContext context)
         {
             _logger.LogInformation("Processing ApprenticeshipStoppedEvent for {commitmentsApprenticeshipId}", Data.CommitmentsApprenticeshipId);
             await context.SendLocal(new ProcessStoppedApprenticeship

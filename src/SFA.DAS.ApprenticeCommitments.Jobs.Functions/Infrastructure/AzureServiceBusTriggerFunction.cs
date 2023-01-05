@@ -21,7 +21,8 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure
             ILogger logger,
             ExecutionContext context)
         {
-            await endpoint.ProcessAtomic(message, context, client, messageActions, logger);
+            //await endpoint.ProcessAtomic(message, context, client, messageActions, logger);
+            await endpoint.ProcessNonAtomic(message, context, logger);
         }
     }
 }
