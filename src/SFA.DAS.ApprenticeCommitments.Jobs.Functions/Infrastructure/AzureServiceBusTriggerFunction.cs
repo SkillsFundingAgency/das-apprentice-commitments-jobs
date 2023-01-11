@@ -16,7 +16,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure
 
         [FunctionName("ApprenticeshipCommitmentsJobs")]
         public async Task Run(
-            [ServiceBusTrigger(queueName: EndpointName, Connection = "NServiceBusConnectionString")] ServiceBusReceivedMessage message,
+            [ServiceBusTrigger(queueName: EndpointName, Connection = "AzureWebJobsServiceBus")] ServiceBusReceivedMessage message,
             ServiceBusClient client, ServiceBusMessageActions messageActions,
             ILogger logger,
             ExecutionContext context)
