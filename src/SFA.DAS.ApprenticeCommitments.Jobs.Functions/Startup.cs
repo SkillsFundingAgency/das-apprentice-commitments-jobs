@@ -6,6 +6,7 @@ using RestEase.HttpClientFactory;
 using SFA.DAS.ApprenticeCommitments.Jobs.Api;
 using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure;
 using SFA.DAS.Http.Configuration;
+using SFA.DAS.Notifications.Messages.Commands;
 using SFA.DAS.NServiceBus.AzureFunction.Extensions;
 using SFA.DAS.NServiceBus.Extensions;
 
@@ -31,6 +32,8 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
             builder.Services.AddApplicationInsightsTelemetry();
             builder.Services.AddApplicationOptions();
             builder.Services.ConfigureFromOptions(f => f.ApprenticeCommitmentsApi);
+            builder.Services.ConfigureFromOptions(f => f.ApprenticeWeb);
+            builder.Services.ConfigureFromOptions(f => f.Notifications);
             builder.Services.AddSingleton<IApimClientConfiguration>(x => x.GetRequiredService<ApprenticeCommitmentsApiOptions>());
 
             InitialiseNServiceBus();
@@ -41,6 +44,9 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
                 configuration.AdvancedConfiguration.UseNewtonsoftJsonSerializer();
                 configuration.AdvancedConfiguration.UseMessageConventions();
                 configuration.AdvancedConfiguration.EnableInstallers();
+
+                configuration.Transport.Routing().RouteToEndpoint(typeof(SendEmailCommand), QueueNames.NotificationsQueue);
+
                 return configuration;
             });
 
