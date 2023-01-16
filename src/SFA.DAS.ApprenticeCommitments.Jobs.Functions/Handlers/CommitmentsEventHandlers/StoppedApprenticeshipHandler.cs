@@ -6,11 +6,6 @@ using SFA.DAS.CommitmentsV2.Messages.Events;
 using System;
 using System.Threading.Tasks;
 
-namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.EventHandlers.CommitmentsEventHandlers
-{
-    public class StoppedApprenticeshipTimeout { }
-}
-
 namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Handlers.CommitmentsEventHandlers
 {
     public class StoppedApprenticeshipSagaData : ContainSagaData
@@ -26,7 +21,6 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Handlers.CommitmentsEvent
         , IAmStartedByMessages<ApprenticeshipStoppedEvent>
         , IHandleMessages<ApprenticeshipCreatedEvent>
         , IHandleTimeouts<StoppedApprenticeshipTimeout>
-        , IHandleTimeouts<EventHandlers.CommitmentsEventHandlers.StoppedApprenticeshipTimeout>
     {
         private readonly ApplicationSettings _settings;
         private readonly ILogger<StoppedApprenticeshipHandler> _logger;
@@ -71,9 +65,5 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Handlers.CommitmentsEvent
             });
             MarkAsComplete();
         }
-
-        public Task Timeout(EventHandlers.CommitmentsEventHandlers.StoppedApprenticeshipTimeout state, IMessageHandlerContext context)
-            => Timeout(new StoppedApprenticeshipTimeout(), context);
-
     }
 }

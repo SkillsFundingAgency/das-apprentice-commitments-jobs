@@ -88,6 +88,9 @@
         "utcValue": {
             "type": "string",
             "defaultValue": "[utcNow('yyMMddHHmmss')]"
+        },
+        "sharedServiceBusFqdn": {
+            "type": "string"
         }
     },
     "variables": {
@@ -256,6 +259,10 @@
                                 {
                                     "name": "AzureWebJobsStorage",
                                     "value": "[parameters('sharedStorageAccountConnectionString')]"
+                                },
+                                {
+                                    "name": "AzureWebJobsServiceBus__fullyQualifiedNamespace",
+                                    "value": "[parameters('sharedServiceBusFqdn')]"
                                 },
                                 {
                                     "name": "APPINSIGHTS_INSTRUMENTATIONKEY",

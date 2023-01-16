@@ -5,25 +5,33 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="C:\Users\cball\.nuget\packages\sfa.das.nservicebus.azurefunction.extensions\17.1.14\contentFiles\cs\net6.0\AutoSubscribe\ForceAutoEventSubscription.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <Content Include="nlog.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="NServiceBus.AzureFunctions.InProcess.ServiceBus " Version="1.3.0" />
+	<PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.21.0" />
+    <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.1.0" />
+    <!--<PackageReference Include="NServiceBus.AzureFunctions.InProcess.ServiceBus" Version="3.0.0" />-->
+	<PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Http" Version="3.2.0" />
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="4.1.3" />
     <PackageReference Include="NLog" Version="5.0.4" />
     <PackageReference Include="NLog.Extensions.Logging" Version="5.0.4" />
-    <PackageReference Include="NServiceBus.Persistence.AzureTable" Version="3.1.0" />
-    <PackageReference Include="RestEase" Version="1.5.5" />
-    <PackageReference Include="RestEase.HttpClientFactory" Version="1.5.5" />
+    <PackageReference Include="NServiceBus.Persistence.AzureTable" Version="3.2.0" />
+
+    <PackageReference Include="RestEase" Version="1.5.7" />
+    <PackageReference Include="RestEase.HttpClientFactory" Version="1.5.7" />
     <PackageReference Include="SFA.DAS.ApprenticeAccounts.Messages" Version="0.1.3-prerelease-4" />
     <PackageReference Include="SFA.DAS.CommitmentsV2.Messages" Version="8.3.8" />
     <PackageReference Include="SFA.DAS.ApprenticeCommitments.Messages" Version="0.1.83-prerelease-10" />
     <PackageReference Include="SFA.DAS.Configuration.AzureTableStorage" Version="3.0.84" />
-    <PackageReference Include="SFA.DAS.Http" Version="3.2.59" />
+    <PackageReference Include="SFA.DAS.Http" Version="3.2.69" />
     <PackageReference Include="SFA.DAS.NLog.Targets.Redis" Version="1.2.1" />
     <PackageReference Include="SFA.DAS.Notifications.Messages" Version="3.0.0" />
+	<PackageReference Include="SFA.DAS.NServiceBus.AzureFunction.Extensions" Version="17.1.14" />
   </ItemGroup>
   <ItemGroup>
     <None Update="host.json">
