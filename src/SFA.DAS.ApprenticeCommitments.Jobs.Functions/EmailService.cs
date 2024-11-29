@@ -90,12 +90,13 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
             IMessageHandlerContext context,
             string emailAddress,
             string firstName,
+            string trainingProviderName,
             string employerName,
             string apprenticeshipName)
         {
             var link = new Uri(_settings.ApprenticeWeb.StartPageUrl, "home");
 
-            await SendApprenticeshipStopped(context, emailAddress, firstName
+            await SendApprenticeshipStopped(context, emailAddress, firstName, trainingProviderName
                 , employerName, apprenticeshipName, link);
         }
 
@@ -103,13 +104,14 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
             IMessageHandlerContext context,
             string emailAddress,
             string firstName,
+            string trainingProviderName,
             string employerName,
             string apprenticeshipName,
             Guid? registrationId)
         {
             var link = new Uri(_settings.ApprenticeWeb.StartPageUrl, $"?Register={registrationId}");
 
-            await SendApprenticeshipStopped(context, emailAddress, firstName,
+            await SendApprenticeshipStopped(context, emailAddress, firstName, trainingProviderName,
                 employerName, apprenticeshipName, link);
         }
 
@@ -117,6 +119,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
             IMessageHandlerContext context,
             string emailAddress,
             string firstName,
+            string trainingProviderName,
             string employerName,
             string apprenticeshipName,
             Uri link)
@@ -126,6 +129,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
                 new Dictionary<string, string>
                 {
                     { "FirstName", firstName },
+                    { "ProviderName", trainingProviderName },
                     { "EmployerName", employerName },
                     { "CourseName", apprenticeshipName },
                     { "ConfirmApprenticeshipUrl", link.ToString() },
