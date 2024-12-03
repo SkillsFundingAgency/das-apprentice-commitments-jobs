@@ -32,6 +32,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Handlers.DomainEvents
                 await _emailer.SendApprenticeshipStopped(context,
                     apprentice.Email,
                     apprentice.FirstName,
+                    message.TrainingProviderName,
                     message.EmployerName,
                     message.CourseName);
             }
@@ -41,6 +42,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Handlers.DomainEvents
                 await _emailer.SendUnmatchedApprenticeshipStopped(context,
                     registration.Email,
                     registration.FirstName,
+                    message.TrainingProviderName,
                     message.EmployerName,
                     message.CourseName,
                     message.RegistrationId.Value);
