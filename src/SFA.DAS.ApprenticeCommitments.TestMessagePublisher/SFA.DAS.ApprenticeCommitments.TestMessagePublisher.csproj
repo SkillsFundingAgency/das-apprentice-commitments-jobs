@@ -14,7 +14,7 @@
 	<PackageReference Include="NServiceBus.Transport.AzureServiceBus" Version="4.2.4" />
 	<PackageReference Include="SFA.DAS.CommitmentsV2.Messages" Version="100.0.82" />
 	<PackageReference Include="Azure.Identity" Version="1.13.1" />
-	<PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.0.2" />
+	<PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.3.0" />
 	<PackageReference Include="System.Drawing.Common" Version="9.0.0" />
 	<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.3.0" />
 	<PackageReference Include="System.Security.Cryptography.Xml" Version="9.0.0" />

@@ -32,7 +32,6 @@
     <PackageReference Include="SFA.DAS.Notifications.Messages" Version="3.0.10" />
 	<PackageReference Include="SFA.DAS.NServiceBus.AzureFunction.Extensions" Version="17.1.14" />
 	<PackageReference Include="Azure.Identity" Version="1.13.1" />
-	<PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.0.2" />
 	<PackageReference Include="System.Drawing.Common" Version="8.0.8" />
 	<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.3.0" />
 	<PackageReference Include="System.Security.Cryptography.Xml" Version="8.0.1" />
