@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <AzureFunctionsVersion>v4</AzureFunctionsVersion>
     <Nullable>enable</Nullable>
   </PropertyGroup>
@@ -13,10 +13,10 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-	<PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.22.0" />
+  <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.22.0" />
     <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.1.0" />
     <!--<PackageReference Include="NServiceBus.AzureFunctions.InProcess.ServiceBus" Version="3.0.0" />-->
-	<PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Http" Version="3.2.0" />
+  <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Http" Version="3.2.0" />
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="4.4.1" />
     <PackageReference Include="NLog" Version="5.0.4" />
     <PackageReference Include="NLog.Extensions.Logging" Version="5.0.4" />
@@ -30,15 +30,15 @@
     <PackageReference Include="SFA.DAS.Http" Version="3.2.69" />
     <PackageReference Include="SFA.DAS.NLog.Targets.Redis" Version="1.2.1" />
     <PackageReference Include="SFA.DAS.Notifications.Messages" Version="3.0.0" />
-	<PackageReference Include="SFA.DAS.NServiceBus.AzureFunction.Extensions" Version="17.1.14" />
-	<PackageReference Include="Azure.Identity" Version="1.12.0" />
-	<PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.0.2" />
-	<PackageReference Include="System.Drawing.Common" Version="8.0.8" />
-	<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.0.2" />
-	<PackageReference Include="System.Security.Cryptography.Xml" Version="8.0.1" />
-	<PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
-	<PackageReference Include="System.Formats.Asn1" Version="8.0.1" />
-	<PackageReference Include="SFA.DAS.ApprenticeCommitments.Messages" Version="0.1.116" />
+  <PackageReference Include="SFA.DAS.NServiceBus.AzureFunction.Extensions" Version="17.1.14" />
+  <PackageReference Include="Azure.Identity" Version="1.12.0" />
+  <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.0.2" />
+  <PackageReference Include="System.Drawing.Common" Version="8.0.8" />
+  <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.0.2" />
+  <PackageReference Include="System.Security.Cryptography.Xml" Version="8.0.1" />
+  <PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
+  <PackageReference Include="System.Formats.Asn1" Version="8.0.1" />
+  <PackageReference Include="SFA.DAS.ApprenticeCommitments.Messages" Version="0.1.116" />
   </ItemGroup>
   <ItemGroup>
     <None Update="host.json">
