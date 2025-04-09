@@ -1,365 +1,394 @@
-{
-    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json",
-    "contentVersion": "1.0.0.0",
-    "parameters": {
-        "serviceName": {
-            "type": "string"
-        },
-        "sharedStorageAccountConnectionString": {
-            "type": "securestring"
-        },
-        "resourceEnvironmentName": {
-            "type": "string",
-            "metadata": {
-                "description": "Short name of the environment. Used for the name of resources created"
-            }
-        },
-        "appServicePlanSize": {
-            "type": "string",
-            "allowedValues": [
-                "1",
-                "2",
-                "3"
-            ],
-            "defaultValue": "1"
-        },
-        "appServicePlanInstances": {
-            "type": "int",
-            "defaultValue": 2
-        },
-        "configNames": {
-            "type": "string"
-        },
-        "environmentName": {
-            "type": "string"
-        },
-        "functionsExtensionVersion": {
-            "type": "string",
-            "defaultValue": "~4"
-        },
-        "tags": {
-            "type": "object"
-        },
-        "resourceGroupLocation": {
-            "type": "string"
-        },
-        "configurationStorageConnectionString": {
-            "type": "securestring"
-        },
-        "sharedEnvResourceGroup": {
-            "type": "string"
-        },
-        "nServiceBusConnectionString": {
-            "type": "securestring"
-        },
-        "nServiceBusLicense": {
-            "type": "securestring"
-        },
-        "sharedServiceBusName": {
-            "type": "string"
-        },
-        "sharedEnvVirtualNetworkName": {
-            "type": "string"
-        },
-        "sharedApimResourceGroup": {
-            "type": "string"
-        },
-        "sharedApimName": {
-            "type": "string"
-        },
-        "subnetDelegations": {
-            "type": "array"
-        },
-        "subnetObject": {
-            "type": "object"
-        },
-        "subnetServiceEndpointList": {
-            "type": "array"
-        },
-        "workerAccessRestrictions": {
-            "type": "array"
-        },
-        "loggingRedisConnectionString": {
-            "type": "securestring"
-        },
-        "loggingRedisKey": {
-            "type": "string"
-        },
-        "utcValue": {
-            "type": "string",
-            "defaultValue": "[utcNow('yyMMddHHmmss')]"
-        },
-        "sharedServiceBusFqdn": {
-            "type": "string"
-        },
-        "EnableRouteTableAssociation": {
-            "type": "bool",
-            "defaultValue": false,
-            "metadata": {
-                "description": "Determines whether to enable route table association on subnet"
-            }
-        },
-        "SharedRouteTableName": {
-            "type": "string",
-            "metadata": {
-                "description": "Determines whether to enable route table association on subnet"
-            }
-        }
-    },
-    "variables": {
-        "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/",
-        "resourcePrefix": "[concat('das-',toLower(parameters('resourceEnvironmentName')),'-' , parameters('serviceName'))]",
-        "appServicePlanName": "[concat(variables('resourcePrefix'),'-asp')]",
-        "functionAppName": "[concat(variables('resourcePrefix'),'-fa')]",
-        "resourceGroupName": "[concat(variables('resourcePrefix'), '-rg')]",
-        "routeTableId": {
-            "id": "[resourceId(subscription().subscriptionId, parameters('sharedEnvResourceGroup'), 'Microsoft.Network/routeTables', parameters('SharedRouteTableName'))]"
-        },
-        "emptyObject": {}
-    },
-    "resources": [
-        {
-            "apiVersion": "2020-06-01",
-            "name": "[variables('resourceGroupName')]",
-            "type": "Microsoft.Resources/resourceGroups",
-            "location": "[parameters('resourceGroupLocation')]",
-            "tags": "[parameters('tags')]",
-            "properties": {}
-        },
-        {
-            "apiVersion": "2020-06-01",
-            "name": "[concat('function-app-service-plan-', parameters('utcValue'))]",
-            "resourceGroup": "[variables('resourceGroupName')]",
-            "type": "Microsoft.Resources/deployments",
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[concat(variables('deploymentUrlBase'),'app-service-plan.json')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "appServicePlanName": {
-                        "value": "[variables('appServicePlanName')]"
-                    },
-                    "aspSize": {
-                        "value": "[parameters('appServicePlanSize')]"
-                    },
-                    "aspInstances": {
-                        "value": "[parameters('appServicePlanInstances')]"
-                    }
-                }
-            }
-        },
-        {
-            "apiVersion": "2020-06-01",
-            "name": "[concat('function-app-subnet-', parameters('utcValue'))]",
-            "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
-            "type": "Microsoft.Resources/deployments",
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[concat(variables('deploymentUrlBase'),'subnet.json')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "virtualNetworkName": {
-                        "value": "[parameters('sharedEnvVirtualNetworkName')]"
-                    },
-                    "subnetName": {
-                        "value": "[parameters('subnetObject').name]"
-                    },
-                    "subnetAddressPrefix": {
-                        "value": "[parameters('subnetObject').addressSpace]"
-                    },
-                    "serviceEndpointList": {
-                        "value": "[parameters('subnetServiceEndpointList')]"
-                    },
-                    "delegations": {
-                        "value": "[parameters('subnetDelegations')]"
-                    },
-                    "routeTable": {
-                        "value": "[if(parameters('enableRouteTableAssociation'), variables('routeTableId') , variables('emptyObject'))]"
-                    }
-                }
-            }
-        },
-        {
-            "apiVersion": "2020-06-01",
-            "name": "[concat('function-app-insights-', parameters('utcValue'))]",
-            "resourceGroup": "[variables('resourceGroupName')]",
-            "type": "Microsoft.Resources/deployments",
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[concat(variables('deploymentUrlBase'),'application-insights.json')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "appInsightsName": {
-                        "value": "[variables('functionAppName')]"
-                    },
-                    "attachedService": {
-                        "value": "[variables('functionAppName')]"
-                    }
-                }
-            }
-        },
-        {
-            "apiVersion": "2020-06-01",
-            "name": "[concat('apim-product-subscription-', parameters('utcValue'))]",
-            "resourceGroup": "[parameters('sharedApimResourceGroup')]",
-            "type": "Microsoft.Resources/deployments",
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[concat(variables('deploymentUrlBase'),'apim/apim-subscription.json')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "apimName": {
-                        "value": "[parameters('sharedApimName')]"
-                    },
-                    "subscriptionName": {
-                        "value": "[variables('functionAppName')]"
-                    },
-                    "subscriptionScope": {
-                        "value": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('sharedApimResourceGroup'), '/providers/Microsoft.ApiManagement/service/', parameters('sharedApimName'), '/products/ApprenticeCommitmentsOuterApi')]"
-                    }
-                }
-            }
-        },
-        {
-            "apiVersion": "2020-06-01",
-            "name": "[concat('function-app-', parameters('utcValue'))]",
-            "resourceGroup": "[variables('resourceGroupName')]",
-            "type": "Microsoft.Resources/deployments",
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[concat(variables('deploymentUrlBase'),'function-app-v2.json')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "functionAppName": {
-                        "value": "[variables('functionAppName')]"
-                    },
-                    "appServicePlanName": {
-                        "value": "[variables('appServicePlanName')]"
-                    },
-                    "appServicePlanResourceGroup": {
-                        "value": "[variables('resourceGroupName')]"
-                    },
-                    "subnetResourceId": {
-                        "value": "[reference(concat('function-app-subnet-', parameters('utcValue'))).outputs.SubnetResourceId.value]"
-                    },
-                    "functionAppAppSettings": {
-                        "value": {
-                            "array": [
-                                {
-                                    "name": "ConfigurationStorageConnectionString",
-                                    "value": "[parameters('configurationStorageConnectionString')]"
-                                },
-                                {
-                                    "name": "NServiceBusConnectionString",
-                                    "value": "[parameters('nServiceBusConnectionString')]"
-                                },
-                                {
-                                    "name": "NServiceBusLicense",
-                                    "value": "[parameters('nServiceBusLicense')]"
-                                },
-                                {
-                                    "name": "ConfigNames",
-                                    "value": "[parameters('configNames')]"
-                                },
-                                {
-                                    "name": "EnvironmentName",
-                                    "value": "[parameters('environmentName')]"
-                                },
-                                {
-                                    "name": "AzureWebJobsStorage",
-                                    "value": "[parameters('sharedStorageAccountConnectionString')]"
-                                },
-                                {
-                                    "name": "AzureWebJobsServiceBus__fullyQualifiedNamespace",
-                                    "value": "[parameters('sharedServiceBusFqdn')]"
-                                },
-                                {
-                                    "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                                    "value": "[reference(concat('function-app-insights-', parameters('utcValue'))).outputs.InstrumentationKey.value]"
-                                },
-                                {
-                                    "name": "FUNCTIONS_EXTENSION_VERSION",
-                                    "value": "[parameters('functionsExtensionVersion')]"
-                                },
-                                {
-                                    "name": "AppName",
-                                    "value": "das-apprentice-commitments-jobs"
-                                },
-                                {
-                                    "name": "LoggingRedisConnectionString",
-                                    "value": "[parameters('loggingRedisConnectionString')]"
-                                },
-                                {
-                                    "name": "LoggingRedisKey",
-                                    "value": "[parameters('loggingRedisKey')]"
-                                },
-                                {
-                                    "name": "FUNCTIONS_WORKER_RUNTIME",
-                                    "value": "dotnet"
-                                },
-                                {
-                                    "name": "WEBSITE_RUN_FROM_PACKAGE",
-                                    "value": "1"
+﻿{
+        "$schema":    "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json",
+        "contentVersion":    "1.0.0.0",
+        "parameters":    {
+                                             "serviceName":    {
+                                                                                     "type":    "string"
+                                                                             },
+                                             "sharedStorageAccountConnectionString":    {
+                                                                                                                                        "type":    "securestring"
+                                                                                                                                },
+                                             "resourceEnvironmentName":    {
+                                                                                                             "type":    "string",
+                                                                                                             "metadata":    {
+                                                                                                                                                "description":    "Short name of the environment. Used for the name of resources created"
+                                                                                                                                        }
+                                                                                                     },
+                                             "appServicePlanSize":    {
+                                                                                                    "type":    "string",
+                                                                                                    "allowedValues":    [
+                                                                                                                                                "1",
+                                                                                                                                                "2",
+                                                                                                                                                "3"
+                                                                                                                                        ],
+                                                                                                    "defaultValue":    "1"
+                                                                                            },
+                                             "appServicePlanInstances":    {
+                                                                                                             "type":    "int",
+                                                                                                             "defaultValue":    2
+                                                                                                     },
+                                             "configNames":    {
+                                                                                     "type":    "string"
+                                                                             },
+                                             "environmentName":    {
+                                                                                             "type":    "string"
+                                                                                     },
+                                             "functionsExtensionVersion":    {
+                                                                                                                 "type":    "string",
+                                                                                                                 "defaultValue":    "~4"
+                                                                                                         },
+                                             "tags":    {
+                                                                        "type":    "object"
+                                                                },
+                                             "resourceGroupLocation":    {
+                                                                                                         "type":    "string"
+                                                                                                 },
+                                             "configurationStorageConnectionString":    {
+                                                                                                                                        "type":    "securestring"
+                                                                                                                                },
+                                             "sharedEnvResourceGroup":    {
+                                                                                                            "type":    "string"
+                                                                                                    },
+                                             "nServiceBusConnectionString":    {
+                                                                                                                     "type":    "securestring"
+                                                                                                             },
+                                             "nServiceBusLicense":    {
+                                                                                                    "type":    "securestring"
+                                                                                            },
+                                             "sharedServiceBusName":    {
+                                                                                                        "type":    "string"
+                                                                                                },
+                                             "sharedEnvVirtualNetworkName":    {
+                                                                                                                     "type":    "string"
+                                                                                                             },
+                                             "sharedApimResourceGroup":    {
+                                                                                                             "type":    "string"
+                                                                                                     },
+                                             "sharedApimName":    {
+                                                                                            "type":    "string"
+                                                                                    },
+                                             "subnetDelegations":    {
+                                                                                                 "type":    "array"
+                                                                                         },
+                                             "subnetObject":    {
+                                                                                        "type":    "object"
+                                                                                },
+                                             "subnetServiceEndpointList":    {
+                                                                                                                 "type":    "array"
+                                                                                                         },
+                                             "workerAccessRestrictions":    {
+                                                                                                                "type":    "array"
+                                                                                                        },
+                                             "loggingRedisConnectionString":    {
+                                                                                                                        "type":    "securestring"
+                                                                                                                },
+                                             "loggingRedisKey":    {
+                                                                                             "type":    "string"
+                                                                                     },
+                                             "utcValue":    {
+                                                                                "type":    "string",
+                                                                                "defaultValue":    "[utcNow(\u0027yyMMddHHmmss\u0027)]"
+                                                                        },
+                                             "sharedServiceBusFqdn":    {
+                                                                                                        "type":    "string"
+                                                                                                },
+                                             "EnableRouteTableAssociation":    {
+                                                                                                                     "type":    "bool",
+                                                                                                                     "defaultValue":    false,
+                                                                                                                     "metadata":    {
+                                                                                                                                                        "description":    "Determines whether to enable route table association on subnet"
+                                                                                                                                                }
+                                                                                                             },
+                                             "SharedRouteTableName":    {
+                                                                                                        "type":    "string",
+                                                                                                        "metadata":    {
+                                                                                                                                         "description":    "Determines whether to enable route table association on subnet"
+                                                                                                                                 }
+                                                                                                }
+                                     },
+        "variables":    {
+                                            "deploymentUrlBase":    "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/",
+                                            "resourcePrefix":    "[concat(\u0027das-\u0027,toLower(parameters(\u0027resourceEnvironmentName\u0027)),\u0027-\u0027 , parameters(\u0027serviceName\u0027))]",
+                                            "appServicePlanName":    "[concat(variables(\u0027resourcePrefix\u0027),\u0027-asp\u0027)]",
+                                            "functionAppName":    "[concat(variables(\u0027resourcePrefix\u0027),\u0027-fa\u0027)]",
+                                            "resourceGroupName":    "[concat(variables(\u0027resourcePrefix\u0027), \u0027-rg\u0027)]",
+                                            "routeTableId":    {
+                                                                                     "id":    "[resourceId(subscription().subscriptionId, parameters(\u0027sharedEnvResourceGroup\u0027), \u0027Microsoft.Network/routeTables\u0027, parameters(\u0027SharedRouteTableName\u0027))]"
+                                                                             },
+                                            "emptyObject":    {
+
+                                                                            },
+                                            "privateLinkScopeName":    "[toLower(concat(\u0027das-\u0027, parameters(\u0027resourceEnvironmentName\u0027),\u0027-shared-ampls\u0027))]"
+                                    },
+        "resources":    [
+                                            {
+                                                    "apiVersion":    "2020-06-01",
+                                                    "name":    "[variables(\u0027resourceGroupName\u0027)]",
+                                                    "type":    "Microsoft.Resources/resourceGroups",
+                                                    "location":    "[parameters(\u0027resourceGroupLocation\u0027)]",
+                                                    "tags":    "[parameters(\u0027tags\u0027)]",
+                                                    "properties":    {
+
+                                                                                 }
+                                            },
+                                            {
+                                                    "apiVersion":    "2020-06-01",
+                                                    "name":    "[concat(\u0027function-app-service-plan-\u0027, parameters(\u0027utcValue\u0027))]",
+                                                    "resourceGroup":    "[variables(\u0027resourceGroupName\u0027)]",
+                                                    "type":    "Microsoft.Resources/deployments",
+                                                    "properties":    {
+                                                                                         "mode":    "Incremental",
+                                                                                         "templateLink":    {
+                                                                                                                                    "uri":    "[concat(variables(\u0027deploymentUrlBase\u0027),\u0027app-service-plan.json\u0027)]",
+                                                                                                                                    "contentVersion":    "1.0.0.0"
+                                                                                                                            },
+                                                                                         "parameters":    {
+                                                                                                                                "appServicePlanName":    {
+                                                                                                                                                                                     "value":    "[variables(\u0027appServicePlanName\u0027)]"
+                                                                                                                                                                             },
+                                                                                                                                "aspSize":    {
+                                                                                                                                                                "value":    "[parameters(\u0027appServicePlanSize\u0027)]"
+                                                                                                                                                        },
+                                                                                                                                "aspInstances":    {
+                                                                                                                                                                         "value":    "[parameters(\u0027appServicePlanInstances\u0027)]"
+                                                                                                                                                                 }
+                                                                                                                        }
+                                                                                 }
+                                            },
+                                            {
+                                                    "apiVersion":    "2020-06-01",
+                                                    "name":    "[concat(\u0027function-app-subnet-\u0027, parameters(\u0027utcValue\u0027))]",
+                                                    "resourceGroup":    "[parameters(\u0027sharedEnvResourceGroup\u0027)]",
+                                                    "type":    "Microsoft.Resources/deployments",
+                                                    "properties":    {
+                                                                                         "mode":    "Incremental",
+                                                                                         "templateLink":    {
+                                                                                                                                    "uri":    "[concat(variables(\u0027deploymentUrlBase\u0027),\u0027subnet.json\u0027)]",
+                                                                                                                                    "contentVersion":    "1.0.0.0"
+                                                                                                                            },
+                                                                                         "parameters":    {
+                                                                                                                                "virtualNetworkName":    {
+                                                                                                                                                                                     "value":    "[parameters(\u0027sharedEnvVirtualNetworkName\u0027)]"
+                                                                                                                                                                             },
+                                                                                                                                "subnetName":    {
+                                                                                                                                                                     "value":    "[parameters(\u0027subnetObject\u0027).name]"
+                                                                                                                                                             },
+                                                                                                                                "subnetAddressPrefix":    {
+                                                                                                                                                                                        "value":    "[parameters(\u0027subnetObject\u0027).addressSpace]"
+                                                                                                                                                                                },
+                                                                                                                                "serviceEndpointList":    {
+                                                                                                                                                                                        "value":    "[parameters(\u0027subnetServiceEndpointList\u0027)]"
+                                                                                                                                                                                },
+                                                                                                                                "delegations":    {
+                                                                                                                                                                        "value":    "[parameters(\u0027subnetDelegations\u0027)]"
+                                                                                                                                                                },
+                                                                                                                                "routeTable":    {
+                                                                                                                                                                     "value":    "[if(parameters(\u0027enableRouteTableAssociation\u0027), variables(\u0027routeTableId\u0027) , variables(\u0027emptyObject\u0027))]"
+                                                                                                                                                             }
+                                                                                                                        }
+                                                                                 }
+                                            },
+                                            {
+                                                    "apiVersion":    "2020-06-01",
+                                                    "name":    "[concat(\u0027function-app-insights-\u0027, parameters(\u0027utcValue\u0027))]",
+                                                    "resourceGroup":    "[variables(\u0027resourceGroupName\u0027)]",
+                                                    "type":    "Microsoft.Resources/deployments",
+                                                    "properties":    {
+                                                                                         "mode":    "Incremental",
+                                                                                         "templateLink":    {
+                                                                                                                                    "uri":    "[concat(variables(\u0027deploymentUrlBase\u0027),\u0027application-insights.json\u0027)]",
+                                                                                                                                    "contentVersion":    "1.0.0.0"
+                                                                                                                            },
+                                                                                         "parameters":    {
+                                                                                                                                "appInsightsName":    {
+                                                                                                                                                                                "value":    "[variables(\u0027functionAppName\u0027)]"
+                                                                                                                                                                        },
+                                                                                                                                "attachedService":    {
+                                                                                                                                                                                "value":    "[variables(\u0027functionAppName\u0027)]"
+                                                                                                                                                                        }
+                                                                                                                        }
+                                                                                 }
+                                            },
+                                            {
+                                                    "apiVersion":    "2020-06-01",
+                                                    "name":    "[concat(\u0027apim-product-subscription-\u0027, parameters(\u0027utcValue\u0027))]",
+                                                    "resourceGroup":    "[parameters(\u0027sharedApimResourceGroup\u0027)]",
+                                                    "type":    "Microsoft.Resources/deployments",
+                                                    "properties":    {
+                                                                                         "mode":    "Incremental",
+                                                                                         "templateLink":    {
+                                                                                                                                    "uri":    "[concat(variables(\u0027deploymentUrlBase\u0027),\u0027apim/apim-subscription.json\u0027)]",
+                                                                                                                                    "contentVersion":    "1.0.0.0"
+                                                                                                                            },
+                                                                                         "parameters":    {
+                                                                                                                                "apimName":    {
+                                                                                                                                                                 "value":    "[parameters(\u0027sharedApimName\u0027)]"
+                                                                                                                                                         },
+                                                                                                                                "subscriptionName":    {
+                                                                                                                                                                                 "value":    "[variables(\u0027functionAppName\u0027)]"
+                                                                                                                                                                         },
+                                                                                                                                "subscriptionScope":    {
+                                                                                                                                                                                    "value":    "[concat(\u0027/subscriptions/\u0027, subscription().subscriptionId, \u0027/resourceGroups/\u0027, parameters(\u0027sharedApimResourceGroup\u0027), \u0027/providers/Microsoft.ApiManagement/service/\u0027, parameters(\u0027sharedApimName\u0027), \u0027/products/ApprenticeCommitmentsOuterApi\u0027)]"
+                                                                                                                                                                            }
+                                                                                                                        }
+                                                                                 }
+                                            },
+                                            {
+                                                    "apiVersion":    "2020-06-01",
+                                                    "name":    "[concat(\u0027function-app-\u0027, parameters(\u0027utcValue\u0027))]",
+                                                    "resourceGroup":    "[variables(\u0027resourceGroupName\u0027)]",
+                                                    "type":    "Microsoft.Resources/deployments",
+                                                    "properties":    {
+                                                                                         "mode":    "Incremental",
+                                                                                         "templateLink":    {
+                                                                                                                                    "uri":    "[concat(variables(\u0027deploymentUrlBase\u0027),\u0027function-app-v2.json\u0027)]",
+                                                                                                                                    "contentVersion":    "1.0.0.0"
+                                                                                                                            },
+                                                                                         "parameters":    {
+                                                                                                                                "functionAppName":    {
+                                                                                                                                                                                "value":    "[variables(\u0027functionAppName\u0027)]"
+                                                                                                                                                                        },
+                                                                                                                                "appServicePlanName":    {
+                                                                                                                                                                                     "value":    "[variables(\u0027appServicePlanName\u0027)]"
+                                                                                                                                                                             },
+                                                                                                                                "appServicePlanResourceGroup":    {
+                                                                                                                                                                                                        "value":    "[variables(\u0027resourceGroupName\u0027)]"
+                                                                                                                                                                                                },
+                                                                                                                                "subnetResourceId":    {
+                                                                                                                                                                                 "value":    "[reference(concat(\u0027function-app-subnet-\u0027, parameters(\u0027utcValue\u0027))).outputs.SubnetResourceId.value]"
+                                                                                                                                                                         },
+                                                                                                                                "functionAppAppSettings":    {
+                                                                                                                                                                                             "value":    {
+                                                                                                                                                                                                                         "array":    [
+                                                                                                                                                                                                                                                     {
+                                                                                                                                                                                                                                                             "name":    "ConfigurationStorageConnectionString",
+                                                                                                                                                                                                                                                             "value":    "[parameters(\u0027configurationStorageConnectionString\u0027)]"
+                                                                                                                                                                                                                                                     },
+                                                                                                                                                                                                                                                     {
+                                                                                                                                                                                                                                                             "name":    "NServiceBusConnectionString",
+                                                                                                                                                                                                                                                             "value":    "[parameters(\u0027nServiceBusConnectionString\u0027)]"
+                                                                                                                                                                                                                                                     },
+                                                                                                                                                                                                                                                     {
+                                                                                                                                                                                                                                                             "name":    "NServiceBusLicense",
+                                                                                                                                                                                                                                                             "value":    "[parameters(\u0027nServiceBusLicense\u0027)]"
+                                                                                                                                                                                                                                                     },
+                                                                                                                                                                                                                                                     {
+                                                                                                                                                                                                                                                             "name":    "ConfigNames",
+                                                                                                                                                                                                                                                             "value":    "[parameters(\u0027configNames\u0027)]"
+                                                                                                                                                                                                                                                     },
+                                                                                                                                                                                                                                                     {
+                                                                                                                                                                                                                                                             "name":    "EnvironmentName",
+                                                                                                                                                                                                                                                             "value":    "[parameters(\u0027environmentName\u0027)]"
+                                                                                                                                                                                                                                                     },
+                                                                                                                                                                                                                                                     {
+                                                                                                                                                                                                                                                             "name":    "AzureWebJobsStorage",
+                                                                                                                                                                                                                                                             "value":    "[parameters(\u0027sharedStorageAccountConnectionString\u0027)]"
+                                                                                                                                                                                                                                                     },
+                                                                                                                                                                                                                                                     {
+                                                                                                                                                                                                                                                             "name":    "AzureWebJobsServiceBus__fullyQualifiedNamespace",
+                                                                                                                                                                                                                                                             "value":    "[parameters(\u0027sharedServiceBusFqdn\u0027)]"
+                                                                                                                                                                                                                                                     },
+                                                                                                                                                                                                                                                     {
+                                                                                                                                                                                                                                                             "name":    "APPINSIGHTS_INSTRUMENTATIONKEY",
+                                                                                                                                                                                                                                                             "value":    "[reference(concat(\u0027function-app-insights-\u0027, parameters(\u0027utcValue\u0027))).outputs.InstrumentationKey.value]"
+                                                                                                                                                                                                                                                     },
+                                                                                                                                                                                                                                                     {
+                                                                                                                                                                                                                                                             "name":    "FUNCTIONS_EXTENSION_VERSION",
+                                                                                                                                                                                                                                                             "value":    "[parameters(\u0027functionsExtensionVersion\u0027)]"
+                                                                                                                                                                                                                                                     },
+                                                                                                                                                                                                                                                     {
+                                                                                                                                                                                                                                                             "name":    "AppName",
+                                                                                                                                                                                                                                                             "value":    "das-apprentice-commitments-jobs"
+                                                                                                                                                                                                                                                     },
+                                                                                                                                                                                                                                                     {
+                                                                                                                                                                                                                                                             "name":    "LoggingRedisConnectionString",
+                                                                                                                                                                                                                                                             "value":    "[parameters(\u0027loggingRedisConnectionString\u0027)]"
+                                                                                                                                                                                                                                                     },
+                                                                                                                                                                                                                                                     {
+                                                                                                                                                                                                                                                             "name":    "LoggingRedisKey",
+                                                                                                                                                                                                                                                             "value":    "[parameters(\u0027loggingRedisKey\u0027)]"
+                                                                                                                                                                                                                                                     },
+                                                                                                                                                                                                                                                     {
+                                                                                                                                                                                                                                                             "name":    "FUNCTIONS_WORKER_RUNTIME",
+                                                                                                                                                                                                                                                             "value":    "dotnet"
+                                                                                                                                                                                                                                                     },
+                                                                                                                                                                                                                                                     {
+                                                                                                                                                                                                                                                             "name":    "WEBSITE_RUN_FROM_PACKAGE",
+                                                                                                                                                                                                                                                             "value":    "1"
+                                                                                                                                                                                                                                                     }
+                                                                                                                                                                                                                                             ]
+                                                                                                                                                                                                                 }
+                                                                                                                                                                                     },
+                                                                                                                                "ipSecurityRestrictions":    {
+                                                                                                                                                                                             "value":    "[parameters(\u0027workerAccessRestrictions\u0027)]"
+                                                                                                                                                                                     }
+                                                                                                                        }
+                                                                                 },
+                                                    "dependsOn":    [
+                                                                                        "[concat(\u0027function-app-service-plan-\u0027, parameters(\u0027utcValue\u0027))]",
+                                                                                        "[concat(\u0027function-app-insights-\u0027, parameters(\u0027utcValue\u0027))]"
+                                                                                ]
+                                            },
+                                            {
+                                                    "apiVersion":    "2020-06-01",
+                                                    "name":    "[concat(\u0027function-app-sb-role-assignment-\u0027, parameters(\u0027utcValue\u0027))]",
+                                                    "type":    "Microsoft.Resources/deployments",
+                                                    "resourceGroup":    "[parameters(\u0027sharedEnvResourceGroup\u0027)]",
+                                                    "properties":    {
+                                                                                         "mode":    "Incremental",
+                                                                                         "templateLink":    {
+                                                                                                                                    "uri":    "[concat(variables(\u0027deploymentUrlBase\u0027),\u0027role-assignments/role-assignment-service-bus.json\u0027)]",
+                                                                                                                                    "contentVersion":    "1.0.0.0"
+                                                                                                                            },
+                                                                                         "parameters":    {
+                                                                                                                                "principalId":    {
+                                                                                                                                                                        "value":    "[reference(concat(\u0027function-app-\u0027, parameters(\u0027utcValue\u0027))).outputs.managedServiceIdentityId.value]"
+                                                                                                                                                                },
+                                                                                                                                "assignmentType":    {
+                                                                                                                                                                             "value":    "ServiceBusOwner"
+                                                                                                                                                                     },
+                                                                                                                                "resourceName":    {
+                                                                                                                                                                         "value":    "[parameters(\u0027sharedServiceBusName\u0027)]"
+                                                                                                                                                                 }
+                                                                                                                        }
+                                                                                 },
+                                                    "dependsOn":    [
+                                                                                        "[concat(\u0027function-app-\u0027, parameters(\u0027utcValue\u0027))]"
+                                                                                ]
+                                            },
+                                            {
+                                                    "apiVersion":    "2021-04-01",
+                                                    "name":    "[concat(variables(\u0027apiAppServiceName\u0027), \u0027-private-link-scoped-\u0027, parameters(\u0027utcValue\u0027))]",
+                                                    "type":    "Microsoft.Resources/deployments",
+                                                    "resourceGroup":    "[parameters(\u0027sharedEnvResourceGroup\u0027)]",
+                                                    "properties":    {
+                                                                                         "templateLink":    {
+                                                                                                                                    "uri":    "[concat(variables(\u0027deploymentUrlBase\u0027),\u0027private-linked-scoped-resource.json\u0027)]",
+                                                                                                                                    "contentVersion":    "1.0.0.0"
+                                                                                                                            },
+                                                                                         "parameters":    {
+                                                                                                                                "scopedResourceId":    {
+                                                                                                                                                                                 "value":    "[reference(concat(variables(\u0027apiAppServiceName\u0027), \u0027-application-insights-\u0027, parameters(\u0027utcValue\u0027))).outputs.AppInsightsResourceId.value]"
+                                                                                                                                                                         },
+                                                                                                                                "scopedResourceName":    {
+                                                                                                                                                                                     "value":    "[variables(\u0027apiAppServiceName\u0027)]"
+                                                                                                                                                                             },
+                                                                                                                                "privateLinkScopeName":    {
+                                                                                                                                                                                         "value":    "[variables(\u0027privateLinkScopeName\u0027)]"
+                                                                                                                                                                                 }
+                                                                                                                        },
+                                                                                         "mode":    "Incremental"
+                                                                                 }
+                                            }
+                                    ],
+        "outputs":    {
+                                        "FunctionAppName":    {
+                                                                                        "type":    "string",
+                                                                                        "value":    "[variables(\u0027functionAppName\u0027)]"
+                                                                                },
+                                        "ResourceGroupName":    {
+                                                                                            "type":    "string",
+                                                                                            "value":    "[variables(\u0027resourceGroupName\u0027)]"
+                                                                                    }
                                 }
-                            ]
-                        }
-                    },
-                    "ipSecurityRestrictions": {
-                        "value": "[parameters('workerAccessRestrictions')]"
-                    }
-                }
-            },
-            "dependsOn": [
-                "[concat('function-app-service-plan-', parameters('utcValue'))]",
-                "[concat('function-app-insights-', parameters('utcValue'))]"
-            ]
-        },
-        {
-            "apiVersion": "2020-06-01",
-            "name": "[concat('function-app-sb-role-assignment-', parameters('utcValue'))]",
-            "type": "Microsoft.Resources/deployments",
-            "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[concat(variables('deploymentUrlBase'),'role-assignments/role-assignment-service-bus.json')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "principalId": {
-                        "value": "[reference(concat('function-app-', parameters('utcValue'))).outputs.managedServiceIdentityId.value]"
-                    },
-                    "assignmentType": {
-                        "value": "ServiceBusOwner"
-                    },
-                    "resourceName": {
-                        "value": "[parameters('sharedServiceBusName')]"
-                    }
-                }
-            },
-            "dependsOn": [
-                "[concat('function-app-', parameters('utcValue'))]"
-            ]
-        }
-    ],
-    "outputs": {
-        "FunctionAppName": {
-            "type": "string",
-            "value": "[variables('functionAppName')]"
-        },
-        "ResourceGroupName": {
-            "type": "string",
-            "value": "[variables('resourceGroupName')]"
-        }
-    }
 }
