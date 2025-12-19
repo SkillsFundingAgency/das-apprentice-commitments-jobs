@@ -30,7 +30,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Handlers.DomainEvents
 
             var registration = await GetRegistration(request.RegistrationId);
 
-            await _emailer.SendApprenticeSignUpInvitation(context, request.RegistrationId, registration.Email, registration.FirstName);
+            await _emailer.SendApprenticeSignUpInvitation(context, request.RegistrationId, registration.Email, registration.FirstName, registration.TrainingProviderName, registration.CourseName);
         }
 
         private async Task<Registration> GetRegistration(System.Guid registrationId)

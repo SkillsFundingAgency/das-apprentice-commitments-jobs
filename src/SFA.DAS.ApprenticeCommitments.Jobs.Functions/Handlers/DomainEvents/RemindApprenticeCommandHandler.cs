@@ -24,7 +24,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Handlers.DomainEvents
             var registration = await _api.GetRegistration(message.RegistrationId);
 
             await _emailer.SendApprenticeSignUpInvitation(context,
-                registration.RegistrationId, registration.Email, registration.FirstName);
+                registration.RegistrationId, registration.Email, registration.FirstName, registration.TrainingProviderName, registration.CourseName);
 
             await _api.InvitationReminderSent(
                 message.RegistrationId,
