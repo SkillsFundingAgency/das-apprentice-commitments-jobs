@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.Logging;
 using NServiceBus;
 using RestEase;
@@ -8,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Handlers.CommandHandlers
 {
+    [ExcludeFromCodeCoverage]
     public class SendApprenticeshipInvitationCommandHandler
         : IHandleMessages<SendApprenticeshipInvitationCommand>
     {

@@ -2,10 +2,12 @@
 using SFA.DAS.ApprenticeCommitments.Jobs.Api;
 using SFA.DAS.ApprenticeCommitments.Jobs.Functions.InternalMessages.Commands;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Handlers.DomainEvents
 {
+    [ExcludeFromCodeCoverage]
     public class RemindApprenticeCommandHandler : IHandleMessages<RemindApprenticeCommand>
     {
         private readonly IEcsApi _api;

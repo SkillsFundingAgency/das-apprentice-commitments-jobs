@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.Extensions.Logging;
 using NServiceBus;
 using SFA.DAS.ApprenticeCommitments.Jobs.Api;
 using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure;
@@ -7,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Handlers.DomainEvents
 {
+    [ExcludeFromCodeCoverage]
     public class ApprenticeshipRegisteredEventHandler : IHandleMessages<ApprenticeshipRegisteredEvent>
     {
         private readonly IEcsApi _api;
