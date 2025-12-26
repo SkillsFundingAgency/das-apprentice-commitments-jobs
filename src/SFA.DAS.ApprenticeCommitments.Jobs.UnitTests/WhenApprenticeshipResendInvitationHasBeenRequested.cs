@@ -41,6 +41,8 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
                 {
                     TemplateId = applicationSettings.Notifications.ApprenticeSignUp.ToString(),
                     RecipientsAddress = registration.Email,
+                    TrainingProviderName = registration.TrainingProviderName,
+                    CourseName = registration.CourseName,
                     Tokens = new Dictionary<string, string>
                     {
                         { "GivenName", registration.FirstName },
