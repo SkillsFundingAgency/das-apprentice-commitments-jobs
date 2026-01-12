@@ -1,10 +1,9 @@
-using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using NServiceBus;
 using SFA.DAS.ApprenticeCommitments.Jobs.Api;
 using SFA.DAS.CommitmentsV2.Messages.Events;
+using SFA.DAS.CommitmentsV2.Types;
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Handlers.CommitmentsEventHandlers
 {
@@ -25,12 +24,12 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Handlers.CommitmentsEvent
 
         public async Task Handle(ApprenticeshipCreatedEvent message, IMessageHandlerContext context)
         {
-            if (!ShouldProcessTrainingType(message, out var trainingType))
+            if (!ShouldProcessTrainingType(message.TrainingType))
             {
                 _logger.LogInformation(
                     "Ignoring ApprenticeshipCreatedEvent for {ApprenticeshipId} due to TrainingType={TrainingType}",
                     message.ApprenticeshipId,
-                    trainingType);
+                    message.TrainingType);
 
                 return;
             }
@@ -48,12 +47,12 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Handlers.CommitmentsEvent
 
         public Task Handle(ApprenticeshipUpdatedApprovedEvent message, IMessageHandlerContext context)
         {
-            if (!ShouldProcessTrainingType(message, out var trainingType))
+            if (!ShouldProcessTrainingType(message.TrainingType))
             {
                 _logger.LogInformation(
                     "Ignoring ApprenticeshipUpdatedApprovedEvent for {ApprenticeshipId} due to TrainingType={TrainingType}",
                     message.ApprenticeshipId,
-                    trainingType);
+                    message.TrainingType);
 
                 return Task.CompletedTask;
             }
@@ -65,30 +64,9 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Handlers.CommitmentsEvent
             return _api.UpdateApproval(message.ToApprenticeshipUpdated());
         }
 
-        private static bool ShouldProcessTrainingType(object message, out string trainingType)
+        private static bool ShouldProcessTrainingType(ProgrammeType trainingType)
         {
-            trainingType = string.Empty;
-
-            var property = message.GetType()
-                .GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance)
-                .FirstOrDefault(p => p.Name == "TrainingType" && p.PropertyType == typeof(string));
-
-            if (property == null)
-            {
-                return true;
-            }
-
-            trainingType = property.GetValue(message)?.ToString() ?? string.Empty;
-
-            if (string.IsNullOrWhiteSpace(trainingType))
-            {
-                return true;
-            }
-
-            var normalised = string.Concat(trainingType.Where(c => !char.IsWhiteSpace(c)));
-
-            return normalised.Equals("Apprenticeship", StringComparison.OrdinalIgnoreCase)
-                || normalised.Equals("Foundation", StringComparison.OrdinalIgnoreCase);
+            return trainingType == ProgrammeType.Standard;
         }
     }
 }
