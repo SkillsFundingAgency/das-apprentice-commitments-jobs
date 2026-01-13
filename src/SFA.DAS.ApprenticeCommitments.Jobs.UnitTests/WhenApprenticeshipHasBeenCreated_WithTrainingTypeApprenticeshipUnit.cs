@@ -10,15 +10,21 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
 {
-    public class WhenApprenticeshipHasBeenCreated_WithTrainingTypeFramework
+    public class WhenApprenticeshipHasBeenCreated_WithLearningTypeApprenticeshipUnit
     {
+        public class ApprenticeshipCreatedEventWithLearningType : ApprenticeshipCreatedEvent
+        {
+            public string LearningType { get; set; }
+        }
+
         [Test, AutoMoqData]
         public async Task Then_it_does_not_notify_apim(
             [Frozen] Mock<IEcsApi> api,
             CommitmentsEventHandler sut,
-            ApprenticeshipCreatedEvent evt)
+            ApprenticeshipCreatedEventWithLearningType evt)
         {
-            evt.TrainingType = ProgrammeType.Framework;
+            evt.TrainingType = ProgrammeType.Standard;
+            evt.LearningType = "Apprenticeship Unit";
             evt.ContinuationOfId = null;
 
             await sut.Handle(evt, new TestableMessageHandlerContext());

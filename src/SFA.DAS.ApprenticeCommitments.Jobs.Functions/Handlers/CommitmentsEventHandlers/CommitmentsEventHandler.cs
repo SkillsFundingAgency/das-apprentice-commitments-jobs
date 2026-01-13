@@ -1,3 +1,5 @@
+using System;
+using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using NServiceBus;
@@ -24,12 +26,14 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Handlers.CommitmentsEvent
 
         public async Task Handle(ApprenticeshipCreatedEvent message, IMessageHandlerContext context)
         {
-            if (!ShouldProcessTrainingType(message.TrainingType))
+            var learningType = GetLearningType(message);
+
+            if (!ShouldProcessLearningType(learningType))
             {
                 _logger.LogInformation(
-                    "Ignoring ApprenticeshipCreatedEvent for {ApprenticeshipId} due to TrainingType={TrainingType}",
+                    "Ignoring ApprenticeshipCreatedEvent for {ApprenticeshipId} due to LearningType={LearningType}",
                     message.ApprenticeshipId,
-                    message.TrainingType);
+                    learningType);
 
                 return;
             }
@@ -47,12 +51,14 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Handlers.CommitmentsEvent
 
         public Task Handle(ApprenticeshipUpdatedApprovedEvent message, IMessageHandlerContext context)
         {
-            if (!ShouldProcessTrainingType(message.TrainingType))
+            var learningType = GetLearningType(message);
+
+            if (!ShouldProcessLearningType(learningType))
             {
                 _logger.LogInformation(
-                    "Ignoring ApprenticeshipUpdatedApprovedEvent for {ApprenticeshipId} due to TrainingType={TrainingType}",
+                    "Ignoring ApprenticeshipUpdatedApprovedEvent for {ApprenticeshipId} due to LearningType={LearningType}",
                     message.ApprenticeshipId,
-                    message.TrainingType);
+                    learningType);
 
                 return Task.CompletedTask;
             }
@@ -62,6 +68,30 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Handlers.CommitmentsEvent
                 message.ApprenticeshipId);
 
             return _api.UpdateApproval(message.ToApprenticeshipUpdated());
+        }
+
+        private static bool ShouldProcessLearningType(string learningType)
+        {
+            if (string.IsNullOrWhiteSpace(learningType))
+            {
+                return true;
+            }
+
+            return learningType.Equals("Apprenticeship", StringComparison.OrdinalIgnoreCase)
+                || learningType.Equals("FoundationApprenticeship", StringComparison.OrdinalIgnoreCase)
+                || learningType.Equals("Foundation Apprenticeship", StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static string GetLearningType(object message)
+        {
+            var prop = message.GetType().GetProperty("LearningType", BindingFlags.Public | BindingFlags.Instance);
+
+            if (prop == null || prop.PropertyType != typeof(string))
+            {
+                return null;
+            }
+
+            return prop.GetValue(message) as string;
         }
 
         private static bool ShouldProcessTrainingType(ProgrammeType trainingType)
