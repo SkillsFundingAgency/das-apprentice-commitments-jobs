@@ -5,7 +5,6 @@ using Microsoft.Extensions.Logging;
 using NServiceBus;
 using SFA.DAS.ApprenticeCommitments.Jobs.Api;
 using SFA.DAS.CommitmentsV2.Messages.Events;
-using SFA.DAS.CommitmentsV2.Types;
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Handlers.CommitmentsEventHandlers
 {
@@ -70,7 +69,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Handlers.CommitmentsEvent
             return _api.UpdateApproval(message.ToApprenticeshipUpdated());
         }
 
-        private static bool ShouldProcessLearningType(string learningType)
+        private static bool ShouldProcessLearningType(string? learningType)
         {
             if (string.IsNullOrWhiteSpace(learningType))
             {
@@ -82,7 +81,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Handlers.CommitmentsEvent
                 || learningType.Equals("Foundation Apprenticeship", StringComparison.OrdinalIgnoreCase);
         }
 
-        private static string GetLearningType(object message)
+        private static string? GetLearningType(object message)
         {
             var prop = message.GetType().GetProperty("LearningType", BindingFlags.Public | BindingFlags.Instance);
 
@@ -92,11 +91,6 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Handlers.CommitmentsEvent
             }
 
             return prop.GetValue(message) as string;
-        }
-
-        private static bool ShouldProcessTrainingType(ProgrammeType trainingType)
-        {
-            return trainingType == ProgrammeType.Standard;
         }
     }
 }
