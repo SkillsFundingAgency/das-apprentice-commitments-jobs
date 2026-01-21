@@ -19,6 +19,10 @@ jobs:
       SonarCloudProjectKey: SkillsFundingAgency_das-apprentice-commitments-jobs
       ContinueOnVulnerablePackageScanError: true
 
+  - script: |
+      mkdir -p "$(Build.SourcesDirectory)/src/SFA.DAS.ApprenticeCommitments.Jobs.UnitTests/TestResults"
+    displayName: 'Create TestResults folder'
+
   - task: DotNetCoreCLI@2
     displayName: 'Run unit tests with coverage'
     inputs:
