@@ -20,6 +20,19 @@ jobs:
       ContinueOnVulnerablePackageScanError: true
 
   - task: DotNetCoreCLI@2
+    displayName: 'Run unit tests with coverage'
+    inputs:
+      command: test
+      publishTestResults: true
+      projects: 'src/SFA.DAS.ApprenticeCommitments.Jobs.UnitTests/SFA.DAS.ApprenticeCommitments.Jobs.UnitTests.csproj'
+      arguments: |
+        -c $(buildConfiguration)
+        --logger "trx;LogFileName=test-results.trx"
+        /p:CollectCoverage=true
+        /p:CoverletOutputFormat=opencover
+        /p:CoverletOutput=$(Build.SourcesDirectory)/src/SFA.DAS.ApprenticeCommitments.Jobs.UnitTests/TestResults/coverage
+
+  - task: DotNetCoreCLI@2
     displayName: 'Publish Function App Apprentice Commitments Jobs'
     inputs:
       command: publish
