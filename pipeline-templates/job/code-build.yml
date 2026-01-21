@@ -3,14 +3,17 @@ jobs:
   pool:
     name: DAS - Continuous Integration Agents
     demands: LATEST_DOTNET_VERSION -equals 3.1
+
   variables:
   - group: BUILD Management Resources
   - name: buildConfiguration
-    value: release
+    value: Release
   - name: buildPlatform
     value: anycpu
+
   workspace:
     clean: all
+
   steps:
   - template: azure-pipelines-templates/build/step/gitversion.yml@das-platform-building-blocks
 
@@ -19,10 +22,12 @@ jobs:
       SonarCloudProjectKey: SkillsFundingAgency_das-apprentice-commitments-jobs
       ContinueOnVulnerablePackageScanError: true
 
-  - powershell: |
-      New-Item -ItemType Directory -Force `
-        "$(Build.SourcesDirectory)/src/SFA.DAS.ApprenticeCommitments.Jobs.UnitTests/TestResults"
+  - task: PowerShell@2
     displayName: 'Create TestResults folder'
+    inputs:
+      targetType: 'inline'
+      script: |
+        New-Item -ItemType Directory -Force "$(Build.SourcesDirectory)/src/SFA.DAS.ApprenticeCommitments.Jobs.UnitTests/TestResults" | Out-Null
 
   - task: DotNetCoreCLI@2
     displayName: 'Run unit tests with coverage'
@@ -35,7 +40,7 @@ jobs:
         --logger "trx;LogFileName=test-results.trx"
         /p:CollectCoverage=true
         /p:CoverletOutputFormat=opencover
-        /p:CoverletOutput=$(Build.SourcesDirectory)/src/SFA.DAS.ApprenticeCommitments.Jobs.UnitTests/TestResults/coverage
+        /p:CoverletOutput=src/SFA.DAS.ApprenticeCommitments.Jobs.UnitTests/TestResults/coverage
 
   - task: DotNetCoreCLI@2
     displayName: 'Publish Function App Apprentice Commitments Jobs'
