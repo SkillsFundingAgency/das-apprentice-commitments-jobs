@@ -11,13 +11,13 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Handlers.DomainEvents
     {
         private readonly IEcsApi _api;
         private readonly EmailService _emailer;
-        private readonly ILogger<ApprenticeshipConfirmedEventHandler> _logger;
+        private readonly ILogger<ApprenticeshipRegisteredEventHandler> _logger;
 
         public ApprenticeshipRegisteredEventHandler(
             IEcsApi api,
             EmailService emailer,
             UrlConfiguration urls,
-            ILogger<ApprenticeshipConfirmedEventHandler> logger)
+            ILogger<ApprenticeshipRegisteredEventHandler> logger)
         {
             _api = api;
             _emailer = emailer;
