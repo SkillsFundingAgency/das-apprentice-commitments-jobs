@@ -103,6 +103,8 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
                     Tokens = new Dictionary<string, string>
                     {
                         { "GivenName", registration.FirstName },
+                        { "TrainingProviderName", registration.TrainingProviderName },
+                        { "CourseName", registration.CourseName },
                         { "CreateAccountLink", url },
                         { "LoginLink", url },
                     }

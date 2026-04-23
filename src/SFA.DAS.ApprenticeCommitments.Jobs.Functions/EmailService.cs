@@ -25,20 +25,26 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
             IMessageHandlerContext context,
             Guid registrationId,
             string emailAddress,
-            string firstName)
+            string firstName,
+            string trainingProviderName,
+            string courseName)
         {
             await SendApprenticeSignUpInvitation(
                 o => context.Send(o),
                 registrationId,
                 emailAddress,
-                firstName);
+                firstName,
+                trainingProviderName,
+                courseName);
         }
 
         internal async Task SendApprenticeSignUpInvitation(
             Func<object, Task> send,
             Guid registrationId,
             string emailAddress,
-            string firstName)
+            string firstName,
+            string trainingProviderName,
+            string courseName)
         {
             var link = $"{_settings.ApprenticeWeb.StartPageUrl}?Register={registrationId}";
 
@@ -52,6 +58,8 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
                     { "GivenName", firstName },
                     { "CreateAccountLink", link },
                     { "LoginLink", link },
+                    { "TrainingProviderName", trainingProviderName },
+                    { "CourseName", courseName }
                 });
         }
 

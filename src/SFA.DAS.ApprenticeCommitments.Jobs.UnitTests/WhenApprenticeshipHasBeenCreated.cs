@@ -87,6 +87,8 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
                     {
                         { "GivenName", registration.FirstName },
                         { "CreateAccountLink", url },
+                        { "TrainingProviderName", registration.TrainingProviderName },
+                        { "CourseName", registration.CourseName },
                         { "LoginLink", url },
                     }
                 });

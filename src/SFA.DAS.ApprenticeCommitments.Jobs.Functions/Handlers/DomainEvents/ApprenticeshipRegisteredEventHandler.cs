@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.Extensions.Logging;
 using NServiceBus;
 using SFA.DAS.ApprenticeCommitments.Jobs.Api;
 using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure;
@@ -7,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Handlers.DomainEvents
 {
+    [ExcludeFromCodeCoverage]
     public class ApprenticeshipRegisteredEventHandler : IHandleMessages<ApprenticeshipRegisteredEvent>
     {
         private readonly IEcsApi _api;
@@ -30,7 +32,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Handlers.DomainEvents
 
             var registration = await GetRegistration(request.RegistrationId);
 
-            await _emailer.SendApprenticeSignUpInvitation(context, request.RegistrationId, registration.Email, registration.FirstName);
+            await _emailer.SendApprenticeSignUpInvitation(context, request.RegistrationId, registration.Email, registration.FirstName, registration.TrainingProviderName, registration.CourseName);
         }
 
         private async Task<Registration> GetRegistration(System.Guid registrationId)

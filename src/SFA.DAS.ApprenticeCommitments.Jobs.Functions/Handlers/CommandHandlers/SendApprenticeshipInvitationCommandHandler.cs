@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.Logging;
 using NServiceBus;
 using RestEase;
@@ -8,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Handlers.CommandHandlers
 {
+    [ExcludeFromCodeCoverage]
     public class SendApprenticeshipInvitationCommandHandler
         : IHandleMessages<SendApprenticeshipInvitationCommand>
     {
@@ -36,7 +38,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Handlers.CommandHandlers
                 if (registration.IsMatchedToApprentice)
                     _logger.LogInformation("Commitments Apprenticeship {ApprenticeshipId}, already assigned to an apprentice, invitation email not required", message.CommitmentsApprenticeshipId);
                 else
-                    await _emailService.SendApprenticeSignUpInvitation(context, registration.RegistrationId, registration.Email, registration.FirstName);
+                    await _emailService.SendApprenticeSignUpInvitation(context, registration.RegistrationId, registration.Email, registration.FirstName, registration.TrainingProviderName, registration.CourseName);
             }
             catch (ApiException e) when (e.StatusCode == HttpStatusCode.NotFound)
             {
