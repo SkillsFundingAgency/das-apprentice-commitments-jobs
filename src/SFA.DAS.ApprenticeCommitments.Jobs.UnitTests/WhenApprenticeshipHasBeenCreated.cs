@@ -2,18 +2,20 @@ using AutoFixture;
 using AutoFixture.AutoMoq;
 using AutoFixture.NUnit3;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NServiceBus.Testing;
 using NUnit.Framework;
 using SFA.DAS.ApprenticeCommitments.Jobs.Api;
+using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Handlers.CommitmentsEventHandlers;
 using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure;
 using SFA.DAS.ApprenticeCommitments.Messages.Events;
 using SFA.DAS.CommitmentsV2.Messages.Events;
+using SFA.DAS.Common.Domain.Types;
 using SFA.DAS.Notifications.Messages.Commands;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Handlers.CommitmentsEventHandlers;
 using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Handlers.DomainEvents;
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
@@ -29,6 +31,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
         {
             var evt = _fixture.Build<ApprenticeshipCreatedEvent>()
                .Without(p => p.ContinuationOfId)
+               .With(p => p.LearningType, LearningType.Apprenticeship) // ensure it's processed
                .Create();
 
             await sut.Handle(evt, new TestableMessageHandlerContext());
@@ -48,6 +51,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
 
             var evt = _fixture.Build<ApprenticeshipCreatedEvent>()
                 .With(p => p.ContinuationOfId, continuationId)
+                .With(p => p.LearningType, LearningType.Apprenticeship)
                 .Create();
 
             await sut.Handle(evt, new TestableMessageHandlerContext());
@@ -56,6 +60,156 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
                 n.CommitmentsContinuedApprenticeshipId == continuationId &&
                 n.CommitmentsApprenticeshipId == evt.ApprenticeshipId &&
                 n.CommitmentsApprovedOn == evt.CreatedOn)));
+        }
+
+        [Test, AutoMoqData]
+        public async Task And_LearningType_is_ApprenticeshipUnit_Then_ignore_and_log(
+            [Frozen] Mock<IEcsApi> api,
+            [Frozen] Mock<ILogger<CommitmentsEventHandler>> logger,
+            CommitmentsEventHandler sut)
+        {
+            var evt = _fixture.Build<ApprenticeshipCreatedEvent>()
+                .With(p => p.LearningType, LearningType.ApprenticeshipUnit)
+                .Create();
+
+            await sut.Handle(evt, new TestableMessageHandlerContext());
+
+            api.VerifyNoOtherCalls();
+            logger.Verify(x => x.Log(
+                LogLevel.Information,
+                It.IsAny<EventId>(),
+                It.Is<It.IsAnyType>((v, t) => v.ToString().Contains("Ignoring ApprenticeshipCreatedEvent")),
+                It.IsAny<Exception>(),
+                It.IsAny<Func<It.IsAnyType, Exception, string>>()));
+        }
+
+        [Test, AutoMoqData]
+        public async Task And_LearningType_is_Apprenticeship_Then_process(
+            [Frozen] Mock<IEcsApi> api,
+            CommitmentsEventHandler sut)
+        {
+            var evt = _fixture.Build<ApprenticeshipCreatedEvent>()
+                .With(p => p.LearningType, LearningType.Apprenticeship)
+                .Without(p => p.ContinuationOfId)
+                .Create();
+
+            await sut.Handle(evt, new TestableMessageHandlerContext());
+
+            api.Verify(m => m.CreateApproval(It.IsAny<ApprovalCreated>()), Times.Once);
+        }
+
+        [Test, AutoMoqData]
+        public async Task And_LearningType_is_FoundationApprenticeship_Then_process(
+            [Frozen] Mock<IEcsApi> api,
+            CommitmentsEventHandler sut)
+        {
+            var evt = _fixture.Build<ApprenticeshipCreatedEvent>()
+                .With(p => p.LearningType, LearningType.FoundationApprenticeship)
+                .Without(p => p.ContinuationOfId)
+                .Create();
+
+            await sut.Handle(evt, new TestableMessageHandlerContext());
+
+            api.Verify(m => m.CreateApproval(It.IsAny<ApprovalCreated>()), Times.Once);
+        }
+
+        [Test, AutoMoqData]
+        public async Task And_LearningType_is_null_Then_process(
+            [Frozen] Mock<IEcsApi> api,
+            CommitmentsEventHandler sut)
+        {
+            var evt = _fixture.Build<ApprenticeshipCreatedEvent>()
+                .Without(p => p.LearningType)
+                .Without(p => p.ContinuationOfId)
+                .Create();
+
+            await sut.Handle(evt, new TestableMessageHandlerContext());
+
+            api.Verify(m => m.CreateApproval(It.IsAny<ApprovalCreated>()), Times.Once);
+        }
+    }
+
+    public class WhenApprenticeshipHasBeenUpdatedAndApproved
+    {
+        private readonly Fixture _fixture = new Fixture();
+
+        [Test, AutoMoqData]
+        public async Task Then_update_the_apprentice_record(
+            [Frozen] Mock<IEcsApi> api,
+            CommitmentsEventHandler sut)
+        {
+            var evt = _fixture.Build<ApprenticeshipUpdatedApprovedEvent>()
+                .With(p => p.LearningType, LearningType.Apprenticeship)
+                .Create();
+
+            await sut.Handle(evt, new TestableMessageHandlerContext());
+
+            api.Verify(m => m.UpdateApproval(It.Is<ApprovalUpdated>(n =>
+                n.CommitmentsApprenticeshipId == evt.ApprenticeshipId &&
+                n.CommitmentsApprovedOn == evt.ApprovedOn)));
+        }
+
+        [Test, AutoMoqData]
+        public async Task And_LearningType_is_ApprenticeshipUnit_Then_ignore_and_log(
+            [Frozen] Mock<IEcsApi> api,
+            [Frozen] Mock<ILogger<CommitmentsEventHandler>> logger,
+            CommitmentsEventHandler sut)
+        {
+            var evt = _fixture.Build<ApprenticeshipUpdatedApprovedEvent>()
+                .With(p => p.LearningType, LearningType.ApprenticeshipUnit)
+                .Create();
+
+            await sut.Handle(evt, new TestableMessageHandlerContext());
+
+            api.VerifyNoOtherCalls();
+            logger.Verify(x => x.Log(
+                LogLevel.Information,
+                It.IsAny<EventId>(),
+                It.Is<It.IsAnyType>((v, t) => v.ToString().Contains("Ignoring ApprenticeshipUpdatedApprovedEvent")),
+                It.IsAny<Exception>(),
+                It.IsAny<Func<It.IsAnyType, Exception, string>>()));
+        }
+
+        [Test, AutoMoqData]
+        public async Task And_LearningType_is_Apprenticeship_Then_process(
+            [Frozen] Mock<IEcsApi> api,
+            CommitmentsEventHandler sut)
+        {
+            var evt = _fixture.Build<ApprenticeshipUpdatedApprovedEvent>()
+                .With(p => p.LearningType, LearningType.Apprenticeship)
+                .Create();
+
+            await sut.Handle(evt, new TestableMessageHandlerContext());
+
+            api.Verify(m => m.UpdateApproval(It.IsAny<ApprovalUpdated>()), Times.Once);
+        }
+
+        [Test, AutoMoqData]
+        public async Task And_LearningType_is_FoundationApprenticeship_Then_process(
+            [Frozen] Mock<IEcsApi> api,
+            CommitmentsEventHandler sut)
+        {
+            var evt = _fixture.Build<ApprenticeshipUpdatedApprovedEvent>()
+                .With(p => p.LearningType, LearningType.FoundationApprenticeship)
+                .Create();
+
+            await sut.Handle(evt, new TestableMessageHandlerContext());
+
+            api.Verify(m => m.UpdateApproval(It.IsAny<ApprovalUpdated>()), Times.Once);
+        }
+
+        [Test, AutoMoqData]
+        public async Task And_LearningType_is_null_Then_process(
+            [Frozen] Mock<IEcsApi> api,
+            CommitmentsEventHandler sut)
+        {
+            var evt = _fixture.Build<ApprenticeshipUpdatedApprovedEvent>()
+                .Without(p => p.LearningType)
+                .Create();
+
+            await sut.Handle(evt, new TestableMessageHandlerContext());
+
+            api.Verify(m => m.UpdateApproval(It.IsAny<ApprovalUpdated>()), Times.Once);
         }
     }
 
@@ -72,7 +226,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
         {
             evt.RegistrationId = registration.RegistrationId;
             api.Setup(x => x.GetRegistration(evt.RegistrationId)).ReturnsAsync(registration);
-            
+
             var context = new TestableMessageHandlerContext();
             await sut.Handle(evt, context);
 
