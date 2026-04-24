@@ -24,6 +24,10 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Handlers.CommitmentsEvent
 
         public async Task Handle(ApprenticeshipCreatedEvent message, IMessageHandlerContext context)
         {
+            _logger.LogInformation(
+                "Starting processing ApprenticeshipCreatedEvent for {ApprenticeshipId}",
+                message.ApprenticeshipId);
+            
             // Filter: ignore ApprenticeshipUnit
             if (message.LearningType == LearningType.ApprenticeshipUnit)
             {
