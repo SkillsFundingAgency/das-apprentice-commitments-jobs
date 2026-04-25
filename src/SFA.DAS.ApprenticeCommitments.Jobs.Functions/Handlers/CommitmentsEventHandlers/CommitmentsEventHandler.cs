@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using NServiceBus;
 using SFA.DAS.ApprenticeCommitments.Jobs.Api;
 using SFA.DAS.CommitmentsV2.Messages.Events;
+using SFA.DAS.CommitmentsV2.Types;
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Handlers.CommitmentsEventHandlers
 {
@@ -26,6 +27,16 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Handlers.CommitmentsEvent
             _logger.LogInformation("Handling ApprenticeshipCreatedEvent for {ApprenticeshipId} (continuation {ContinuationOfId})"
                 , message.ApprenticeshipId, message.ContinuationOfId);
 
+            // Filter: ignore ApprenticeshipUnit
+            if (message.LearningType == Common.Domain.Types.LearningType.ApprenticeshipUnit)
+            {
+                _logger.LogInformation(
+                    "Ignoring ApprenticeshipCreatedEvent for {ApprenticeshipId} due to LearningType={LearningType}",
+                    message.ApprenticeshipId, message.LearningType);
+                return;
+            }            
+            
+            
             if (message.ContinuationOfId.HasValue)
                 await _api.UpdateApproval(message.ToApprenticeshipUpdated());
             else
@@ -34,6 +45,15 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Handlers.CommitmentsEvent
 
         public Task Handle(ApprenticeshipUpdatedApprovedEvent message, IMessageHandlerContext context)
         {
+            // Filter: ignore ApprenticeshipUnit
+            if (message.LearningType == Common.Domain.Types.LearningType.ApprenticeshipUnit)
+            {
+                _logger.LogInformation(
+                    "Ignoring ApprenticeshipUpdatedApprovedEvent for {ApprenticeshipId} due to LearningType={LearningType}",
+                    message.ApprenticeshipId, message.LearningType);
+                return Task.CompletedTask;
+            }            
+            
             _logger.LogInformation("Handling ApprenticeshipUpdatedApprovedEvent for {ApprenticeshipId}", message.ApprenticeshipId);
             return _api.UpdateApproval(message.ToApprenticeshipUpdated());
         }
