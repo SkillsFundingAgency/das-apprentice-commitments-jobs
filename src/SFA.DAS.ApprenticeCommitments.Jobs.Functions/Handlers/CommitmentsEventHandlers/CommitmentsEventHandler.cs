@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 using NServiceBus;
 using SFA.DAS.ApprenticeCommitments.Jobs.Api;
 using SFA.DAS.CommitmentsV2.Messages.Events;
-using SFA.DAS.CommitmentsV2.Types;
+using SFA.DAS.Common.Domain.Types;
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Handlers.CommitmentsEventHandlers
 {
@@ -26,38 +26,62 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Handlers.CommitmentsEvent
 
         public async Task Handle(ApprenticeshipCreatedEvent message, IMessageHandlerContext context)
         {
-            _logger.LogInformation("Handling ApprenticeshipCreatedEvent for {ApprenticeshipId} (continuation {ContinuationOfId})"
-                , message.ApprenticeshipId, message.ContinuationOfId);
+            _logger.LogInformation(
+                "Handling ApprenticeshipCreatedEvent for {ApprenticeshipId} (continuation {ContinuationOfId}) with LearningType {LearningType}",
+                message.ApprenticeshipId,
+                message.ContinuationOfId,
+                message.LearningType);
 
-            // Filter: ignore ApprenticeshipUnit
-            if (message.LearningType == Common.Domain.Types.LearningType.ApprenticeshipUnit)
+            if (ShouldIgnore(message.LearningType, message.ApprenticeshipId, nameof(ApprenticeshipCreatedEvent)))
             {
-                _logger.LogInformation(
-                    "Ignoring ApprenticeshipCreatedEvent for {ApprenticeshipId} due to LearningType={LearningType}",
-                    message.ApprenticeshipId, message.LearningType);
                 return;
-            }            
-            
-            
+            }
+
             if (message.ContinuationOfId.HasValue)
+            {
                 await _api.UpdateApproval(message.ToApprenticeshipUpdated());
+            }
             else
+            {
                 await _api.CreateApproval(message.ToApprenticeshipCreated());
+            }
         }
 
         public Task Handle(ApprenticeshipUpdatedApprovedEvent message, IMessageHandlerContext context)
         {
-            // Filter: ignore ApprenticeshipUnit
-            if (message.LearningType == Common.Domain.Types.LearningType.ApprenticeshipUnit)
+            _logger.LogInformation(
+                "Handling ApprenticeshipUpdatedApprovedEvent for {ApprenticeshipId} with LearningType {LearningType}",
+                message.ApprenticeshipId,
+                message.LearningType);
+
+            if (ShouldIgnore(message.LearningType, message.ApprenticeshipId, nameof(ApprenticeshipUpdatedApprovedEvent)))
+            {
+                return Task.CompletedTask;
+            }
+
+            return _api.UpdateApproval(message.ToApprenticeshipUpdated());
+        }
+
+        private bool ShouldIgnore(LearningType learningType, long apprenticeshipId, string eventName)
+        {
+            _logger.LogInformation(
+                "ShouldIgnore check: ApprenticeshipId={ApprenticeshipId}, LearningType={LearningType}, EnumNumericValue={EnumValue}",
+                apprenticeshipId,
+                learningType,
+                (byte)learningType);
+
+            if (learningType == LearningType.ApprenticeshipUnit)
             {
                 _logger.LogInformation(
-                    "Ignoring ApprenticeshipUpdatedApprovedEvent for {ApprenticeshipId} due to LearningType={LearningType}",
-                    message.ApprenticeshipId, message.LearningType);
-                return Task.CompletedTask;
-            }            
-            
-            _logger.LogInformation("Handling ApprenticeshipUpdatedApprovedEvent for {ApprenticeshipId}", message.ApprenticeshipId);
-            return _api.UpdateApproval(message.ToApprenticeshipUpdated());
+                    "Ignoring {EventName} for {ApprenticeshipId} due to LearningType={LearningType}",
+                    eventName,
+                    apprenticeshipId,
+                    learningType);
+
+                return true;
+            }
+
+            return false;
         }
     }
 }
