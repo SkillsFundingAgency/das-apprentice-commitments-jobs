@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using NServiceBus;
@@ -6,13 +7,14 @@ using SFA.DAS.CommitmentsV2.Messages.Events;
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Handlers.CommitmentsEventHandlers
 {
+    [ExcludeFromCodeCoverage]
     public class CommitmentsEventHandler
         : IHandleMessages<ApprenticeshipCreatedEvent>
-        , IHandleMessages<ApprenticeshipUpdatedApprovedEvent>
+            , IHandleMessages<ApprenticeshipUpdatedApprovedEvent>
     {
         private readonly IEcsApi _api;
         private readonly ILogger<CommitmentsEventHandler> _logger;
-
+        
         public CommitmentsEventHandler(
             IEcsApi api,
             ILogger<CommitmentsEventHandler> logger)
