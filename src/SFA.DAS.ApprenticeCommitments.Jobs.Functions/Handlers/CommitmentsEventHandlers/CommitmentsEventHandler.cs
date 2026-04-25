@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -8,6 +9,7 @@ using SFA.DAS.CommitmentsV2.Messages.Events;
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Handlers.CommitmentsEventHandlers
 {
+    [ExcludeFromCodeCoverage]
     public class CommitmentsEventHandler
         : IHandleMessages<ApprenticeshipCreatedEvent>
         , IHandleMessages<ApprenticeshipUpdatedApprovedEvent>
