@@ -4,10 +4,12 @@ using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure;
 using SFA.DAS.Notifications.Messages.Commands;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
 {
+    [ExcludeFromCodeCoverage]
     public class EmailService
     {
         private readonly ILogger<EmailService> _logger;
