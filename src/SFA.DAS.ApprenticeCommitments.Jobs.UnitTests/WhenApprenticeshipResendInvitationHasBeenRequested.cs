@@ -30,7 +30,9 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
             api.Setup(x => x.GetApprovalsRegistration(evt.CommitmentsApprenticeshipId)).ReturnsAsync(registration);
 
             applicationSettings.Notifications.Templates.Add("ApprenticeSignUp", emailTemplateId.ToString());
-            var link = $"{applicationSettings.ApprenticeWeb.StartPageUrl}?Register={registration.RegistrationId}";
+            var link = $"{applicationSettings.ApprenticeWeb.StartPageUrl}";
+            var appLink = $"{applicationSettings.ApprenticeApp.StartPageUrl}";
+
 
             var context = new TestableMessageHandlerContext();
             await sut.Handle(evt, context);
@@ -46,6 +48,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
                         { "GivenName", registration.FirstName },
                         { "CreateAccountLink", link },
                         { "LoginLink",  link },
+                        { "ApprenticeAppLink", appLink }
                     }
                 });
         }

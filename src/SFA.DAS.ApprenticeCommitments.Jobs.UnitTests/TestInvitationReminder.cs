@@ -1,5 +1,6 @@
 ﻿using AutoFixture.NUnit3;
 using FluentAssertions;
+using Microsoft.Azure.Amqp;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -92,7 +93,8 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
             var context = new TestableMessageHandlerContext();
             await sut.Handle(evt, context);
 
-            var url = $"{settings.ApprenticeWeb.StartPageUrl}?Register={evt.RegistrationId}";
+            var url = $"{settings.ApprenticeWeb.StartPageUrl}";
+            var appLink = $"{settings.ApprenticeApp.StartPageUrl}";
 
             context.SentMessages
                 .Should().Contain(x => x.Message is SendEmailCommand)
@@ -105,6 +107,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
                         { "GivenName", registration.FirstName },
                         { "CreateAccountLink", url },
                         { "LoginLink", url },
+                        { "ApprenticeAppLink", appLink }
                     }
                 });
         }
