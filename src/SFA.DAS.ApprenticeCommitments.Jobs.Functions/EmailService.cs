@@ -40,18 +40,20 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
             string emailAddress,
             string firstName)
         {
-            var link = $"{_settings.ApprenticeWeb.StartPageUrl}?Register={registrationId}";
+            var link = $"{_settings.ApprenticeWeb.StartPageUrl}";
+            var appLink = $"{_settings.ApprenticeApp.StartPageUrl}";
 
-            _logger.LogInformation($"Send ApprenticeSignUpInvitation ({{templateId}}) with {{link}}",
-                _settings.Notifications.ApprenticeSignUp, link);
+            _logger.LogInformation($"Send ApprenticeSignUpInvitation ({{templateId}}) with {{link}} and {{appLink}}",
+                _settings.Notifications.ApprenticeSignUp, link, appLink);
 
             await SendEmail(send, emailAddress,
                 _settings.Notifications.ApprenticeSignUp,
                 new Dictionary<string, string>
-                {
+                {   
                     { "GivenName", firstName },
                     { "CreateAccountLink", link },
                     { "LoginLink", link },
+                    { "ApprenticeAppLink", appLink }
                 });
         }
 
