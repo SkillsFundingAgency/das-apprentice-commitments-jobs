@@ -42,11 +42,10 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
             string emailAddress,
             string firstName)
         {
-            var link = $"{_settings.ApprenticeWeb.StartPageUrl}";
-            var appLink = $"{_settings.ApprenticeApp.StartPageUrl}";
+            var link = $"{_settings.ApprenticeWeb.StartPageUrl}";            
 
-            _logger.LogInformation($"Send ApprenticeSignUpInvitation ({{templateId}}) with {{link}} and {{appLink}}",
-                _settings.Notifications.ApprenticeSignUp, link, appLink);
+            _logger.LogInformation($"Send ApprenticeSignUpInvitation ({{templateId}}) with {{link}}",
+                _settings.Notifications.ApprenticeSignUp, link);
 
             await SendEmail(send, emailAddress,
                 _settings.Notifications.ApprenticeSignUp,
@@ -54,8 +53,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
                 {   
                     { "GivenName", firstName },
                     { "CreateAccountLink", link },
-                    { "LoginLink", link },
-                    { "ApprenticeAppLink", appLink }
+                    { "LoginLink", link } 
                 });
         }
 

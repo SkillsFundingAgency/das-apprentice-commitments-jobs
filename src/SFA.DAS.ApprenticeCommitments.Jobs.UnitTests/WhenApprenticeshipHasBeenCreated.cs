@@ -78,8 +78,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
             var context = new TestableMessageHandlerContext();
             await sut.Handle(evt, context);
 
-            var url = $"{settings.ApprenticeWeb.StartPageUrl}";
-            var appLink = $"{settings.ApprenticeApp.StartPageUrl}";
+            var url = $"{settings.ApprenticeWeb.StartPageUrl}";            
             context.SentMessages
                 .Should().Contain(x => x.Message is SendEmailCommand)
                 .Which.Message.Should().BeEquivalentTo(new
@@ -90,8 +89,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
                     {
                         { "GivenName", registration.FirstName },
                         { "CreateAccountLink", url },
-                        { "LoginLink", url },
-                        { "ApprenticeAppLink", appLink }
+                        { "LoginLink", url }                        
                     }
                 });
         }
