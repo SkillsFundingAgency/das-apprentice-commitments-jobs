@@ -4,10 +4,12 @@ using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure;
 using SFA.DAS.Notifications.Messages.Commands;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
 {
+    [ExcludeFromCodeCoverage]
     public class EmailService
     {
         private readonly ILogger<EmailService> _logger;
@@ -40,7 +42,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
             string emailAddress,
             string firstName)
         {
-            var link = $"{_settings.ApprenticeWeb.StartPageUrl}?Register={registrationId}";
+            var link = $"{_settings.ApprenticeWeb.StartPageUrl}";            
 
             _logger.LogInformation($"Send ApprenticeSignUpInvitation ({{templateId}}) with {{link}}",
                 _settings.Notifications.ApprenticeSignUp, link);
@@ -48,10 +50,10 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions
             await SendEmail(send, emailAddress,
                 _settings.Notifications.ApprenticeSignUp,
                 new Dictionary<string, string>
-                {
+                {   
                     { "GivenName", firstName },
                     { "CreateAccountLink", link },
-                    { "LoginLink", link },
+                    { "LoginLink", link } 
                 });
         }
 

@@ -13,7 +13,6 @@ using SFA.DAS.ApprenticeCommitments.Jobs.Functions.InternalMessages.Commands;
 using SFA.DAS.Notifications.Messages.Commands;
 using System;
 using System.Collections.Generic;
-using System.Security.Policy;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
@@ -92,7 +91,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
             var context = new TestableMessageHandlerContext();
             await sut.Handle(evt, context);
 
-            var url = $"{settings.ApprenticeWeb.StartPageUrl}?Register={evt.RegistrationId}";
+            var url = $"{settings.ApprenticeWeb.StartPageUrl}";           
 
             context.SentMessages
                 .Should().Contain(x => x.Message is SendEmailCommand)
@@ -104,7 +103,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
                     {
                         { "GivenName", registration.FirstName },
                         { "CreateAccountLink", url },
-                        { "LoginLink", url },
+                        { "LoginLink", url }
                     }
                 });
         }

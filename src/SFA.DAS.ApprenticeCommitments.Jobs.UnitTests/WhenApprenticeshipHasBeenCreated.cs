@@ -2,10 +2,14 @@ using AutoFixture;
 using AutoFixture.AutoMoq;
 using AutoFixture.NUnit3;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NServiceBus.Testing;
 using NUnit.Framework;
+using RestEase;
 using SFA.DAS.ApprenticeCommitments.Jobs.Api;
+using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Handlers.CommitmentsEventHandlers;
+using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Handlers.DomainEvents;
 using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure;
 using SFA.DAS.ApprenticeCommitments.Messages.Events;
 using SFA.DAS.CommitmentsV2.Messages.Events;
@@ -13,8 +17,6 @@ using SFA.DAS.Notifications.Messages.Commands;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Handlers.CommitmentsEventHandlers;
-using SFA.DAS.ApprenticeCommitments.Jobs.Functions.Handlers.DomainEvents;
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
 {
@@ -56,7 +58,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
                 n.CommitmentsContinuedApprenticeshipId == continuationId &&
                 n.CommitmentsApprenticeshipId == evt.ApprenticeshipId &&
                 n.CommitmentsApprovedOn == evt.CreatedOn)));
-        }
+        }        
     }
 
     public class WhenRegistationHasBeenSaved
@@ -76,7 +78,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
             var context = new TestableMessageHandlerContext();
             await sut.Handle(evt, context);
 
-            var url = $"{settings.ApprenticeWeb.StartPageUrl}?Register={registration.RegistrationId}";
+            var url = $"{settings.ApprenticeWeb.StartPageUrl}";            
             context.SentMessages
                 .Should().Contain(x => x.Message is SendEmailCommand)
                 .Which.Message.Should().BeEquivalentTo(new
@@ -87,7 +89,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
                     {
                         { "GivenName", registration.FirstName },
                         { "CreateAccountLink", url },
-                        { "LoginLink", url },
+                        { "LoginLink", url }                        
                     }
                 });
         }
