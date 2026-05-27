@@ -7,7 +7,7 @@ namespace SFA.DAS.ApprenticeCommitments.Jobs.Functions.Infrastructure
     public class ApplicationSettings
     {
         public ApprenticeCommitmentsApiOptions ApprenticeCommitmentsApi { get; set; } = null!;
-        public UrlConfiguration ApprenticeWeb { get; set; } = null!;        
+        public UrlConfiguration ApprenticeWeb { get; set; } = null!;
         public NotificationConfiguration Notifications { get; set; } = null!;
         public long SendRemindersAfterThisNumberDays { get; set; }
         public TimeSpan TimeToWaitBeforeChangeOfApprenticeshipEmail { get; set; } = TimeSpan.FromHours(24);

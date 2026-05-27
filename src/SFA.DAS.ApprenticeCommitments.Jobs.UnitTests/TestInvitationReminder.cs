@@ -1,6 +1,5 @@
 ﻿using AutoFixture.NUnit3;
 using FluentAssertions;
-using Microsoft.Azure.Amqp;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -14,7 +13,6 @@ using SFA.DAS.ApprenticeCommitments.Jobs.Functions.InternalMessages.Commands;
 using SFA.DAS.Notifications.Messages.Commands;
 using System;
 using System.Collections.Generic;
-using System.Security.Policy;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.ApprenticeCommitments.Jobs.UnitTests
